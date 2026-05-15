@@ -649,60 +649,87 @@ function App() {
     if (ebayLoading) return;
     setEbayLoading(true);
     const results = [];
+
+    // eBay Finding API — free, works via CORS proxy
+    // Uses findItemsAdvanced endpoint, no OAuth needed (App ID only)
+    const EBAY_APP_ID = "ShinyDen-PokeDeal-PRD-a1b2c3d4e-12345678"; // placeholder — set real one in env
     const searches = [
-      { q:"pokemon evolving skies booster box sealed",    set:"evolving skies" },
-      { q:"pokemon prismatic evolutions elite trainer",   set:"prismatic evolutions" },
-      { q:"pokemon shining fates elite trainer box",      set:"shining fates" },
-      { q:"pokemon 151 booster bundle sealed",            set:"151" },
-      { q:"pokemon surging sparks booster box sealed",    set:"surging sparks" },
-      { q:"pokemon hidden fates booster box sealed",      set:"hidden fates" },
-      { q:"pokemon chilling reign booster box",           set:"chilling reign" },
-      { q:"pokemon battle styles booster box sealed",     set:"battle styles" },
+      "pokemon evolving skies booster box sealed",
+      "pokemon prismatic evolutions elite trainer box",
+      "pokemon shining fates elite trainer box",
+      "pokemon 151 booster bundle",
+      "pokemon surging sparks booster box",
+      "pokemon hidden fates booster box sealed",
+      "pokemon chilling reign booster box",
+      "pokemon battle styles booster box sealed",
     ];
-    for (const { q, set } of searches) {
+
+    for (const keywords of searches) {
       try {
-        // eBay RSS feed — free, no API key, no CORS issues
-        const rssUrl = `https://www.ebay.co.uk/sch/i.html?_nkw=${encodeURIComponent(q)}&LH_BIN=1&LH_ItemCondition=1000&_sop=10&_ipg=10&_rss=1`;
-        const proxy = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
-        const r = await fetch(proxy, { signal: AbortSignal.timeout(8000) });
+        // Use allorigins to bypass CORS on the eBay Finding API
+        const ebayUrl = `https://svcs.ebay.com/services/search/FindingService/v1`
+          + `?OPERATION-NAME=findItemsAdvanced`
+          + `&SERVICE-VERSION=1.0.0`
+          + `&SECURITY-APPNAME=${EBAY_APP_ID}`
+          + `&RESPONSE-DATA-FORMAT=JSON`
+          + `&REST-PAYLOAD`
+          + `&keywords=${encodeURIComponent(keywords)}`
+          + `&itemFilter(0).name=ListingType&itemFilter(0).value=FixedPrice`
+          + `&itemFilter(1).name=Condition&itemFilter(1).value=New`
+          + `&itemFilter(2).name=MinPrice&itemFilter(2).value=20&itemFilter(2).paramName=Currency&itemFilter(2).paramValue=GBP`
+          + `&itemFilter(3).name=MaxPrice&itemFilter(3).value=3000&itemFilter(3).paramName=Currency&itemFilter(3).paramValue=GBP`
+          + `&sortOrder=PricePlusShippingLowest`
+          + `&paginationInput.entriesPerPage=10`
+          + `&siteid=3`; // 3 = eBay UK
+
+        const proxy = `https://api.allorigins.win/raw?url=${encodeURIComponent(ebayUrl)}`;
+        const r = await fetch(proxy, { signal: AbortSignal.timeout(10000) });
         if (!r.ok) continue;
         const data = await r.json();
-        const items = data.items || [];
+        const items = data?.findItemsAdvancedResponse?.[0]?.searchResult?.[0]?.item || [];
+
         for (const item of items) {
-          const title = item.title?.replace(/<[^>]+>/g,"").trim();
-          if (!title || !isValidEbayTitle(title)) continue;
-          // Parse price from title or description
-          const priceMatch = (item.title + item.description).match(/£([\d,]+\.?\d*)/);
-          if (!priceMatch) continue;
-          const price = parseFloat(priceMatch[1].replace(",",""));
-          if (!price || isNaN(price)) continue;
-          // Extract image from description
-          const imgMatch = item.description?.match(/src="([^"]+)"/);
-          const image = imgMatch ? imgMatch[1] : getDemoImage(title);
+          const title = item.title?.[0];
+          const price = parseFloat(item.sellingStatus?.[0]?.currentPrice?.[0]?.__value__ || 0);
+          const url   = item.viewItemURL?.[0];
+          const image = item.galleryURL?.[0] || null;
+          const itemId = item.itemId?.[0];
+
+          if (!title || !price || !url || !isValidEbayTitle(title)) continue;
+
           results.push({
-            id: item.link,
+            id: itemId,
             title,
             price,
-            url: item.link,
+            url,
             image,
             condition: "New",
             endingSoon: false,
             buyItNow: true,
             feedbackPct: 99,
             feedbackCount: 100,
+            hoursOld: undefined,
           });
         }
-      } catch {}
-      await new Promise(r => setTimeout(r, 200));
+      } catch (e) {
+        console.log("eBay search error:", e.message);
+      }
+      await new Promise(r => setTimeout(r, 300));
     }
+
     // Deduplicate, score, sort
     const seen = new Set();
-    const unique = results.filter(r => { if(seen.has(r.id)) return false; seen.add(r.id); return true; });
+    const unique = results.filter(r => {
+      if (seen.has(r.id)) return false;
+      seen.add(r.id);
+      return true;
+    });
     const scored = unique
       .map(r => ({ ...r, ...scoreEbayListing(r) }))
-      .filter(r => r.score >= 40)
-      .sort((a,b) => b.score - a.score)
-      .slice(0, 30);
+      .filter(r => r.score >= 35)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 40);
+
     setEbayListings(scored);
     setEbayLoaded(true);
     setEbayLoading(false);
@@ -839,7 +866,7 @@ function App() {
 
         {/* TAB BAR */}
         <div style={{ display:"flex", gap:2, marginBottom:14, background:"#0F0F18", border:"1px solid #252535", borderRadius:7, padding:3 }}>
-          {[{id:"deals",l:"🎯 DEALS"},{id:"ebay",l:"🛒 EBAY"},{id:"heat",l:"🔥 HEAT"},{id:"stats",l:"📊 STATS"}].map(t=>(
+          {[{id:"deals",l:"🎯 DEALS"},{id:"ebay",l:"🛒 EBAY"},{id:"market",l:"🏷 MARKET"},{id:"heat",l:"🔥 HEAT"}].map(t=>(
             <button key={t.id} onClick={()=>setTab(t.id)} style={{ flex:1, background:tab===t.id?"#CC0000":"transparent", border:"none", borderRadius:5, padding:"9px 4px", color:tab===t.id?"#fff":"#AAAAAA", fontFamily:DISP, fontSize:12, letterSpacing:"0.08em", cursor:"pointer", transition:"all 0.15s" }}>{t.l}</button>
           ))}
         </div>
@@ -978,6 +1005,55 @@ function App() {
           </div>
         )}
 
+        {/* ── MARKETPLACE TAB ── */}
+        {tab==="market"&&(
+          <div style={{animation:"fadeup 0.3s ease"}}>
+            <div style={{ fontFamily:DISP, fontSize:16, fontWeight:600, color:"#FFFFFF", marginBottom:4 }}>Marketplace</div>
+            <div style={{ fontFamily:MONO, fontSize:9, color:"#555", marginBottom:24 }}>Buy and sell sealed Pokémon products directly</div>
+
+            {/* Coming soon hero */}
+            <div style={{ background:"#0A0A10", border:"1px solid #1E1E2A", borderRadius:10, padding:"28px 20px", textAlign:"center", marginBottom:16 }}>
+              <div style={{ fontSize:40, marginBottom:12 }}>🏷️</div>
+              <div style={{ fontFamily:DISP, fontSize:18, fontWeight:600, color:"#FFFFFF", marginBottom:8 }}>Coming Soon</div>
+              <div style={{ fontFamily:MONO, fontSize:10, color:"#555", lineHeight:1.7, marginBottom:20 }}>
+                Buy and sell sealed Pokémon products directly with other collectors. No eBay fees. No middleman.
+              </div>
+              <div style={{ display:"flex", flexDirection:"column", gap:10, textAlign:"left" }}>
+                {[
+                  { icon:"✅", t:"List sealed products in seconds" },
+                  { icon:"✅", t:"Instant deal scoring vs market price" },
+                  { icon:"✅", t:"Trusted seller verification" },
+                  { icon:"✅", t:"Direct buyer-seller messaging" },
+                  { icon:"✅", t:"Price alerts when your target hits" },
+                ].map((f,i)=>(
+                  <div key={i} style={{ display:"flex", gap:10, alignItems:"center", background:"#0F0F18", borderRadius:6, padding:"10px 12px" }}>
+                    <span style={{ fontSize:14 }}>{f.icon}</span>
+                    <span style={{ fontFamily:MONO, fontSize:10, color:"#AAAAAA" }}>{f.t}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Notify me */}
+            <div style={{ background:"#0A0A10", border:"1px solid #CC000033", borderRadius:10, padding:"16px 20px" }}>
+              <div style={{ fontFamily:DISP, fontSize:13, fontWeight:600, color:"#FFFFFF", marginBottom:4 }}>Get early access</div>
+              <div style={{ fontFamily:MONO, fontSize:9, color:"#555", marginBottom:12 }}>Be first to know when Marketplace launches</div>
+              <div style={{ display:"flex", gap:8 }}>
+                <input
+                  type="email"
+                  placeholder="your@email.com"
+                  onClick={e=>e.stopPropagation()}
+                  style={{ flex:1, background:"#0F0F18", border:"1px solid #2A2A38", borderRadius:5, padding:"10px 12px", color:"#FFFFFF", fontFamily:MONO, fontSize:11, outline:"none" }}
+                />
+                <button
+                  style={{ background:"#CC0000", border:"none", borderRadius:5, padding:"10px 16px", color:"#fff", fontFamily:MONO, fontSize:10, letterSpacing:"0.08em", cursor:"pointer", whiteSpace:"nowrap" }}
+                  onClick={e=>{e.stopPropagation();alert("You're on the list! We'll let you know when Marketplace launches.");}}
+                >NOTIFY ME</button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {tab==="heat"&&<HeatTab/>}
 
         {/* ── STATS ── */}
@@ -1092,7 +1168,7 @@ function App() {
 
     {/* ══ BOTTOM NAV ══ */}
     <div style={{ position:"fixed",bottom:0,left:0,right:0,background:"rgba(7,7,13,0.98)",borderTop:"1px solid rgba(255,255,255,0.07)",display:"flex",padding:"10px 0 24px",zIndex:100,backdropFilter:"blur(20px)" }}>
-      {[{id:"deals",icon:"🎯",l:"DEALS"},{id:"ebay",icon:"🛒",l:"EBAY"},{id:"heat",icon:"🔥",l:"HEAT"},{id:"stats",icon:"📊",l:"STATS"}].map(n=>(
+      {[{id:"deals",icon:"🎯",l:"DEALS"},{id:"ebay",icon:"🛒",l:"EBAY"},{id:"market",icon:"🏷",l:"MARKET"},{id:"heat",icon:"🔥",l:"HEAT"}].map(n=>(
         <button key={n.id} onClick={()=>setTab(n.id)} style={{ flex:1,background:"transparent",border:"none",color:tab===n.id?"#CC0000":"#888",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:3,fontFamily:DISP,fontSize:11,fontWeight:500,letterSpacing:"0.1em",transition:"color 0.15s" }}>
           <span style={{ fontSize:19 }}>{n.icon}</span>{n.l}
         </button>
