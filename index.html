@@ -421,53 +421,42 @@ function Card({ d, rank }) {
           {h&&(()=>{
             const tC = h.trend==="rising"?"#39D98A":h.trend==="declining"?"#FF3B3B":"#FF8C00";
             // All profits calculated vs what YOU actually pay (d.buyNow)
-            const calcProfit = (val) => {
-              const fees = +(val * EF + POST).toFixed(2);
-              const profit = +(val - fees - d.buyNow).toFixed(2);
-              const roi = Math.round(profit / d.buyNow * 100);
-              const g = roi>=80?"#00FF88":roi>=40?"#00EE77":roi>=15?"#39D98A":roi>=5?"#2ECC71":"#FF3B3B";
-              return { profit, roi, g };
-            };
-            const p1 = calcProfit(h.yr1val);
-            const p2 = calcProfit(h.yr2val);
-            const p3 = calcProfit(h.yr3val || Math.round(h.yr2val*1.15));
-            const p4 = calcProfit(h.yr4val || Math.round(h.yr2val*1.30));
+            const yr1v = h.yr1val;
+            const yr2v = h.yr2val;
+            const yr3v = h.yr3val || Math.round(h.yr2val*1.15);
+            const yr4v = h.yr4val || Math.round(h.yr2val*1.30);
 
-            const HoldRow = ({label, val, p, yrs}) => (
-              <div style={{ background:p.profit>=0?"rgba(0,255,136,0.05)":"rgba(255,59,59,0.05)", border:`1px solid ${p.profit>=0?"rgba(0,255,136,0.2)":"rgba(255,59,59,0.2)"}`, borderRadius:6, padding:"10px 12px", marginBottom:6 }}>
-                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-                  <div>
-                    <div style={{ fontFamily:MONO, fontSize:9, color:"#AAAAAA", fontWeight:700 }}>HOLD {label}</div>
-                    <div style={{ fontFamily:MONO, fontSize:8, color:"#555", marginTop:2 }}>
-                      Sell est. £{val.toLocaleString()} · after fees
-                    </div>
-                  </div>
-                  <div style={{ textAlign:"right" }}>
-                    <div style={{ fontFamily:MONO, fontSize:14, fontWeight:700, color:p.profit>=0?p.g:"#FF3B3B" }}>
-                      {p.profit>=0?"+":"-"}£{Math.abs(p.profit).toFixed(2)}
-                    </div>
-                    <div style={{ fontFamily:MONO, fontSize:8, color:p.roi>=0?p.g:"#FF3B3B" }}>{p.roi>=0?"+":""}{p.roi}% on your £{d.buyNow.toFixed(2)}</div>
+            const HoldRow = ({label, val}) => {
+              const trendC = h.trend==="rising"?"#39D98A":h.trend==="declining"?"#FF3B3B":"#FF8C00";
+              const pct = Math.round((val / h.yr1val.toString().replace ? (val/d.resell-1)*100 : (val/d.resell-1)*100));
+              const gain = Math.round((val - d.resell) / d.resell * 100);
+              return (
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"9px 0", borderBottom:"1px solid rgba(255,255,255,0.05)" }}>
+                  <div style={{ fontFamily:MONO, fontSize:9, color:"#666" }}>{label}</div>
+                  <div style={{ display:"flex", alignItems:"baseline", gap:8 }}>
+                    <div style={{ fontFamily:MONO, fontSize:13, fontWeight:700, color:"#FFFFFF" }}>£{val.toLocaleString()}</div>
+                    <div style={{ fontFamily:MONO, fontSize:9, color:gain>=0?trendC:"#FF3B3B" }}>{gain>=0?"+":""}{gain}%</div>
                   </div>
                 </div>
-              </div>
-            );
+              );
+            };
 
             return (
               <div style={{ background:"rgba(0,0,0,0.5)", border:"1px solid rgba(255,255,255,0.08)", borderRadius:6, padding:"14px", marginBottom:10 }}>
                 <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:10 }}>
                   <div>
                     <div style={{ fontFamily:MONO, fontSize:9, color:"#888", letterSpacing:"0.15em" }}>HOLD ANALYSIS</div>
-                    <div style={{ fontFamily:MONO, fontSize:8, color:"#444", marginTop:2 }}>All profits vs your buy price of £{d.buyNow.toFixed(2)}</div>
+                    <div style={{ fontFamily:MONO, fontSize:8, color:"#444", marginTop:2 }}>Est. eBay market value if held sealed</div>
                   </div>
                   <div style={{ display:"flex", alignItems:"center", gap:8 }}>
                     <span style={{ fontFamily:MONO, fontSize:9, color:tC }}>{h.trend==="rising"?"↗ RISING":h.trend==="declining"?"↘ FALLING":"→ STABLE"}</span>
                     <span style={{ fontFamily:MONO, fontSize:11, color:h.score>=7?"#00FF88":h.score>=5?"#FF8C00":"#FF3B3B" }}>{h.score}/10</span>
                   </div>
                 </div>
-                <HoldRow label="1 YEAR"  val={h.yr1val} p={p1}/>
-                <HoldRow label="2 YEARS" val={h.yr2val} p={p2}/>
-                <HoldRow label="3 YEARS" val={h.yr3val||Math.round(h.yr2val*1.15)} p={p3}/>
-                <HoldRow label="4 YEARS" val={h.yr4val||Math.round(h.yr2val*1.30)} p={p4}/>
+                <HoldRow label="1 YEAR"  val={yr1v}/>
+                <HoldRow label="2 YEARS" val={yr2v}/>
+                <HoldRow label="3 YEARS" val={yr3v}/>
+                <HoldRow label="4 YEARS" val={yr4v}/>
                 <div style={{ fontFamily:MONO, fontSize:9, color:"#888", lineHeight:1.6, marginTop:8, padding:"8px 10px", background:"rgba(255,255,255,0.03)", borderRadius:4 }}>
                   💡 {h.note}
                 </div>
@@ -519,33 +508,33 @@ function HeatTab() {
   const MONTHS = ["Jun","Jul","Aug","Sep","Oct","Nov","Dec","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec","Jan","Feb","Mar","Apr","May"];
 
   const sets = [
-    { n:"Base Set (WOTC)",      y1:25,  y2:60,  s:10, t:"rising",
+    { n:"Base Set (WOTC) — Booster Box",      y1:25,  y2:60,  s:10, t:"rising",
       history:[1600,1680,1750,1820,1900,1980,2050,2100,2180,2240,2310,2380,2430,2450,2470,2480,2490,2495,2498,2500,2502,2505,2503,2500] },
-    { n:"Evolving Skies",       y1:20,  y2:44,  s:10, t:"rising",
+    { n:"Evolving Skies — Booster Box",       y1:20,  y2:44,  s:10, t:"rising",
       history:[148,152,158,163,169,175,180,186,191,196,200,205,208,210,211,212,213,214,215,215,216,215,215,215] },
-    { n:"Hidden Fates",         y1:15,  y2:32,  s:9,  t:"rising",
+    { n:"Hidden Fates — Booster Box",         y1:15,  y2:32,  s:9,  t:"rising",
       history:[290,298,306,315,324,333,341,348,355,361,367,372,376,378,380,381,382,383,384,385,385,385,385,385] },
-    { n:"Prismatic Evolutions", y1:25,  y2:56,  s:9,  t:"rising",
+    { n:"Prismatic Evolutions — Booster Box", y1:25,  y2:56,  s:9,  t:"rising",
       history:[null,null,null,null,null,null,null,95,115,138,155,170,178,182,184,186,187,188,189,190,190,190,190,190] },
-    { n:"151",                  y1:15,  y2:32,  s:8,  t:"rising",
+    { n:"151 — Booster Box",                  y1:15,  y2:32,  s:8,  t:"rising",
       history:[125,128,132,136,140,144,148,152,156,160,163,166,169,171,173,174,175,176,177,178,178,178,178,178] },
-    { n:"Shining Fates",        y1:10,  y2:21,  s:8,  t:"stable",
+    { n:"Shining Fates — Elite Trainer Box",        y1:10,  y2:21,  s:8,  t:"stable",
       history:[198,200,203,206,209,212,215,218,220,223,226,228,230,232,233,234,235,236,237,238,239,239,240,240] },
-    { n:"Champions Path",       y1:15,  y2:32,  s:8,  t:"rising",
+    { n:"Champions Path — Elite Trainer Box",       y1:15,  y2:32,  s:8,  t:"rising",
       history:[148,151,154,158,161,164,167,170,173,176,179,182,184,186,187,188,189,190,190,191,192,192,192,192] },
-    { n:"Surging Sparks",       y1:12,  y2:28,  s:6,  t:"rising",
+    { n:"Surging Sparks — Booster Box",       y1:12,  y2:28,  s:6,  t:"rising",
       history:[null,null,null,null,null,null,150,163,172,182,190,197,202,206,209,211,212,213,214,215,215,215,215,215] },
-    { n:"Chilling Reign",       y1:8,   y2:17,  s:6,  t:"rising",
+    { n:"Chilling Reign — Booster Box",       y1:8,   y2:17,  s:6,  t:"rising",
       history:[130,132,134,135,137,138,140,141,143,144,146,147,148,149,150,150,151,151,152,152,152,152,152,152] },
-    { n:"Phantasmal Flames",    y1:20,  y2:44,  s:7,  t:"rising",
+    { n:"Phantasmal Flames — Booster Box",    y1:20,  y2:44,  s:7,  t:"rising",
       history:[null,null,null,null,null,null,null,null,null,null,null,null,280,295,310,320,330,338,345,350,355,358,360,360] },
-    { n:"Chaos Rising",         y1:15,  y2:32,  s:7,  t:"rising",
+    { n:"Chaos Rising — Booster Box",         y1:15,  y2:32,  s:7,  t:"rising",
       history:[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,110,118,125,132,139,145] },
-    { n:"Paradox Rift",         y1:-2,  y2:-4,  s:4,  t:"declining",
+    { n:"Paradox Rift — Booster Box",         y1:-2,  y2:-4,  s:4,  t:"declining",
       history:[128,126,125,123,122,120,119,118,117,116,115,114,113,112,112,111,110,110,110,109,109,109,108,108] },
-    { n:"Obsidian Flames",      y1:-2,  y2:-4,  s:4,  t:"declining",
+    { n:"Obsidian Flames — Booster Box",      y1:-2,  y2:-4,  s:4,  t:"declining",
       history:[140,138,136,134,133,131,130,129,128,127,126,125,124,123,122,121,120,120,119,119,118,118,118,118] },
-    { n:"Paldea Evolved",       y1:-5,  y2:-10, s:3,  t:"declining",
+    { n:"Paldea Evolved — Booster Box",       y1:-5,  y2:-10, s:3,  t:"declining",
       history:[125,122,119,116,114,112,110,108,107,106,105,103,102,101,100,99,98,97,96,95,94,93,92,92] },
   ];
 
