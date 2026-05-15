@@ -571,17 +571,21 @@ function App() {
 
   async function load() {
     setPulse(true);
+    const minDelay = new Promise(r => setTimeout(r, 2000)); // minimum 2s so user sees the sweep
     try {
       const r = await fetch(`${DEALS_URL}?t=${Date.now()}`);
       if (r.ok) {
         const d = await r.json();
         if (Array.isArray(d) && d.length > 0) {
+          await minDelay;
           setDeals(d); setLive(true); setUpdated(new Date()); setLoading(false);
           setPulse(false); return;
         }
       }
-    } catch {}
-    // Fallback to demo
+    } catch (e) {
+      console.log("Fetch error:", e.message);
+    }
+    await minDelay;
     setDeals(DEMO); setLive(false); setUpdated(new Date()); setLoading(false); setPulse(false);
   }
 
@@ -872,7 +876,7 @@ function App() {
             <div style={{ fontFamily:MONO, fontSize:10, color:"#555", letterSpacing:"0.06em" }}>● {deals.length} TOTAL</div>
           </div>
           <button onClick={()=>load()} style={{ background:"#CC0000", border:"none", borderRadius:5, padding:"6px 0", width:68, color:"#fff", fontFamily:MONO, fontSize:10, letterSpacing:"0.08em", cursor:"pointer", boxShadow:"0 2px 12px rgba(204,0,0,0.4)", opacity:pulse?0.7:1, flexShrink:0, textAlign:"center" }}>
-            {pulse?"...":"⟳ SCAN"}
+            {pulse?"SCANNING":"⟳ SCAN"}
           </button>
         </div>
       </div>
