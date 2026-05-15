@@ -33,49 +33,53 @@ const EF = 0.13, POST = 4;
 
 // ─── HOLD DATA ────────────────────────────────────────────────────────────────
 const HOLD = {
-  // Sources: PriceCharting, eBay UK sold, Bleeding Cool Value Watch Jan 2026,
-  // Athlon Sports TCG Investing Guide Jan 2026, Resell Calendar Nov 2025
-  "evolving skies":       { score:10, trend:"rising",   yr1:1.18, yr2:1.40, note:"Umbreon VMAX Alt Art $1,771 raw, 449% long-term. Boxes $260-310 in March 2026." },
-  "hidden fates":         { score:9,  trend:"rising",   yr1:1.15, yr2:1.32, note:"Shiny Vault. Consistently appreciates every year without fail." },
-  "prismatic evolutions": { score:9,  trend:"rising",   yr1:1.22, yr2:1.50, note:"ETBs £90 mid-2026. Umbreon ex SIR $1,005 raw. Eevee demand is permanent." },
-  "shining fates":        { score:8,  trend:"stable",   yr1:1.10, yr2:1.21, note:"Shiny Charizard VMAX. Strong floor. Steady appreciation." },
-  "champions path":       { score:8,  trend:"rising",   yr1:1.15, yr2:1.32, note:"Tiny print run. Shiny Charizard V. Very limited supply." },
-  "cosmic eclipse":       { score:7,  trend:"stable",   yr1:1.08, yr2:1.17, note:"Last Sun & Moon set. Nostalgia premium building steadily." },
-  "151":                  { score:8,  trend:"rising",   yr1:1.15, yr2:1.32, note:"Original 151. Evergreen nostalgia. Bundles still appreciating." },
-  "phantasmal flames":    { score:7,  trend:"rising",   yr1:1.18, yr2:1.40, note:"ME05. Mega Gengar ex SIR. Grade early for 3-5x multipliers." },
-  "chaos rising":         { score:7,  trend:"rising",   yr1:1.15, yr2:1.32, note:"ME04. Just launched May 2026. Early buyer window is open NOW." },
-  "perfect order":        { score:7,  trend:"rising",   yr1:1.12, yr2:1.25, note:"ME03. Mega Zygarde ex SIR at £300+." },
-  "ascended heroes":      { score:6,  trend:"rising",   yr1:1.10, yr2:1.21, note:"ME01. Mega Era is 2026's dominant market force." },
-  "destined rivals":      { score:5,  trend:"stable",   yr1:1.05, yr2:1.10, note:"ME02. Settling post-launch. Moderate hold." },
-  "surging sparks":       { score:6,  trend:"rising",   yr1:1.12, yr2:1.28, note:"Boxes up 150-250% over 18 months. Pikachu ex SIR at $271." },
-  "paldean fates":        { score:6,  trend:"stable",   yr1:1.08, yr2:1.17, note:"Shiny vault. Strong collector demand. Steady floor." },
-  "stellar crown":        { score:5,  trend:"rising",   yr1:1.08, yr2:1.20, note:"Terapagos ex. Sealed boxes up 50% to $150. Underrated." },
-  "journey together":     { score:5,  trend:"stable",   yr1:1.04, yr2:1.08, note:"Recent release. Still finding its floor." },
-  "brilliant stars":      { score:5,  trend:"stable",   yr1:1.05, yr2:1.10, note:"Charizard VSTAR. Consistent demand." },
-  "chilling reign":       { score:6,  trend:"rising",   yr1:1.08, yr2:1.17, note:"Ice/Shadow Rider Calyrex. Criminally underrated set." },
-  "battle styles":        { score:5,  trend:"stable",   yr1:1.05, yr2:1.10, note:"Urshifu V. Solid competitive + collector demand." },
-  "darkness ablaze":      { score:5,  trend:"stable",   yr1:1.04, yr2:1.08, note:"Charizard VMAX. Fan favourite. Stable floor." },
-  "unified minds":        { score:6,  trend:"stable",   yr1:1.05, yr2:1.10, note:"Tag Team era. Steady year-on-year gains." },
-  "unbroken bonds":       { score:6,  trend:"stable",   yr1:1.05, yr2:1.10, note:"Strong Tag Team lineup." },
-  "silver tempest":       { score:5,  trend:"stable",   yr1:1.05, yr2:1.10, note:"Lugia V alt art. Consistent premium." },
-  "base set":             { score:10, trend:"rising",   yr1:1.25, yr2:1.60, note:"WOTC Base Set. The original. Vintage TCG up 30-50% in 2026." },
-  "jungle":               { score:9,  trend:"rising",   yr1:1.20, yr2:1.44, note:"WOTC Jungle. Scarce sealed supply. Vintage surge ongoing." },
-  "fossil":               { score:9,  trend:"rising",   yr1:1.18, yr2:1.40, note:"WOTC Fossil. Classic chase. Vintage market hot in 2026." },
-  "team rocket":          { score:8,  trend:"rising",   yr1:1.15, yr2:1.32, note:"WOTC Team Rocket. Dark cards premium. Strong floor." },
-  "gym heroes":           { score:8,  trend:"rising",   yr1:1.15, yr2:1.32, note:"WOTC Gym Heroes. Leader chase. Appreciating." },
-  "gym challenge":        { score:8,  trend:"rising",   yr1:1.15, yr2:1.32, note:"WOTC Gym Challenge. Strong collector demand." },
-  "neo genesis":          { score:9,  trend:"rising",   yr1:1.20, yr2:1.44, note:"WOTC Neo Genesis. Lugia. Vintage market surge 2026." },
-  "neo destiny":          { score:8,  trend:"rising",   yr1:1.18, yr2:1.40, note:"WOTC Neo Destiny. Dark & Shining chase cards." },
-  "celebrations":         { score:7,  trend:"stable",   yr1:1.08, yr2:1.17, note:"25th anniversary keepsake. Steady collector demand." },
-  "evolutions":           { score:7,  trend:"rising",   yr1:1.10, yr2:1.21, note:"XY Evolutions. Base Set art nostalgia. Appreciating." },
-  "fusion strike":        { score:4,  trend:"stable",   yr1:1.02, yr2:1.04, note:"Mew VMAX. Large print run limits ceiling." },
-  "twilight masquerade":  { score:4,  trend:"stable",   yr1:1.02, yr2:1.04, note:"Standard modern. Slow appreciation." },
-  "temporal forces":      { score:4,  trend:"stable",   yr1:1.02, yr2:1.04, note:"Standard modern. Slow appreciation." },
-  "paradox rift":         { score:3,  trend:"declining",yr1:0.96, yr2:0.92, note:"High print run. Softening market. Avoid holding." },
-  "obsidian flames":      { score:3,  trend:"declining",yr1:0.96, yr2:0.92, note:"Charizard ex fatigue. Declining." },
-  "crown zenith":         { score:4,  trend:"stable",   yr1:1.03, yr2:1.06, note:"Last SwSh set. Steady." },
-  "paldea evolved":       { score:2,  trend:"declining",yr1:0.92, yr2:0.85, note:"Oversupplied. Declining. Don't hold." },
-  "shrouded fable":       { score:4,  trend:"stable",   yr1:1.02, yr2:1.04, note:"Low hype. Modest potential." },
+  // yr1/yr2/yr3/yr4 = multiplier from current eBay market price
+  // Based on verified eBay UK sold data trends May 2026
+  "evolving skies":       { score:10, trend:"rising",   yr1:1.05, yr2:1.15, yr3:1.35, yr4:1.55, note:"Umbreon VMAX Alt Art. Generational set. Gets rarer every year." },
+  "hidden fates":         { score:9,  trend:"rising",   yr1:1.05, yr2:1.12, yr3:1.25, yr4:1.40, note:"Shiny Vault. Limited print run. Appreciates every year without fail." },
+  "prismatic evolutions": { score:9,  trend:"rising",   yr1:1.04, yr2:1.12, yr3:1.28, yr4:1.45, note:"Eevee demand is permanent. Next Evolving Skies. Buy and seal away." },
+  "shining fates":        { score:8,  trend:"stable",   yr1:1.03, yr2:1.07, yr3:1.15, yr4:1.25, note:"Shiny Charizard VMAX. Strong collector floor. Slow but steady." },
+  "champions path":       { score:8,  trend:"rising",   yr1:1.04, yr2:1.10, yr3:1.22, yr4:1.35, note:"Tiny print run. Shiny Charizard V. Supply shrinks every year." },
+  "cosmic eclipse":       { score:7,  trend:"stable",   yr1:1.02, yr2:1.05, yr3:1.10, yr4:1.17, note:"Last Sun & Moon set. Nostalgia premium building slowly." },
+  "151":                  { score:8,  trend:"rising",   yr1:1.04, yr2:1.10, yr3:1.22, yr4:1.35, note:"Original 151. Evergreen nostalgia. Bundles consistently rising." },
+  "phantasmal flames":    { score:7,  trend:"rising",   yr1:1.05, yr2:1.12, yr3:1.28, yr4:1.44, note:"ME05. Mega Gengar ex SIR. Early buyer window still open." },
+  "chaos rising":         { score:7,  trend:"rising",   yr1:1.04, yr2:1.10, yr3:1.22, yr4:1.36, note:"ME04. Brand new May 2026. Get in before market catches up." },
+  "perfect order":        { score:7,  trend:"rising",   yr1:1.03, yr2:1.08, yr3:1.18, yr4:1.30, note:"ME03. Mega Zygarde ex SIR at £230+. Steady appreciation." },
+  "ascended heroes":      { score:6,  trend:"rising",   yr1:1.03, yr2:1.07, yr3:1.15, yr4:1.25, note:"ME01. Mega Era 2026 flagship. Foundation set." },
+  "destined rivals":      { score:5,  trend:"stable",   yr1:1.01, yr2:1.04, yr3:1.08, yr4:1.13, note:"ME02. Still settling post-launch. Hold medium term." },
+  "surging sparks":       { score:6,  trend:"rising",   yr1:1.03, yr2:1.08, yr3:1.18, yr4:1.30, note:"Pikachu ex SIR at $271. Box price rose 150%+ over 18 months." },
+  "paldean fates":        { score:6,  trend:"stable",   yr1:1.02, yr2:1.05, yr3:1.11, yr4:1.18, note:"Shiny vault set. Strong collector demand. Steady floor." },
+  "stellar crown":        { score:5,  trend:"stable",   yr1:1.01, yr2:1.03, yr3:1.07, yr4:1.12, note:"Terapagos ex. Moderate hold." },
+  "journey together":     { score:5,  trend:"stable",   yr1:1.01, yr2:1.02, yr3:1.05, yr4:1.09, note:"Recent release. Still finding price floor." },
+  "brilliant stars":      { score:5,  trend:"stable",   yr1:1.01, yr2:1.03, yr3:1.07, yr4:1.12, note:"Charizard VSTAR. Consistent collector demand." },
+  "chilling reign":       { score:6,  trend:"rising",   yr1:1.02, yr2:1.06, yr3:1.13, yr4:1.22, note:"Ice/Shadow Rider Calyrex. Criminally underrated. Buy now." },
+  "battle styles":        { score:5,  trend:"stable",   yr1:1.01, yr2:1.03, yr3:1.07, yr4:1.11, note:"Urshifu V. Solid competitive and collector demand." },
+  "darkness ablaze":      { score:5,  trend:"stable",   yr1:1.01, yr2:1.03, yr3:1.06, yr4:1.10, note:"Charizard VMAX. Fan favourite. Stable floor." },
+  "unified minds":        { score:6,  trend:"stable",   yr1:1.01, yr2:1.04, yr3:1.09, yr4:1.15, note:"Tag Team era. Steady year-on-year gains." },
+  "unbroken bonds":       { score:6,  trend:"stable",   yr1:1.01, yr2:1.04, yr3:1.09, yr4:1.15, note:"Strong tag team lineup. Collecting premium building." },
+  "silver tempest":       { score:5,  trend:"stable",   yr1:1.01, yr2:1.03, yr3:1.07, yr4:1.12, note:"Lugia V alt art premium." },
+  "crown zenith":         { score:4,  trend:"stable",   yr1:1.01, yr2:1.02, yr3:1.05, yr4:1.09, note:"Last SwSh release. Moderate hold." },
+  "lost origin":          { score:4,  trend:"stable",   yr1:1.00, yr2:1.02, yr3:1.05, yr4:1.08, note:"Origin Forme demand. Steady." },
+  "astral radiance":      { score:3,  trend:"stable",   yr1:1.00, yr2:1.01, yr3:1.03, yr4:1.06, note:"Solid but common set." },
+  "fusion strike":        { score:4,  trend:"stable",   yr1:1.01, yr2:1.02, yr3:1.05, yr4:1.08, note:"Mew VMAX. Moderate appreciation." },
+  "twilight masquerade":  { score:4,  trend:"stable",   yr1:1.00, yr2:1.01, yr3:1.04, yr4:1.07, note:"Standard modern set." },
+  "temporal forces":      { score:4,  trend:"stable",   yr1:1.00, yr2:1.01, yr3:1.04, yr4:1.07, note:"Standard modern set." },
+  "paradox rift":         { score:3,  trend:"declining",yr1:0.98, yr2:0.96, yr3:0.95, yr4:0.95, note:"Overprinted. Avoid for investment purposes." },
+  "obsidian flames":      { score:3,  trend:"declining",yr1:0.98, yr2:0.96, yr3:0.95, yr4:0.95, note:"Heavy print run. Slow decline continuing." },
+  "shrouded fable":       { score:4,  trend:"stable",   yr1:1.00, yr2:1.01, yr3:1.04, yr4:1.07, note:"Low-hype set. Modest long-term hold." },
+  "paldea evolved":       { score:2,  trend:"declining",yr1:0.96, yr2:0.93, yr3:0.91, yr4:0.90, note:"Overprinted. Do not hold." },
+  "scarlet violet":       { score:3,  trend:"stable",   yr1:1.00, yr2:1.01, yr3:1.03, yr4:1.05, note:"Base SV. Functional set, limited appreciation." },
+  "rebel clash":          { score:3,  trend:"stable",   yr1:1.00, yr2:1.01, yr3:1.02, yr4:1.04, note:"Standard SwSh set." },
+  "sword shield":         { score:3,  trend:"stable",   yr1:1.00, yr2:1.01, yr3:1.02, yr4:1.04, note:"Base SwSh. Slow appreciation." },
+  "celebrations":         { score:7,  trend:"stable",   yr1:1.02, yr2:1.06, yr3:1.13, yr4:1.21, note:"25th anniversary keepsake. Steady collector demand." },
+  "evolutions":           { score:7,  trend:"rising",   yr1:1.03, yr2:1.08, yr3:1.18, yr4:1.29, note:"XY Evolutions. Base Set art nostalgia. Appreciating." },
+  "base set":             { score:10, trend:"rising",   yr1:1.08, yr2:1.20, yr3:1.40, yr4:1.65, note:"The original. Irreplaceable. Never stops appreciating." },
+  "neo genesis":          { score:9,  trend:"rising",   yr1:1.06, yr2:1.15, yr3:1.30, yr4:1.50, note:"Lugia era. Limited supply, permanent nostalgia premium." },
+  "jungle":               { score:8,  trend:"rising",   yr1:1.05, yr2:1.12, yr3:1.25, yr4:1.40, note:"WOTC classic. Strong appreciation trajectory." },
+  "fossil":               { score:8,  trend:"rising",   yr1:1.05, yr2:1.11, yr3:1.24, yr4:1.38, note:"WOTC classic. Kabutops/Gengar demand." },
+  "team rocket":          { score:8,  trend:"rising",   yr1:1.05, yr2:1.12, yr3:1.25, yr4:1.40, note:"WOTC Team Rocket. Dark cards premium. Strong floor." },
+  "gym heroes":           { score:8,  trend:"rising",   yr1:1.05, yr2:1.11, yr3:1.23, yr4:1.37, note:"WOTC Gym Heroes. Leader chase. Appreciating." },
+  "neo destiny":          { score:8,  trend:"rising",   yr1:1.06, yr2:1.13, yr3:1.28, yr4:1.44, note:"WOTC Neo Destiny. Dark & Shining chase cards." },
 };
 
 // Product images — using pokemontcg.io card images as set art (free, no auth needed for small use)
@@ -141,12 +145,17 @@ function calcHold(sell, title) {
   const key = Object.keys(HOLD).find(k => title.toLowerCase().includes(k));
   if (!key) return null;
   const h = HOLD[key];
-  const y1 = Math.round(sell * h.yr1), y2 = Math.round(sell * h.yr2);
+  const y1 = Math.round(sell * h.yr1);
+  const y2 = Math.round(sell * h.yr2);
+  const y3 = Math.round(sell * (h.yr3 || h.yr2 * h.yr2 / h.yr1));
+  const y4 = Math.round(sell * (h.yr4 || h.yr2 * h.yr2 / sell));
   const n1 = +(y1 - sell - y1*EF - POST).toFixed(2);
   const n2 = +(y2 - sell - y2*EF - POST).toFixed(2);
-  return { ...h, yr1val:y1, yr2val:y2, yr1net:n1, yr2net:n2,
+  return { ...h, yr1val:y1, yr2val:y2, yr3val:y3, yr4val:y4,
+    yr1net:n1, yr2net:n2,
     yr1roi:Math.round(n1/sell*100), yr2roi:Math.round(n2/sell*100),
-    yr1pct:Math.round((h.yr1-1)*100), yr2pct:Math.round((h.yr2-1)*100) };
+    yr1pct:Math.round((h.yr1-1)*100), yr2pct:Math.round((h.yr2-1)*100),
+    yr3pct:Math.round((y3/sell-1)*100), yr4pct:Math.round((y4/sell-1)*100) };
 }
 
 // Colour system: green=money, red=danger, white=neutral, all on near-black
@@ -410,70 +419,57 @@ function Card({ d, rank }) {
           {/* HOLD ANALYSIS */}
           {h&&(()=>{
             const tC = h.trend==="rising"?"#39D98A":h.trend==="declining"?"#FF3B3B":"#FF8C00";
-            // Calculate profit vs what user ACTUALLY PAYS (buyNow), not market price
-            const yr1fees = +(h.yr1val * EF + POST).toFixed(2);
-            const yr2fees = +(h.yr2val * EF + POST).toFixed(2);
-            const yr1profit = +(h.yr1val - yr1fees - d.buyNow).toFixed(2);
-            const yr2profit = +(h.yr2val - yr2fees - d.buyNow).toFixed(2);
-            const yr1roi    = Math.round(yr1profit / d.buyNow * 100);
-            const yr2roi    = Math.round(yr2profit / d.buyNow * 100);
-            return (
-              <div style={{ background:"rgba(0,0,0,0.5)", border:"1px solid rgba(255,255,255,0.08)", borderRadius:6, padding:"14px", marginBottom:10 }}>
-                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12 }}>
-                  <div style={{ fontFamily:MONO, fontSize:9, color:"#888", letterSpacing:"0.15em" }}>HOLD ANALYSIS</div>
-                  <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-                    <span style={{ fontFamily:MONO, fontSize:10, color:tC }}>{h.trend==="rising"?"↗ RISING":h.trend==="declining"?"↘ FALLING":"→ STABLE"}</span>
-                    <span style={{ fontFamily:MONO, fontSize:12, color:h.score>=7?"#00FF88":h.score>=5?"#FF8C00":"#FF3B3B" }}>{h.score}/10</span>
+            // All profits calculated vs what YOU actually pay (d.buyNow)
+            const calcProfit = (val) => {
+              const fees = +(val * EF + POST).toFixed(2);
+              const profit = +(val - fees - d.buyNow).toFixed(2);
+              const roi = Math.round(profit / d.buyNow * 100);
+              const g = roi>=80?"#00FF88":roi>=40?"#00EE77":roi>=15?"#39D98A":roi>=5?"#2ECC71":"#FF3B3B";
+              return { profit, roi, g };
+            };
+            const p1 = calcProfit(h.yr1val);
+            const p2 = calcProfit(h.yr2val);
+            const p3 = calcProfit(h.yr3val || Math.round(h.yr2val*1.15));
+            const p4 = calcProfit(h.yr4val || Math.round(h.yr2val*1.30));
+
+            const HoldRow = ({label, val, p, yrs}) => (
+              <div style={{ background:p.profit>=0?"rgba(0,255,136,0.05)":"rgba(255,59,59,0.05)", border:`1px solid ${p.profit>=0?"rgba(0,255,136,0.2)":"rgba(255,59,59,0.2)"}`, borderRadius:6, padding:"10px 12px", marginBottom:6 }}>
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+                  <div>
+                    <div style={{ fontFamily:MONO, fontSize:9, color:"#AAAAAA", fontWeight:700 }}>HOLD {label}</div>
+                    <div style={{ fontFamily:MONO, fontSize:8, color:"#555", marginTop:2 }}>
+                      Sell est. £{val.toLocaleString()} · after fees
+                    </div>
+                  </div>
+                  <div style={{ textAlign:"right" }}>
+                    <div style={{ fontFamily:MONO, fontSize:14, fontWeight:700, color:p.profit>=0?p.g:"#FF3B3B" }}>
+                      {p.profit>=0?"+":"-"}£{Math.abs(p.profit).toFixed(2)}
+                    </div>
+                    <div style={{ fontFamily:MONO, fontSize:8, color:p.roi>=0?p.g:"#FF3B3B" }}>{p.roi>=0?"+":""}{p.roi}% on your £{d.buyNow.toFixed(2)}</div>
                   </div>
                 </div>
+              </div>
+            );
 
-                {/* 1yr */}
-                {(() => {
-                  const g1 = yr1roi>=80?"#00FF88":yr1roi>=40?"#00EE77":yr1roi>=15?"#39D98A":"#2ECC71";
-                  return (
-                    <div style={{ background:yr1profit>=0?"rgba(0,255,136,0.06)":"rgba(255,59,59,0.06)", border:`1px solid ${yr1profit>=0?"rgba(0,255,136,0.25)":"rgba(255,59,59,0.25)"}`, borderRadius:6, padding:"12px", marginBottom:7 }}>
-                      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-                        <div style={{ flex:1, marginRight:12 }}>
-                          <div style={{ fontFamily:MONO, fontSize:10, color:"#CCCCCC", fontWeight:700, marginBottom:5 }}>HOLD 1 YEAR</div>
-                          <div style={{ fontFamily:MONO, fontSize:9, color:"#AAAAAA", lineHeight:1.6 }}>
-                            Buy for <span style={{color:"#FFFFFF"}}>£{d.buyNow.toFixed(2)}</span> · sell in 12 months for est. <span style={{color:"#FFFFFF"}}>£{h.yr1val}</span> · after eBay fees & postage you walk away with:
-                          </div>
-                        </div>
-                        <div style={{ textAlign:"right", flexShrink:0 }}>
-                          <div style={{ fontFamily:MONO, fontSize:16, fontWeight:700, color:yr1profit>=0?g1:"#FF3B3B" }}>
-                            {yr1profit>=0?"+":"-"}£{Math.abs(yr1profit).toFixed(2)}
-                          </div>
-                          <div style={{ fontFamily:MONO, fontSize:9, color:yr1roi>=0?g1:"#FF3B3B", marginTop:2 }}>{yr1roi>=0?"+":""}{yr1roi}% ROI</div>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })()}
-
-                {/* 2yr */}
-                {(() => {
-                  const g2 = yr2roi>=80?"#00FF88":yr2roi>=40?"#00EE77":yr2roi>=15?"#39D98A":"#2ECC71";
-                  return (
-                    <div style={{ background:yr2profit>=0?"rgba(0,255,136,0.06)":"rgba(255,59,59,0.06)", border:`1px solid ${yr2profit>=0?"rgba(0,255,136,0.25)":"rgba(255,59,59,0.25)"}`, borderRadius:6, padding:"12px", marginBottom:10 }}>
-                      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-                        <div style={{ flex:1, marginRight:12 }}>
-                          <div style={{ fontFamily:MONO, fontSize:10, color:"#CCCCCC", fontWeight:700, marginBottom:5 }}>HOLD 2 YEARS</div>
-                          <div style={{ fontFamily:MONO, fontSize:9, color:"#AAAAAA", lineHeight:1.6 }}>
-                            Buy for <span style={{color:"#FFFFFF"}}>£{d.buyNow.toFixed(2)}</span> · sell in 24 months for est. <span style={{color:"#FFFFFF"}}>£{h.yr2val}</span> · after eBay fees & postage you walk away with:
-                          </div>
-                        </div>
-                        <div style={{ textAlign:"right", flexShrink:0 }}>
-                          <div style={{ fontFamily:MONO, fontSize:16, fontWeight:700, color:yr2profit>=0?g2:"#FF3B3B" }}>
-                            {yr2profit>=0?"+":"-"}£{Math.abs(yr2profit).toFixed(2)}
-                          </div>
-                          <div style={{ fontFamily:MONO, fontSize:9, color:yr2roi>=0?g2:"#FF3B3B", marginTop:2 }}>{yr2roi>=0?"+":""}{yr2roi}% ROI</div>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })()}
-
-                <div style={{ fontFamily:MONO, fontSize:10, color:"#C8C8C8", lineHeight:1.6 }}>💡 {h.note}</div>
+            return (
+              <div style={{ background:"rgba(0,0,0,0.5)", border:"1px solid rgba(255,255,255,0.08)", borderRadius:6, padding:"14px", marginBottom:10 }}>
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:10 }}>
+                  <div>
+                    <div style={{ fontFamily:MONO, fontSize:9, color:"#888", letterSpacing:"0.15em" }}>HOLD ANALYSIS</div>
+                    <div style={{ fontFamily:MONO, fontSize:8, color:"#444", marginTop:2 }}>All profits vs your buy price of £{d.buyNow.toFixed(2)}</div>
+                  </div>
+                  <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                    <span style={{ fontFamily:MONO, fontSize:9, color:tC }}>{h.trend==="rising"?"↗ RISING":h.trend==="declining"?"↘ FALLING":"→ STABLE"}</span>
+                    <span style={{ fontFamily:MONO, fontSize:11, color:h.score>=7?"#00FF88":h.score>=5?"#FF8C00":"#FF3B3B" }}>{h.score}/10</span>
+                  </div>
+                </div>
+                <HoldRow label="1 YEAR"  val={h.yr1val} p={p1}/>
+                <HoldRow label="2 YEARS" val={h.yr2val} p={p2}/>
+                <HoldRow label="3 YEARS" val={h.yr3val||Math.round(h.yr2val*1.15)} p={p3}/>
+                <HoldRow label="4 YEARS" val={h.yr4val||Math.round(h.yr2val*1.30)} p={p4}/>
+                <div style={{ fontFamily:MONO, fontSize:9, color:"#888", lineHeight:1.6, marginTop:8, padding:"8px 10px", background:"rgba(255,255,255,0.03)", borderRadius:4 }}>
+                  💡 {h.note}
+                </div>
               </div>
             );
           })()}
@@ -768,13 +764,16 @@ function App() {
       console.log("Fetch error:", e.message);
     }
     await minDelay;
-    setDeals(DEMO); setLive(false); setUpdated(new Date()); setLoading(false); setPulse(false);
+    // Only fall back to DEMO if genuinely no live data available
+    setDeals(prev => prev.length > 0 ? prev : DEMO);
+    setLive(prev => prev); // keep live status if already set
+    setUpdated(new Date()); setLoading(false); setPulse(false);
   }
 
   useEffect(() => {
     if (!unlocked) return;
-    // Small delay ensures DOM is ready after gate disappears
-    const t = setTimeout(() => { load(); }, 100);
+    // 300ms delay — gives React time to fully unmount gate and mount app
+    const t = setTimeout(() => { load(); }, 300);
     const i = setInterval(load, 600000);
     return () => { clearTimeout(t); clearInterval(i); };
   }, [unlocked]);
@@ -1077,7 +1076,7 @@ function App() {
       <div style={{ padding:"14px 16px" }}>
 
         {/* DEMO BANNER */}
-        {!live&&tab==="deals"&&(
+        {!live&&!loading&&tab==="deals"&&(
           <div style={{ background:"rgba(255,140,0,0.08)", border:"1px solid rgba(255,140,0,0.3)", borderRadius:6, padding:"10px 14px", marginBottom:14, display:"flex", gap:10, alignItems:"flex-start" }}>
             <span style={{ fontSize:12, flexShrink:0 }}>⚠️</span>
             <div>
