@@ -3,9 +3,6 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
-  <meta http-equiv="Pragma" content="no-cache"/>
-  <meta http-equiv="Expires" content="0"/>
   <meta name="theme-color" content="#CC0000"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
@@ -571,7 +568,7 @@ function App() {
 
   async function load() {
     setPulse(true);
-    const minDelay = new Promise(r => setTimeout(r, 2000)); // minimum 2s so user sees the sweep
+    const minDelay = new Promise(r => setTimeout(r, 2000));
     try {
       const r = await fetch(`${DEALS_URL}?t=${Date.now()}`);
       if (r.ok) {
@@ -591,9 +588,10 @@ function App() {
 
   useEffect(() => {
     if (!unlocked) return;
-    load();
+    // Small delay ensures DOM is ready after gate disappears
+    const t = setTimeout(() => { load(); }, 100);
     const i = setInterval(load, 600000);
-    return () => clearInterval(i);
+    return () => { clearTimeout(t); clearInterval(i); };
   }, [unlocked]);
 
   function tryUnlock() {
@@ -850,7 +848,7 @@ function App() {
       <div style={{ background:"rgba(7,7,13,0.98)", borderBottom:"1px solid rgba(255,255,255,0.08)", position:"sticky", top:0, zIndex:100, backdropFilter:"blur(20px)" }}>
 
         {/* Banner — full width at top */}
-        <img src="banner.png?v=2" alt="Shiny Den" style={{ width:"100%", height:"auto", display:"block", maxHeight:60, objectFit:"cover", objectPosition:"center" }}
+        <img src="banner.png" alt="Shiny Den" style={{ width:"100%", height:"auto", display:"block", maxHeight:60, objectFit:"cover", objectPosition:"center" }}
           onError={e=>{e.target.style.display="none"}}/>
 
         {/* Status bar below banner */}
