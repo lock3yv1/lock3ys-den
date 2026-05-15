@@ -597,35 +597,52 @@ function App() {
         @keyframes gengar-glow{0%,100%{opacity:0.15}50%{opacity:0.28}}
       `}</style>
 
-      {/* Gengar SVG — shadow silhouette, floating */}
+      {/* Gengar SVG — proper silhouette, floating */}
       <div style={{ position:"relative", marginBottom:16, animation:"gengar-float 4s ease-in-out infinite" }}>
-        {/* Glow behind */}
-        <div style={{ position:"absolute", inset:0, borderRadius:"50%", background:"radial-gradient(ellipse,#CC000040 0%,transparent 70%)", animation:"gengar-glow 4s ease-in-out infinite", transform:"scaleX(1.4) translateY(10px)" }}/>
-        <svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
-          {/* Body */}
-          <ellipse cx="80" cy="100" rx="52" ry="46" fill="#1A0A2A" opacity="0.9"/>
-          {/* Head */}
-          <ellipse cx="80" cy="68" rx="46" ry="44" fill="#1A0A2A" opacity="0.9"/>
-          {/* Ears */}
-          <polygon points="40,44 28,14 56,38" fill="#1A0A2A" opacity="0.9"/>
-          <polygon points="120,44 132,14 104,38" fill="#1A0A2A" opacity="0.9"/>
-          {/* Eyes — glowing red */}
-          <ellipse cx="64" cy="62" rx="9" ry="10" fill="#CC0000" opacity="0.9"/>
-          <ellipse cx="96" cy="62" rx="9" ry="10" fill="#CC0000" opacity="0.9"/>
-          {/* Eye shine */}
-          <ellipse cx="67" cy="59" rx="3" ry="3" fill="#FF6060" opacity="0.7"/>
-          <ellipse cx="99" cy="59" rx="3" ry="3" fill="#FF6060" opacity="0.7"/>
-          {/* Mouth — grin */}
-          <path d="M58 80 Q80 96 102 80" stroke="#CC0000" strokeWidth="3" strokeLinecap="round" fill="none" opacity="0.8"/>
-          {/* Teeth */}
-          <polygon points="68,80 73,90 63,90" fill="#FFFFFF" opacity="0.6"/>
-          <polygon points="80,83 85,93 75,93" fill="#FFFFFF" opacity="0.6"/>
-          <polygon points="92,80 97,90 87,90" fill="#FFFFFF" opacity="0.6"/>
-          {/* Claws bottom */}
-          <path d="M44 130 L38 148 M52 136 L48 152 M60 138 L58 154" stroke="#1A0A2A" strokeWidth="5" strokeLinecap="round" opacity="0.8"/>
-          <path d="M116 130 L122 148 M108 136 L112 152 M100 138 L102 154" stroke="#1A0A2A" strokeWidth="5" strokeLinecap="round" opacity="0.8"/>
-          {/* Shadow cast on floor */}
-          <ellipse cx="80" cy="155" rx="50" ry="6" fill="#CC0000" opacity="0.08"/>
+        <div style={{ position:"absolute", bottom:-10, left:"50%", transform:"translateX(-50%)", width:120, height:20, background:"radial-gradient(ellipse,#CC000030 0%,transparent 70%)", animation:"gengar-glow 4s ease-in-out infinite" }}/>
+        <svg width="180" height="180" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+          {/* Gengar's wide round body */}
+          <ellipse cx="100" cy="118" rx="68" ry="58" fill="#1A0A2E"/>
+          {/* Head — large round */}
+          <circle cx="100" cy="82" r="58" fill="#1A0A2E"/>
+          {/* Left ear — pointed */}
+          <polygon points="52,42 34,4 72,34" fill="#1A0A2E"/>
+          {/* Right ear — pointed */}
+          <polygon points="148,42 166,4 128,34" fill="#1A0A2E"/>
+          {/* Left eye */}
+          <ellipse cx="76" cy="74" rx="13" ry="14" fill="#CC0000"/>
+          <ellipse cx="76" cy="74" rx="8" ry="9" fill="#FF2222"/>
+          <ellipse cx="80" cy="70" rx="4" ry="4" fill="#FF8888" opacity="0.6"/>
+          {/* Right eye */}
+          <ellipse cx="124" cy="74" rx="13" ry="14" fill="#CC0000"/>
+          <ellipse cx="124" cy="74" rx="8" ry="9" fill="#FF2222"/>
+          <ellipse cx="128" cy="70" rx="4" ry="4" fill="#FF8888" opacity="0.6"/>
+          {/* Big wide Gengar grin */}
+          <path d="M58 100 Q100 132 142 100" fill="#4A0A6E"/>
+          <path d="M58 100 Q100 132 142 100" stroke="#CC0000" strokeWidth="2" fill="none"/>
+          {/* Teeth — Gengar has chunky teeth */}
+          <polygon points="68,100 74,116 62,116" fill="white" opacity="0.9"/>
+          <polygon points="82,106 88,122 76,122" fill="white" opacity="0.9"/>
+          <polygon points="100,110 106,126 94,126" fill="white" opacity="0.9"/>
+          <polygon points="118,106 124,122 112,122" fill="white" opacity="0.9"/>
+          <polygon points="132,100 138,116 126,116" fill="white" opacity="0.9"/>
+          {/* Stubby left arm */}
+          <ellipse cx="42" cy="130" rx="16" ry="12" fill="#1A0A2E" transform="rotate(-20 42 130)"/>
+          <circle cx="30" cy="138" r="7" fill="#1A0A2E"/>
+          <circle cx="22" cy="132" r="6" fill="#1A0A2E"/>
+          <circle cx="28" cy="124" r="6" fill="#1A0A2E"/>
+          {/* Stubby right arm */}
+          <ellipse cx="158" cy="130" rx="16" ry="12" fill="#1A0A2E" transform="rotate(20 158 130)"/>
+          <circle cx="170" cy="138" r="7" fill="#1A0A2E"/>
+          <circle cx="178" cy="132" r="6" fill="#1A0A2E"/>
+          <circle cx="172" cy="124" r="6" fill="#1A0A2E"/>
+          {/* Feet */}
+          <ellipse cx="72" cy="172" rx="18" ry="10" fill="#1A0A2E"/>
+          <ellipse cx="128" cy="172" rx="18" ry="10" fill="#1A0A2E"/>
+          {/* Gengar's spiky back */}
+          <polygon points="100,26 106,42 94,42" fill="#1A0A2E"/>
+          {/* Tail */}
+          <path d="M152 158 Q172 148 168 134 Q164 122 178 118" stroke="#1A0A2E" strokeWidth="10" strokeLinecap="round" fill="none"/>
         </svg>
       </div>
 
@@ -846,9 +863,15 @@ function App() {
         {/* Status bar below banner */}
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"5px 16px", borderBottom:"1px solid rgba(255,255,255,0.04)", fontSize:9, fontFamily:MONO }}>
           <span style={{ color:"#666", letterSpacing:"0.1em" }}>Live Pokémon deals · updated in real time</span>
-          <div style={{ display:"flex", alignItems:"center", gap:7 }}>
-            <div style={{ width:6, height:6, borderRadius:"50%", background:live?"#00FF88":"#FF8C00", boxShadow:live?"0 0 10px #00FF88":"0 0 10px #FF8C00", animation:"blink 2s infinite" }}/>
-            <span style={{ fontSize:9, fontFamily:MONO, color:live?"#00FF88":"#FF8C00" }}>{live?"LIVE":"DEMO"} · {now}</span>
+          <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+            <div style={{ display:"flex", alignItems:"center", gap:7 }}>
+              <div style={{ width:6, height:6, borderRadius:"50%", background:live?"#00FF88":"#FF8C00", boxShadow:live?"0 0 10px #00FF88":"0 0 10px #FF8C00", animation:"blink 2s infinite" }}/>
+              <span style={{ fontSize:9, fontFamily:MONO, color:live?"#00FF88":"#FF8C00" }}>{live?"LIVE":"DEMO"} · {now}</span>
+            </div>
+            <button onClick={()=>{try{sessionStorage.removeItem("sd_auth")}catch{}setUnlocked(false);}}
+              style={{ background:"none", border:"none", color:"#2A2A38", fontFamily:MONO, fontSize:8, cursor:"pointer", letterSpacing:"0.08em", padding:"2px 4px" }}>
+              lock
+            </button>
           </div>
         </div>
 
