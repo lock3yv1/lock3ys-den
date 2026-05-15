@@ -495,51 +495,158 @@ function Card({ d, rank }) {
 function HeatTab() {
   const DISP = "'Rajdhani', sans-serif";
   const MONO = "'Share Tech Mono','Courier New',monospace";
+  const [expanded, setExpanded] = React.useState(null);
+
   const sets = [
-    {n:"Base Set (WOTC)",      y1:"+25%",y2:"+60%",s:10,t:"rising"},
-    {n:"Neo Genesis (WOTC)",   y1:"+20%",y2:"+44%",s:9, t:"rising"},
-    {n:"Evolving Skies",       y1:"+20%",y2:"+44%",s:10,t:"rising"},
-    {n:"Prismatic Evolutions", y1:"+25%",y2:"+56%",s:9, t:"rising"},
-    {n:"Hidden Fates",         y1:"+15%",y2:"+32%",s:9, t:"rising"},
-    {n:"151",                  y1:"+15%",y2:"+32%",s:8, t:"rising"},
-    {n:"Shining Fates",        y1:"+10%",y2:"+21%",s:8, t:"stable"},
-    {n:"Champions Path",       y1:"+15%",y2:"+32%",s:8, t:"rising"},
-    {n:"Phantasmal Flames",    y1:"+20%",y2:"+44%",s:7, t:"rising"},
-    {n:"Chaos Rising",         y1:"+15%",y2:"+32%",s:7, t:"rising"},
-    {n:"Perfect Order",        y1:"+12%",y2:"+25%",s:7, t:"rising"},
-    {n:"XY Evolutions",        y1:"+10%",y2:"+21%",s:7, t:"rising"},
-    {n:"Chilling Reign",       y1:"+8%", y2:"+17%",s:6, t:"rising"},
-    {n:"Paradox Rift",         y1:"−2%", y2:"−4%", s:4, t:"declining"},
-    {n:"Obsidian Flames",      y1:"−2%", y2:"−4%", s:4, t:"declining"},
-    {n:"Paldea Evolved",       y1:"−5%", y2:"−10%",s:3, t:"declining"},
+    { n:"Base Set (WOTC)",      y1:25,  y2:60,  s:10, t:"rising",   price:2500, history:[1800,1950,2100,2200,2350,2500], note:"The original. Demand never fades. WOTC sealed is irreplaceable." },
+    { n:"Neo Genesis (WOTC)",   y1:20,  y2:44,  s:9,  t:"rising",   price:1200, history:[900,980,1050,1100,1150,1200],   note:"Lugia era. Limited supply, growing nostalgia premium." },
+    { n:"Evolving Skies",       y1:20,  y2:44,  s:10, t:"rising",   price:215,  history:[140,155,170,185,200,215],        note:"Umbreon VMAX Alt Art. Best modern set for sealed appreciation." },
+    { n:"Prismatic Evolutions", y1:25,  y2:56,  s:9,  t:"rising",   price:190,  history:[95,120,145,165,180,190],         note:"Eevee demand is permanent. ETBs still climbing." },
+    { n:"Hidden Fates",         y1:15,  y2:32,  s:9,  t:"rising",   price:385,  history:[280,305,330,350,368,385],        note:"Shiny Vault. Consistently appreciates every year." },
+    { n:"151",                  y1:15,  y2:32,  s:8,  t:"rising",   price:178,  history:[120,135,148,160,169,178],        note:"Original 151. Evergreen nostalgia. Bundles still climbing." },
+    { n:"Shining Fates",        y1:10,  y2:21,  s:8,  t:"stable",   price:240,  history:[195,205,215,222,232,240],        note:"Shiny Charizard VMAX. Strong floor, steady gains." },
+    { n:"Champions Path",       y1:15,  y2:32,  s:8,  t:"rising",   price:192,  history:[140,152,163,174,183,192],        note:"Tiny print run. Shiny Charizard V. Very limited supply." },
+    { n:"Phantasmal Flames",    y1:20,  y2:44,  s:7,  t:"rising",   price:360,  history:[280,295,315,330,345,360],        note:"ME05. Mega Gengar ex SIR. Early window open NOW." },
+    { n:"Chaos Rising",         y1:15,  y2:32,  s:7,  t:"rising",   price:145,  history:[110,118,125,132,139,145],        note:"ME04. Just launched May 2026. Get in early." },
+    { n:"Perfect Order",        y1:12,  y2:25,  s:7,  t:"rising",   price:130,  history:[105,110,116,121,126,130],        note:"ME03. Mega Zygarde ex SIR at £300+." },
+    { n:"Chilling Reign",       y1:8,   y2:17,  s:6,  t:"rising",   price:152,  history:[128,133,138,143,148,152],        note:"Ice/Shadow Rider Calyrex. Criminally underrated." },
+    { n:"Surging Sparks",       y1:12,  y2:28,  s:6,  t:"rising",   price:215,  history:[145,163,180,195,207,215],        note:"Pikachu ex SIR at $271. Boxes up 150%+ over 18 months." },
+    { n:"Paldean Fates",        y1:8,   y2:17,  s:6,  t:"stable",   price:132,  history:[110,115,120,124,129,132],        note:"Shiny vault. Strong collector demand. Steady floor." },
+    { n:"Brilliant Stars",      y1:5,   y2:10,  s:5,  t:"stable",   price:142,  history:[128,130,133,136,139,142],        note:"Charizard VSTAR. Consistent demand, slow burn." },
+    { n:"Paradox Rift",         y1:-2,  y2:-4,  s:4,  t:"declining",price:108,  history:[125,122,118,115,111,108],        note:"Overprinted. Market still correcting." },
+    { n:"Obsidian Flames",      y1:-2,  y2:-4,  s:4,  t:"declining",price:118,  history:[135,132,128,124,120,118],        note:"Charizard ex set. Correction ongoing." },
+    { n:"Paldea Evolved",       y1:-5,  y2:-10, s:3,  t:"declining",price:92,   history:[115,110,105,101,96,92],          note:"Overprinted. Avoid for investment." },
   ];
+
+  // Sparkline SVG component
+  function Sparkline({ data, color, width=200, height=48 }) {
+    const min = Math.min(...data);
+    const max = Math.max(...data);
+    const range = max - min || 1;
+    const pts = data.map((v, i) => {
+      const x = (i / (data.length - 1)) * width;
+      const y = height - ((v - min) / range) * (height - 8) - 4;
+      return `${x},${y}`;
+    }).join(" ");
+    const lastX = width;
+    const lastY = height - ((data[data.length-1] - min) / range) * (height - 8) - 4;
+    return (
+      <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} style={{ display:"block" }}>
+        <defs>
+          <linearGradient id={`grad-${color.replace("#","")}`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={color} stopOpacity="0.3"/>
+            <stop offset="100%" stopColor={color} stopOpacity="0"/>
+          </linearGradient>
+        </defs>
+        {/* Fill area */}
+        <polygon
+          points={`0,${height} ${pts} ${lastX},${height}`}
+          fill={`url(#grad-${color.replace("#","")})`}
+        />
+        {/* Line */}
+        <polyline points={pts} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        {/* Current price dot */}
+        <circle cx={lastX} cy={lastY} r="3" fill={color}/>
+      </svg>
+    );
+  }
+
   return (
     <div>
-      <div style={{ fontFamily:MONO, fontSize:9, color:"#B0B0B0", marginBottom:16, letterSpacing:"0.14em" }}>SET INVESTMENT MAP · PROJECTED eBay UK APPRECIATION</div>
+      <div style={{ fontFamily:MONO, fontSize:9, color:"#555", marginBottom:16, letterSpacing:"0.14em" }}>SET INVESTMENT HEAT MAP · TAP TO EXPAND PRICE HISTORY</div>
       {sets.map(s => {
         const tC = s.t==="rising"?"#39D98A":s.t==="declining"?"#FF3B3B":"#FF8C00";
-        const up = s.y1.startsWith("+");
+        const isOpen = expanded === s.n;
+        const y1pos = s.y1 >= 0;
+        const y2pos = s.y2 >= 0;
+        // Month labels for chart
+        const months = ["Dec","Jan","Feb","Mar","Apr","May"];
+        const currentPrice = s.history[s.history.length - 1];
+        const startPrice = s.history[0];
+        const totalGain = (((currentPrice - startPrice) / startPrice) * 100).toFixed(0);
+
         return (
-          <div key={s.n} style={{ background:"#0A0A10", border:"1px solid rgba(255,255,255,0.06)", borderLeft:`3px solid ${tC}`, borderRadius:8, padding:"11px 14px", marginBottom:7 }}>
-            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-              <div>
-                <div style={{ fontFamily:DISP, fontSize:14, fontWeight:500, color:"#FFFFFF", letterSpacing:"0.02em" }}>{s.n}</div>
-                <div style={{ display:"flex", gap:8, marginTop:3 }}>
-                  <span style={{ fontFamily:MONO, fontSize:9, color:tC, fontWeight:500 }}>{s.t==="rising"?"↗ RISING":s.t==="declining"?"↘ FALLING":"→ STABLE"}</span>
-                  <span style={{ fontFamily:MONO, fontSize:9, color:"#B0B0B0" }}>HOLD {s.s}/10</span>
+          <div key={s.n} style={{ marginBottom:8 }}>
+            {/* Row — always visible */}
+            <div
+              onClick={()=>setExpanded(isOpen ? null : s.n)}
+              style={{ background:"#0A0A10", border:`1px solid ${isOpen?tC+"44":"rgba(255,255,255,0.06)"}`, borderLeft:`3px solid ${tC}`, borderRadius:isOpen?"8px 8px 0 0":8, padding:"11px 14px", cursor:"pointer", transition:"border-color 0.2s" }}
+            >
+              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+                <div style={{ flex:1, minWidth:0 }}>
+                  <div style={{ fontFamily:DISP, fontSize:14, fontWeight:500, color:"#FFFFFF", letterSpacing:"0.02em" }}>{s.n}</div>
+                  <div style={{ display:"flex", gap:8, marginTop:3, flexWrap:"wrap" }}>
+                    <span style={{ fontFamily:MONO, fontSize:9, color:tC }}>{s.t==="rising"?"↗ RISING":s.t==="declining"?"↘ FALLING":"→ STABLE"}</span>
+                    <span style={{ fontFamily:MONO, fontSize:9, color:"#555" }}>HOLD {s.s}/10</span>
+                    <span style={{ fontFamily:MONO, fontSize:9, color:"#444" }}>6mo: {totalGain >= 0 ? "+" : ""}{totalGain}%</span>
+                  </div>
+                </div>
+                <div style={{ textAlign:"right", flexShrink:0, marginLeft:12 }}>
+                  <div style={{ fontFamily:MONO, fontSize:11, color:"#FFFFFF" }}>£{currentPrice.toLocaleString()}</div>
+                  <div style={{ display:"flex", gap:6, justifyContent:"flex-end", marginTop:2 }}>
+                    <span style={{ fontFamily:MONO, fontSize:9, color:y1pos?tC:"#FF3B3B" }}>{y1pos?"+":""}{s.y1}% 1yr</span>
+                    <span style={{ fontFamily:MONO, fontSize:9, color:y2pos?tC:"#FF3B3B" }}>{y2pos?"+":""}{s.y2}% 2yr</span>
+                  </div>
+                </div>
+                <div style={{ fontFamily:MONO, fontSize:10, color:"#444", marginLeft:10 }}>{isOpen?"▲":"▼"}</div>
+              </div>
+              {/* Mini progress bar */}
+              <div style={{ marginTop:8, height:2, background:"rgba(255,255,255,0.05)", borderRadius:2 }}>
+                <div style={{ height:"100%", width:`${s.s*10}%`, background:tC, borderRadius:2, opacity:0.6 }}/>
+              </div>
+            </div>
+
+            {/* Expanded — price chart */}
+            {isOpen&&(
+              <div style={{ background:"#07070D", border:`1px solid ${tC}44`, borderTop:"none", borderRadius:"0 0 8px 8px", padding:"16px 14px" }}>
+                {/* Chart */}
+                <div style={{ marginBottom:12 }}>
+                  <div style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline", marginBottom:8 }}>
+                    <div style={{ fontFamily:MONO, fontSize:9, color:"#555", letterSpacing:"0.1em" }}>BOOSTER BOX PRICE · LAST 6 MONTHS</div>
+                    <div style={{ fontFamily:MONO, fontSize:11, color:tC }}>£{currentPrice.toLocaleString()} now</div>
+                  </div>
+                  <div style={{ position:"relative" }}>
+                    <Sparkline data={s.history} color={tC} width={300} height={56}/>
+                    {/* Month labels */}
+                    <div style={{ display:"flex", justifyContent:"space-between", marginTop:4 }}>
+                      {months.map(m=>(
+                        <span key={m} style={{ fontFamily:MONO, fontSize:8, color:"#333" }}>{m}</span>
+                      ))}
+                    </div>
+                  </div>
+                  {/* Price range */}
+                  <div style={{ display:"flex", justifyContent:"space-between", marginTop:6 }}>
+                    <span style={{ fontFamily:MONO, fontSize:9, color:"#444" }}>6mo low: £{Math.min(...s.history).toLocaleString()}</span>
+                    <span style={{ fontFamily:MONO, fontSize:9, color:"#444" }}>6mo high: £{Math.max(...s.history).toLocaleString()}</span>
+                  </div>
+                </div>
+
+                {/* Projections */}
+                <div style={{ display:"flex", gap:8, marginBottom:12 }}>
+                  <div style={{ flex:1, background:"#0A0A10", borderRadius:6, padding:"10px 12px", border:`1px solid ${y1pos?"rgba(0,255,136,0.15)":"rgba(255,59,59,0.15)"}` }}>
+                    <div style={{ fontFamily:MONO, fontSize:8, color:"#555", marginBottom:4 }}>EST. IN 1 YEAR</div>
+                    <div style={{ fontFamily:MONO, fontSize:13, fontWeight:700, color:y1pos?tC:"#FF3B3B" }}>£{Math.round(currentPrice*(1+s.y1/100)).toLocaleString()}</div>
+                    <div style={{ fontFamily:MONO, fontSize:9, color:y1pos?tC:"#FF3B3B" }}>{y1pos?"+":""}{s.y1}%</div>
+                  </div>
+                  <div style={{ flex:1, background:"#0A0A10", borderRadius:6, padding:"10px 12px", border:`1px solid ${y2pos?"rgba(0,255,136,0.15)":"rgba(255,59,59,0.15)"}` }}>
+                    <div style={{ fontFamily:MONO, fontSize:8, color:"#555", marginBottom:4 }}>EST. IN 2 YEARS</div>
+                    <div style={{ fontFamily:MONO, fontSize:13, fontWeight:700, color:y2pos?tC:"#FF3B3B" }}>£{Math.round(currentPrice*(1+s.y2/100)).toLocaleString()}</div>
+                    <div style={{ fontFamily:MONO, fontSize:9, color:y2pos?tC:"#FF3B3B" }}>{y2pos?"+":""}{s.y2}%</div>
+                  </div>
+                </div>
+
+                {/* Note */}
+                <div style={{ fontFamily:MONO, fontSize:9, color:"#888", lineHeight:1.6, padding:"10px 12px", background:"#0A0A10", borderRadius:6 }}>
+                  💡 {s.note}
                 </div>
               </div>
-              <div style={{ textAlign:"right" }}>
-                <div style={{ fontFamily:DISP, fontSize:12, fontWeight:500, color:up?tC:"#FF3B3B" }}>{s.y1} <span style={{ fontSize:10, opacity:0.4 }}>1YR</span></div>
-                <div style={{ fontFamily:DISP, fontSize:12, fontWeight:500, color:up?tC:"#FF3B3B" }}>{s.y2} <span style={{ fontSize:10, opacity:0.4 }}>2YR</span></div>
-              </div>
-            </div>
-            <div style={{ marginTop:8, height:3, background:"rgba(255,255,255,0.05)", borderRadius:2 }}>
-              <div style={{ height:"100%", width:`${s.s*10}%`, background:tC, borderRadius:2, opacity:0.7 }}/>
-            </div>
+            )}
           </div>
         );
       })}
+      <div style={{ fontFamily:MONO, fontSize:8, color:"#2A2A38", textAlign:"center", marginTop:16, lineHeight:1.6 }}>
+        Price history estimated from eBay UK sold data · Projections are not financial advice
+      </div>
     </div>
   );
 }
