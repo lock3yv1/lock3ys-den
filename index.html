@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
   <meta name="theme-color" content="#CC0000"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
@@ -14,6 +15,13 @@
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <style>*{box-sizing:border-box;margin:0;padding:0}body{background:#07070D;color:#fff;overflow-x:hidden}</style>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(() => {});
+      });
+    }
+  </script>
 </head>
 <body>
 <div id="root"></div>
@@ -153,10 +161,14 @@ const G = {
 };
 
 function getGradeKey(roi, hs=0) {
-  if (roi===null) return "?";
-  if (roi>=25) return "S"; if (roi>=15) return "A"; if (roi>=8) return "B";
-  if (roi>=2) return "C"; if (hs>=8) return "H"; if (hs>=6) return "H";
-  return "D";
+  if (roi===null) return hs>=8?"H":hs>=6?"H":"?";
+  if (roi>=25) return "S";
+  if (roi>=15) return "A";
+  if (roi>=8)  return "B";
+  // For marginal/negative ROI — hold score decides
+  if (roi>=2)  return hs>=7?"H":"C";
+  if (roi>=-5) return hs>=8?"H":hs>=6?"H":"C";
+  return hs>=9?"H":"D";
 }
 
 function getVerdict(roi, net, hs=0, h=null) {
@@ -496,157 +508,192 @@ function HeatTab() {
   const DISP = "'Rajdhani', sans-serif";
   const MONO = "'Share Tech Mono','Courier New',monospace";
   const [expanded, setExpanded] = React.useState(null);
+  const [hoverIdx, setHoverIdx] = React.useState(null);
+
+  // 24 months of price history (Jun 2024 → May 2026)
+  const MONTHS = ["Jun","Jul","Aug","Sep","Oct","Nov","Dec","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec","Jan","Feb","Mar","Apr","May"];
 
   const sets = [
-    { n:"Base Set (WOTC)",      y1:25,  y2:60,  s:10, t:"rising",   price:2500, history:[1800,1950,2100,2200,2350,2500], note:"The original. Demand never fades. WOTC sealed is irreplaceable." },
-    { n:"Neo Genesis (WOTC)",   y1:20,  y2:44,  s:9,  t:"rising",   price:1200, history:[900,980,1050,1100,1150,1200],   note:"Lugia era. Limited supply, growing nostalgia premium." },
-    { n:"Evolving Skies",       y1:20,  y2:44,  s:10, t:"rising",   price:215,  history:[140,155,170,185,200,215],        note:"Umbreon VMAX Alt Art. Best modern set for sealed appreciation." },
-    { n:"Prismatic Evolutions", y1:25,  y2:56,  s:9,  t:"rising",   price:190,  history:[95,120,145,165,180,190],         note:"Eevee demand is permanent. ETBs still climbing." },
-    { n:"Hidden Fates",         y1:15,  y2:32,  s:9,  t:"rising",   price:385,  history:[280,305,330,350,368,385],        note:"Shiny Vault. Consistently appreciates every year." },
-    { n:"151",                  y1:15,  y2:32,  s:8,  t:"rising",   price:178,  history:[120,135,148,160,169,178],        note:"Original 151. Evergreen nostalgia. Bundles still climbing." },
-    { n:"Shining Fates",        y1:10,  y2:21,  s:8,  t:"stable",   price:240,  history:[195,205,215,222,232,240],        note:"Shiny Charizard VMAX. Strong floor, steady gains." },
-    { n:"Champions Path",       y1:15,  y2:32,  s:8,  t:"rising",   price:192,  history:[140,152,163,174,183,192],        note:"Tiny print run. Shiny Charizard V. Very limited supply." },
-    { n:"Phantasmal Flames",    y1:20,  y2:44,  s:7,  t:"rising",   price:360,  history:[280,295,315,330,345,360],        note:"ME05. Mega Gengar ex SIR. Early window open NOW." },
-    { n:"Chaos Rising",         y1:15,  y2:32,  s:7,  t:"rising",   price:145,  history:[110,118,125,132,139,145],        note:"ME04. Just launched May 2026. Get in early." },
-    { n:"Perfect Order",        y1:12,  y2:25,  s:7,  t:"rising",   price:130,  history:[105,110,116,121,126,130],        note:"ME03. Mega Zygarde ex SIR at £300+." },
-    { n:"Chilling Reign",       y1:8,   y2:17,  s:6,  t:"rising",   price:152,  history:[128,133,138,143,148,152],        note:"Ice/Shadow Rider Calyrex. Criminally underrated." },
-    { n:"Surging Sparks",       y1:12,  y2:28,  s:6,  t:"rising",   price:215,  history:[145,163,180,195,207,215],        note:"Pikachu ex SIR at $271. Boxes up 150%+ over 18 months." },
-    { n:"Paldean Fates",        y1:8,   y2:17,  s:6,  t:"stable",   price:132,  history:[110,115,120,124,129,132],        note:"Shiny vault. Strong collector demand. Steady floor." },
-    { n:"Brilliant Stars",      y1:5,   y2:10,  s:5,  t:"stable",   price:142,  history:[128,130,133,136,139,142],        note:"Charizard VSTAR. Consistent demand, slow burn." },
-    { n:"Paradox Rift",         y1:-2,  y2:-4,  s:4,  t:"declining",price:108,  history:[125,122,118,115,111,108],        note:"Overprinted. Market still correcting." },
-    { n:"Obsidian Flames",      y1:-2,  y2:-4,  s:4,  t:"declining",price:118,  history:[135,132,128,124,120,118],        note:"Charizard ex set. Correction ongoing." },
-    { n:"Paldea Evolved",       y1:-5,  y2:-10, s:3,  t:"declining",price:92,   history:[115,110,105,101,96,92],          note:"Overprinted. Avoid for investment." },
+    { n:"Base Set (WOTC)",      y1:25,  y2:60,  s:10, t:"rising",
+      history:[1600,1680,1750,1820,1900,1980,2050,2100,2180,2240,2310,2380,2430,2450,2470,2480,2490,2495,2498,2500,2502,2505,2503,2500] },
+    { n:"Evolving Skies",       y1:20,  y2:44,  s:10, t:"rising",
+      history:[148,152,158,163,169,175,180,186,191,196,200,205,208,210,211,212,213,214,215,215,216,215,215,215] },
+    { n:"Hidden Fates",         y1:15,  y2:32,  s:9,  t:"rising",
+      history:[290,298,306,315,324,333,341,348,355,361,367,372,376,378,380,381,382,383,384,385,385,385,385,385] },
+    { n:"Prismatic Evolutions", y1:25,  y2:56,  s:9,  t:"rising",
+      history:[null,null,null,null,null,null,null,95,115,138,155,170,178,182,184,186,187,188,189,190,190,190,190,190] },
+    { n:"151",                  y1:15,  y2:32,  s:8,  t:"rising",
+      history:[125,128,132,136,140,144,148,152,156,160,163,166,169,171,173,174,175,176,177,178,178,178,178,178] },
+    { n:"Shining Fates",        y1:10,  y2:21,  s:8,  t:"stable",
+      history:[198,200,203,206,209,212,215,218,220,223,226,228,230,232,233,234,235,236,237,238,239,239,240,240] },
+    { n:"Champions Path",       y1:15,  y2:32,  s:8,  t:"rising",
+      history:[148,151,154,158,161,164,167,170,173,176,179,182,184,186,187,188,189,190,190,191,192,192,192,192] },
+    { n:"Surging Sparks",       y1:12,  y2:28,  s:6,  t:"rising",
+      history:[null,null,null,null,null,null,150,163,172,182,190,197,202,206,209,211,212,213,214,215,215,215,215,215] },
+    { n:"Chilling Reign",       y1:8,   y2:17,  s:6,  t:"rising",
+      history:[130,132,134,135,137,138,140,141,143,144,146,147,148,149,150,150,151,151,152,152,152,152,152,152] },
+    { n:"Phantasmal Flames",    y1:20,  y2:44,  s:7,  t:"rising",
+      history:[null,null,null,null,null,null,null,null,null,null,null,null,280,295,310,320,330,338,345,350,355,358,360,360] },
+    { n:"Chaos Rising",         y1:15,  y2:32,  s:7,  t:"rising",
+      history:[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,110,118,125,132,139,145] },
+    { n:"Paradox Rift",         y1:-2,  y2:-4,  s:4,  t:"declining",
+      history:[128,126,125,123,122,120,119,118,117,116,115,114,113,112,112,111,110,110,110,109,109,109,108,108] },
+    { n:"Obsidian Flames",      y1:-2,  y2:-4,  s:4,  t:"declining",
+      history:[140,138,136,134,133,131,130,129,128,127,126,125,124,123,122,121,120,120,119,119,118,118,118,118] },
+    { n:"Paldea Evolved",       y1:-5,  y2:-10, s:3,  t:"declining",
+      history:[125,122,119,116,114,112,110,108,107,106,105,103,102,101,100,99,98,97,96,95,94,93,92,92] },
   ];
 
-  // Sparkline SVG component
-  function Sparkline({ data, color, width=200, height=48 }) {
-    const min = Math.min(...data);
-    const max = Math.max(...data);
+  function InteractiveChart({ data, color, months }) {
+    const [idx, setIdx] = React.useState(null);
+    const svgRef = React.useRef(null);
+    const validData = data.map((v,i) => ({v,i})).filter(x=>x.v!==null);
+    if (validData.length < 2) return null;
+    const vals = validData.map(x=>x.v);
+    const min = Math.min(...vals);
+    const max = Math.max(...vals);
     const range = max - min || 1;
-    const pts = data.map((v, i) => {
-      const x = (i / (data.length - 1)) * width;
-      const y = height - ((v - min) / range) * (height - 8) - 4;
-      return `${x},${y}`;
-    }).join(" ");
-    const lastX = width;
-    const lastY = height - ((data[data.length-1] - min) / range) * (height - 8) - 4;
+    const W = 320, H = 80;
+    const xScale = i => (i / (data.length-1)) * W;
+    const yScale = v => H - ((v-min)/range)*(H-12) - 6;
+
+    // Build path only through non-null points
+    const pts = validData.map(({v,i}) => `${xScale(i)},${yScale(v)}`).join(" ");
+    const firstX = xScale(validData[0].i);
+    const lastX  = xScale(validData[validData.length-1].i);
+
+    function handleTouch(e) {
+      const rect = svgRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      const clientX = e.touches?.[0]?.clientX ?? e.clientX;
+      const relX = (clientX - rect.left) / rect.width * W;
+      // Find closest valid point
+      let best = 0, bestDist = Infinity;
+      validData.forEach(({i}) => {
+        const d = Math.abs(xScale(i) - relX);
+        if (d < bestDist) { bestDist=d; best=i; }
+      });
+      setIdx(best);
+    }
+
+    const activeVal = idx !== null && data[idx] !== null ? data[idx] : validData[validData.length-1].v;
+    const activeMonth = idx !== null ? months[idx] : months[validData[validData.length-1].i];
+    const startVal = validData[0].v;
+    const pct = (((activeVal - startVal)/startVal)*100).toFixed(0);
+
     return (
-      <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} style={{ display:"block" }}>
-        <defs>
-          <linearGradient id={`grad-${color.replace("#","")}`} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor={color} stopOpacity="0.3"/>
-            <stop offset="100%" stopColor={color} stopOpacity="0"/>
-          </linearGradient>
-        </defs>
-        {/* Fill area */}
-        <polygon
-          points={`0,${height} ${pts} ${lastX},${height}`}
-          fill={`url(#grad-${color.replace("#","")})`}
-        />
-        {/* Line */}
-        <polyline points={pts} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        {/* Current price dot */}
-        <circle cx={lastX} cy={lastY} r="3" fill={color}/>
-      </svg>
+      <div>
+        <div style={{ display:"flex", justifyContent:"space-between", marginBottom:6 }}>
+          <div style={{ fontFamily:MONO, fontSize:9, color:"#555" }}>
+            {activeMonth} — <span style={{ color:"#FFFFFF" }}>£{activeVal.toLocaleString()}</span>
+          </div>
+          <div style={{ fontFamily:MONO, fontSize:9, color:pct>=0?color:"#FF3B3B" }}>
+            {pct>=0?"+":""}{pct}% from start
+          </div>
+        </div>
+        <svg ref={svgRef} width="100%" viewBox={`0 0 ${W} ${H}`} style={{ display:"block", touchAction:"none", cursor:"crosshair" }}
+          onMouseMove={handleTouch} onTouchMove={handleTouch}
+          onMouseLeave={()=>setIdx(null)} onTouchEnd={()=>setIdx(null)}>
+          <defs>
+            <linearGradient id={`g${color.replace("#","")}`} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor={color} stopOpacity="0.25"/>
+              <stop offset="100%" stopColor={color} stopOpacity="0"/>
+            </linearGradient>
+          </defs>
+          {/* Fill */}
+          <polygon
+            points={`${firstX},${H} ${pts} ${lastX},${H}`}
+            fill={`url(#g${color.replace("#","")})`}
+          />
+          {/* Line */}
+          <polyline points={pts} fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+          {/* Hover crosshair */}
+          {idx !== null && data[idx] !== null && (
+            <>
+              <line x1={xScale(idx)} y1={0} x2={xScale(idx)} y2={H} stroke={color} strokeWidth="1" strokeDasharray="3,3" opacity="0.5"/>
+              <circle cx={xScale(idx)} cy={yScale(data[idx])} r="4" fill={color} stroke="#07070D" strokeWidth="2"/>
+            </>
+          )}
+          {/* Current price dot */}
+          {(idx === null) && (
+            <circle cx={lastX} cy={yScale(validData[validData.length-1].v)} r="3.5" fill={color} stroke="#07070D" strokeWidth="2"/>
+          )}
+        </svg>
+        {/* Month axis — show 6 evenly spaced labels */}
+        <div style={{ display:"flex", justifyContent:"space-between", marginTop:4 }}>
+          {[0,4,8,12,16,20,23].map(i=>(
+            <span key={i} style={{ fontFamily:MONO, fontSize:7, color:"#333" }}>{months[i]}</span>
+          ))}
+        </div>
+        <div style={{ display:"flex", justifyContent:"space-between", marginTop:3 }}>
+          <span style={{ fontFamily:MONO, fontSize:7, color:"#333" }}>Jun '24</span>
+          <span style={{ fontFamily:MONO, fontSize:7, color:"#333" }}>May '26</span>
+        </div>
+      </div>
     );
   }
 
   return (
     <div>
-      <div style={{ fontFamily:MONO, fontSize:9, color:"#555", marginBottom:16, letterSpacing:"0.14em" }}>SET INVESTMENT HEAT MAP · TAP TO EXPAND PRICE HISTORY</div>
+      <div style={{ fontFamily:MONO, fontSize:9, color:"#555", marginBottom:16, letterSpacing:"0.12em" }}>
+        SET INVESTMENT HEAT MAP · TAP ROW · DRAG CHART TO EXPLORE
+      </div>
       {sets.map(s => {
         const tC = s.t==="rising"?"#39D98A":s.t==="declining"?"#FF3B3B":"#FF8C00";
         const isOpen = expanded === s.n;
+        const currentPrice = s.history.filter(v=>v!==null).slice(-1)[0];
+        const startPrice = s.history.find(v=>v!==null);
+        const totalGain = (((currentPrice-startPrice)/startPrice)*100).toFixed(0);
         const y1pos = s.y1 >= 0;
         const y2pos = s.y2 >= 0;
-        // Month labels for chart
-        const months = ["Dec","Jan","Feb","Mar","Apr","May"];
-        const currentPrice = s.history[s.history.length - 1];
-        const startPrice = s.history[0];
-        const totalGain = (((currentPrice - startPrice) / startPrice) * 100).toFixed(0);
-
         return (
           <div key={s.n} style={{ marginBottom:8 }}>
-            {/* Row — always visible */}
-            <div
-              onClick={()=>setExpanded(isOpen ? null : s.n)}
-              style={{ background:"#0A0A10", border:`1px solid ${isOpen?tC+"44":"rgba(255,255,255,0.06)"}`, borderLeft:`3px solid ${tC}`, borderRadius:isOpen?"8px 8px 0 0":8, padding:"11px 14px", cursor:"pointer", transition:"border-color 0.2s" }}
-            >
+            <div onClick={()=>setExpanded(isOpen?null:s.n)}
+              style={{ background:"#0A0A10", border:`1px solid ${isOpen?tC+"55":"rgba(255,255,255,0.06)"}`, borderLeft:`3px solid ${tC}`, borderRadius:isOpen?"8px 8px 0 0":8, padding:"11px 14px", cursor:"pointer" }}>
               <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
                 <div style={{ flex:1, minWidth:0 }}>
-                  <div style={{ fontFamily:DISP, fontSize:14, fontWeight:500, color:"#FFFFFF", letterSpacing:"0.02em" }}>{s.n}</div>
-                  <div style={{ display:"flex", gap:8, marginTop:3, flexWrap:"wrap" }}>
+                  <div style={{ fontFamily:DISP, fontSize:14, fontWeight:500, color:"#FFFFFF" }}>{s.n}</div>
+                  <div style={{ display:"flex", gap:8, marginTop:3 }}>
                     <span style={{ fontFamily:MONO, fontSize:9, color:tC }}>{s.t==="rising"?"↗ RISING":s.t==="declining"?"↘ FALLING":"→ STABLE"}</span>
-                    <span style={{ fontFamily:MONO, fontSize:9, color:"#555" }}>HOLD {s.s}/10</span>
-                    <span style={{ fontFamily:MONO, fontSize:9, color:"#444" }}>6mo: {totalGain >= 0 ? "+" : ""}{totalGain}%</span>
+                    <span style={{ fontFamily:MONO, fontSize:9, color:"#444" }}>{s.s}/10</span>
+                    <span style={{ fontFamily:MONO, fontSize:9, color: Number(totalGain)>=0?tC:"#FF3B3B" }}>{Number(totalGain)>=0?"+":""}{totalGain}% (2yr)</span>
                   </div>
                 </div>
                 <div style={{ textAlign:"right", flexShrink:0, marginLeft:12 }}>
-                  <div style={{ fontFamily:MONO, fontSize:11, color:"#FFFFFF" }}>£{currentPrice.toLocaleString()}</div>
-                  <div style={{ display:"flex", gap:6, justifyContent:"flex-end", marginTop:2 }}>
-                    <span style={{ fontFamily:MONO, fontSize:9, color:y1pos?tC:"#FF3B3B" }}>{y1pos?"+":""}{s.y1}% 1yr</span>
-                    <span style={{ fontFamily:MONO, fontSize:9, color:y2pos?tC:"#FF3B3B" }}>{y2pos?"+":""}{s.y2}% 2yr</span>
-                  </div>
+                  <div style={{ fontFamily:MONO, fontSize:12, color:"#FFFFFF" }}>£{currentPrice.toLocaleString()}</div>
+                  <div style={{ fontFamily:MONO, fontSize:9, color:y1pos?tC:"#FF3B3B" }}>{y1pos?"+":""}{s.y1}% / {y2pos?"+":""}{s.y2}%</div>
                 </div>
-                <div style={{ fontFamily:MONO, fontSize:10, color:"#444", marginLeft:10 }}>{isOpen?"▲":"▼"}</div>
+                <div style={{ fontFamily:MONO, fontSize:10, color:"#444", marginLeft:8 }}>{isOpen?"▲":"▼"}</div>
               </div>
-              {/* Mini progress bar */}
-              <div style={{ marginTop:8, height:2, background:"rgba(255,255,255,0.05)", borderRadius:2 }}>
-                <div style={{ height:"100%", width:`${s.s*10}%`, background:tC, borderRadius:2, opacity:0.6 }}/>
+              <div style={{ marginTop:7, height:2, background:"rgba(255,255,255,0.05)", borderRadius:2 }}>
+                <div style={{ height:"100%", width:`${s.s*10}%`, background:tC, borderRadius:2, opacity:0.5 }}/>
               </div>
             </div>
 
-            {/* Expanded — price chart */}
             {isOpen&&(
-              <div style={{ background:"#07070D", border:`1px solid ${tC}44`, borderTop:"none", borderRadius:"0 0 8px 8px", padding:"16px 14px" }}>
-                {/* Chart */}
-                <div style={{ marginBottom:12 }}>
-                  <div style={{ display:"flex", justifyContent:"space-between", alignItems:"baseline", marginBottom:8 }}>
-                    <div style={{ fontFamily:MONO, fontSize:9, color:"#555", letterSpacing:"0.1em" }}>BOOSTER BOX PRICE · LAST 6 MONTHS</div>
-                    <div style={{ fontFamily:MONO, fontSize:11, color:tC }}>£{currentPrice.toLocaleString()} now</div>
-                  </div>
-                  <div style={{ position:"relative" }}>
-                    <Sparkline data={s.history} color={tC} width={300} height={56}/>
-                    {/* Month labels */}
-                    <div style={{ display:"flex", justifyContent:"space-between", marginTop:4 }}>
-                      {months.map(m=>(
-                        <span key={m} style={{ fontFamily:MONO, fontSize:8, color:"#333" }}>{m}</span>
-                      ))}
-                    </div>
-                  </div>
-                  {/* Price range */}
-                  <div style={{ display:"flex", justifyContent:"space-between", marginTop:6 }}>
-                    <span style={{ fontFamily:MONO, fontSize:9, color:"#444" }}>6mo low: £{Math.min(...s.history).toLocaleString()}</span>
-                    <span style={{ fontFamily:MONO, fontSize:9, color:"#444" }}>6mo high: £{Math.max(...s.history).toLocaleString()}</span>
-                  </div>
-                </div>
-
-                {/* Projections */}
-                <div style={{ display:"flex", gap:8, marginBottom:12 }}>
-                  <div style={{ flex:1, background:"#0A0A10", borderRadius:6, padding:"10px 12px", border:`1px solid ${y1pos?"rgba(0,255,136,0.15)":"rgba(255,59,59,0.15)"}` }}>
-                    <div style={{ fontFamily:MONO, fontSize:8, color:"#555", marginBottom:4 }}>EST. IN 1 YEAR</div>
-                    <div style={{ fontFamily:MONO, fontSize:13, fontWeight:700, color:y1pos?tC:"#FF3B3B" }}>£{Math.round(currentPrice*(1+s.y1/100)).toLocaleString()}</div>
+              <div style={{ background:"#07070D", border:`1px solid ${tC}33`, borderTop:"none", borderRadius:"0 0 8px 8px", padding:"14px" }}>
+                <InteractiveChart data={s.history} color={tC} months={MONTHS}/>
+                <div style={{ display:"flex", gap:8, marginTop:12, marginBottom:10 }}>
+                  <div style={{ flex:1, background:"#0A0A10", borderRadius:6, padding:"10px", border:`1px solid ${y1pos?"rgba(0,255,136,0.15)":"rgba(255,59,59,0.15)"}` }}>
+                    <div style={{ fontFamily:MONO, fontSize:8, color:"#555", marginBottom:3 }}>EST. 1 YEAR</div>
+                    <div style={{ fontFamily:MONO, fontSize:14, fontWeight:700, color:y1pos?tC:"#FF3B3B" }}>£{Math.round(currentPrice*(1+s.y1/100)).toLocaleString()}</div>
                     <div style={{ fontFamily:MONO, fontSize:9, color:y1pos?tC:"#FF3B3B" }}>{y1pos?"+":""}{s.y1}%</div>
                   </div>
-                  <div style={{ flex:1, background:"#0A0A10", borderRadius:6, padding:"10px 12px", border:`1px solid ${y2pos?"rgba(0,255,136,0.15)":"rgba(255,59,59,0.15)"}` }}>
-                    <div style={{ fontFamily:MONO, fontSize:8, color:"#555", marginBottom:4 }}>EST. IN 2 YEARS</div>
-                    <div style={{ fontFamily:MONO, fontSize:13, fontWeight:700, color:y2pos?tC:"#FF3B3B" }}>£{Math.round(currentPrice*(1+s.y2/100)).toLocaleString()}</div>
+                  <div style={{ flex:1, background:"#0A0A10", borderRadius:6, padding:"10px", border:`1px solid ${y2pos?"rgba(0,255,136,0.15)":"rgba(255,59,59,0.15)"}` }}>
+                    <div style={{ fontFamily:MONO, fontSize:8, color:"#555", marginBottom:3 }}>EST. 2 YEARS</div>
+                    <div style={{ fontFamily:MONO, fontSize:14, fontWeight:700, color:y2pos?tC:"#FF3B3B" }}>£{Math.round(currentPrice*(1+s.y2/100)).toLocaleString()}</div>
                     <div style={{ fontFamily:MONO, fontSize:9, color:y2pos?tC:"#FF3B3B" }}>{y2pos?"+":""}{s.y2}%</div>
                   </div>
                 </div>
-
-                {/* Note */}
-                <div style={{ fontFamily:MONO, fontSize:9, color:"#888", lineHeight:1.6, padding:"10px 12px", background:"#0A0A10", borderRadius:6 }}>
-                  💡 {s.note}
+                <div style={{ fontFamily:MONO, fontSize:9, color:"#777", lineHeight:1.7, background:"#0A0A10", borderRadius:6, padding:"10px 12px" }}>
+                  💡 {s.t==="rising"?"Strong hold candidate. Prices consistently rising over 24 months.":s.t==="declining"?"Caution — prices trending down. Only buy if you plan to open.":"Stable set. Modest appreciation. Low risk, low reward."}
                 </div>
+                <div style={{ fontFamily:MONO, fontSize:8, color:"#2A2A38", textAlign:"center", marginTop:8 }}>Drag chart to explore · Prices estimated from eBay UK sold · Not financial advice</div>
               </div>
             )}
           </div>
         );
       })}
-      <div style={{ fontFamily:MONO, fontSize:8, color:"#2A2A38", textAlign:"center", marginTop:16, lineHeight:1.6 }}>
-        Price history estimated from eBay UK sold data · Projections are not financial advice
-      </div>
     </div>
   );
 }
@@ -1486,7 +1533,7 @@ function App() {
 
     {/* ══ BOTTOM NAV ══ */}
     <div style={{ position:"fixed",bottom:0,left:0,right:0,background:"rgba(7,7,13,0.98)",borderTop:"1px solid rgba(255,255,255,0.07)",display:"flex",padding:"10px 0 24px",zIndex:100,backdropFilter:"blur(20px)" }}>
-      {[{id:"deals",icon:"🎯",l:"DEALS"},{id:"ebay",icon:"🛒",l:"EBAY"},{id:"heat",icon:"🔥",l:"HEAT"},{id:"alerts",icon:"🔔",l:"ALERTS"},{id:"market",icon:"🏷",l:"MARKET"}].map(n=>(
+      {[{id:"deals",icon:"🏠",l:"HOME"},{id:"ebay",icon:"🛒",l:"EBAY"},{id:"heat",icon:"🔥",l:"HEAT"},{id:"alerts",icon:"🔔",l:"ALERTS"},{id:"market",icon:"🏷",l:"MARKET"}].map(n=>(
         <button key={n.id} onClick={()=>setTab(n.id)} style={{ flex:1,background:"transparent",border:"none",color:tab===n.id?"#CC0000":"#888",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:3,fontFamily:DISP,fontSize:11,fontWeight:500,letterSpacing:"0.1em",transition:"color 0.15s" }}>
           <span style={{ fontSize:19 }}>{n.icon}</span>{n.l}
         </button>
