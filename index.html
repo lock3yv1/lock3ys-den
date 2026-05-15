@@ -952,16 +952,19 @@ function App() {
     return true;
   }).filter(d=>{
     const r=calcFlip(d.buyNow,d.resell).roi;
+    const h=calcHold(d.resell,d.product);
+    const gk=getGradeKey(r,h?.score??0);
     if(filter==="buy")  return r!==null&&r>=8;
-    if(filter==="flip") return r!==null&&r>0;
-    if(filter==="avoid")return r!==null&&r<0;
+    if(filter==="flip") return r!==null&&r>0&&r<8;
+    if(filter==="hold") return gk==="H";
+    if(filter==="avoid")return gk==="D"||(r!==null&&r<=-8);
     return true;
   });
 
   const buyN=sorted.filter(d=>(calcFlip(d.buyNow,d.resell).roi??-999)>=8).length;
   const excN=sorted.filter(d=>(calcFlip(d.buyNow,d.resell).roi??-999)>=15).length;
   const now=updated?updated.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}):"--:--";
-  const best=sorted[0];
+  const best = sorted.find(d => (calcFlip(d.buyNow, d.resell).roi ?? -999) >= 8) || null;
 
   return (<>
     <style>{`
@@ -986,8 +989,10 @@ function App() {
       <div style={{ background:"rgba(7,7,13,0.98)", borderBottom:"1px solid rgba(255,255,255,0.08)", position:"sticky", top:0, zIndex:100, backdropFilter:"blur(20px)" }}>
 
         {/* Banner — full width at top */}
-        <img src="banner.png" alt="Shiny Den" style={{ width:"100%", height:"auto", display:"block", maxHeight:60, objectFit:"cover", objectPosition:"center" }}
-          onError={e=>{e.target.style.display="none"}}/>
+        <div onClick={()=>setTab("deals")} style={{ cursor:"pointer" }}>
+          <img src="banner.png" alt="Shiny Den" style={{ width:"100%", height:"auto", display:"block", maxHeight:60, objectFit:"cover", objectPosition:"center" }}
+            onError={e=>{e.target.style.display="none"}}/>
+        </div>
 
         {/* Status bar below banner */}
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"5px 16px", borderBottom:"1px solid rgba(255,255,255,0.04)", fontSize:9, fontFamily:MONO }}>
@@ -1025,7 +1030,7 @@ function App() {
       <div style={{ padding:"14px 16px" }}>
 
         {/* DEMO BANNER */}
-        {!live&&(
+        {!live&&tab==="deals"&&(
           <div style={{ background:"rgba(255,140,0,0.08)", border:"1px solid rgba(255,140,0,0.3)", borderRadius:6, padding:"10px 14px", marginBottom:14, display:"flex", gap:10, alignItems:"flex-start" }}>
             <span style={{ fontSize:12, flexShrink:0 }}>⚠️</span>
             <div>
@@ -1063,32 +1068,33 @@ function App() {
 
         {/* ── DEALS ── */}
         {tab==="deals"&&<>
-          {/* Type filter */}
-          <div style={{ display:"flex", gap:5, marginBottom:8, flexWrap:"wrap" }}>
+          {/* Type filter — single scrollable line */}
+          <div style={{ display:"flex", gap:5, marginBottom:8, overflowX:"auto", paddingBottom:2, WebkitOverflowScrolling:"touch", scrollbarWidth:"none" }}>
             {[{id:"all",l:"ALL"},{id:"boxes",l:"📦 BOXES"},{id:"half",l:"½ BOX"},{id:"etbs",l:"🎁 ETB"},{id:"packs",l:"🃏 PACK"},{id:"bundles",l:"📫 BUNDLE"},{id:"tins",l:"🥫 TINS+"}].map(f=>(
               <button key={f.id} onClick={()=>setTypeF(f.id)} style={{
                 background: typeF===f.id ? "#CC0000" : "#161620",
                 border: `1px solid ${typeF===f.id ? "#CC0000" : "#333345"}`,
-                borderRadius:4, padding:"5px 11px",
+                borderRadius:4, padding:"5px 10px", flexShrink:0,
                 fontFamily:MONO, fontSize:9,
                 color: typeF===f.id ? "#FFFFFF" : "#BBBBBB",
-                cursor:"pointer", letterSpacing:"0.06em",
+                cursor:"pointer", letterSpacing:"0.05em",
                 transition:"all 0.12s",
               }}>{f.l}</button>
             ))}
           </div>
-          {/* Deal filter */}
-          <div style={{ display:"flex", gap:5, marginBottom:14, flexWrap:"wrap" }}>
+          {/* Deal filter — single scrollable line with HOLD added, AVOID fixed */}
+          <div style={{ display:"flex", gap:5, marginBottom:14, overflowX:"auto", paddingBottom:2, WebkitOverflowScrolling:"touch", scrollbarWidth:"none" }}>
             {[
-              {id:"all",  l:"ALL",       ac:"#FFFFFF", bg:"#1E1E2A"},
-              {id:"buy",  l:"✅ BUY",    ac:"#00FF88", bg:"#002A18"},
-              {id:"flip", l:"💰 FLIP",   ac:"#FFD60A", bg:"#2A2200"},
-              {id:"avoid",l:"❌ AVOID",  ac:"#FF3B3B", bg:"#2A0808"},
+              {id:"all",  l:"ALL",        ac:"#FFFFFF", bg:"#1E1E2A"},
+              {id:"buy",  l:"✅ BUY",     ac:"#00FF88", bg:"#002A18"},
+              {id:"flip", l:"💰 FLIP",    ac:"#FFD60A", bg:"#2A2200"},
+              {id:"hold", l:"📦 HOLD",    ac:"#B388FF", bg:"#1A1030"},
+              {id:"avoid",l:"❌ AVOID",   ac:"#FF3B3B", bg:"#2A0808"},
             ].map(f=>(
               <button key={f.id} onClick={()=>setFilter(f.id)} style={{
                 background: filter===f.id ? f.bg : "#161620",
                 border: `1px solid ${filter===f.id ? f.ac : "#333345"}`,
-                borderRadius:4, padding:"5px 12px",
+                borderRadius:4, padding:"5px 12px", flexShrink:0,
                 fontFamily:MONO, fontSize:9,
                 color: filter===f.id ? f.ac : "#BBBBBB",
                 cursor:"pointer", transition:"all 0.12s",
