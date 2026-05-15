@@ -1060,7 +1060,7 @@ function App() {
           <div style={{ display:"flex", alignItems:"center", gap:10 }}>
             <div style={{ display:"flex", alignItems:"center", gap:7 }}>
               <div style={{ width:6, height:6, borderRadius:"50%", background:live?"#00FF88":"#FF8C00", boxShadow:live?"0 0 10px #00FF88":"0 0 10px #FF8C00", animation:"blink 2s infinite" }}/>
-              <span style={{ fontSize:9, fontFamily:MONO, color:live?"#00FF88":"#FF8C00" }}>{live?"LIVE":"DEMO"} · {now}</span>
+              <span style={{ fontSize:9, fontFamily:MONO, color:live?"#00FF88":"#FF8C00" }}>{live?"LIVE":"SCANNING"} · {now}</span>
             </div>
             <button onClick={()=>{try{sessionStorage.removeItem("sd_auth")}catch{}setUnlocked(false);}}
               style={{ background:"none", border:"none", color:"#2A2A38", fontFamily:MONO, fontSize:8, cursor:"pointer", letterSpacing:"0.08em", padding:"2px 4px" }}>
