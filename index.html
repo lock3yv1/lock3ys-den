@@ -593,56 +593,66 @@ function App() {
     <div style={{ minHeight:"100vh", background:"#07070D", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:24 }}>
       <style>{`
         @keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
-        @keyframes gengar-float{0%,100%{transform:translateY(0px)}50%{transform:translateY(-10px)}}
-        @keyframes gengar-glow{0%,100%{opacity:0.15}50%{opacity:0.28}}
+        @keyframes gengar-float{0%,100%{transform:translateY(0px)}50%{transform:translateY(-12px)}}
+        @keyframes gengar-glow{0%,100%{opacity:0.3}50%{opacity:0.8}}
       `}</style>
 
-      {/* Gengar SVG — proper silhouette, floating */}
+      {/* Charizard silhouette — floating with flame tail glow */}
       <div style={{ position:"relative", marginBottom:16, animation:"gengar-float 4s ease-in-out infinite" }}>
-        <div style={{ position:"absolute", bottom:-10, left:"50%", transform:"translateX(-50%)", width:120, height:20, background:"radial-gradient(ellipse,#CC000030 0%,transparent 70%)", animation:"gengar-glow 4s ease-in-out infinite" }}/>
-        <svg width="180" height="180" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-          {/* Gengar's wide round body */}
-          <ellipse cx="100" cy="118" rx="68" ry="58" fill="#1A0A2E"/>
-          {/* Head — large round */}
-          <circle cx="100" cy="82" r="58" fill="#1A0A2E"/>
-          {/* Left ear — pointed */}
-          <polygon points="52,42 34,4 72,34" fill="#1A0A2E"/>
-          {/* Right ear — pointed */}
-          <polygon points="148,42 166,4 128,34" fill="#1A0A2E"/>
-          {/* Left eye */}
-          <ellipse cx="76" cy="74" rx="13" ry="14" fill="#CC0000"/>
-          <ellipse cx="76" cy="74" rx="8" ry="9" fill="#FF2222"/>
-          <ellipse cx="80" cy="70" rx="4" ry="4" fill="#FF8888" opacity="0.6"/>
-          {/* Right eye */}
-          <ellipse cx="124" cy="74" rx="13" ry="14" fill="#CC0000"/>
-          <ellipse cx="124" cy="74" rx="8" ry="9" fill="#FF2222"/>
-          <ellipse cx="128" cy="70" rx="4" ry="4" fill="#FF8888" opacity="0.6"/>
-          {/* Big wide Gengar grin */}
-          <path d="M58 100 Q100 132 142 100" fill="#4A0A6E"/>
-          <path d="M58 100 Q100 132 142 100" stroke="#CC0000" strokeWidth="2" fill="none"/>
-          {/* Teeth — Gengar has chunky teeth */}
-          <polygon points="68,100 74,116 62,116" fill="white" opacity="0.9"/>
-          <polygon points="82,106 88,122 76,122" fill="white" opacity="0.9"/>
-          <polygon points="100,110 106,126 94,126" fill="white" opacity="0.9"/>
-          <polygon points="118,106 124,122 112,122" fill="white" opacity="0.9"/>
-          <polygon points="132,100 138,116 126,116" fill="white" opacity="0.9"/>
-          {/* Stubby left arm */}
-          <ellipse cx="42" cy="130" rx="16" ry="12" fill="#1A0A2E" transform="rotate(-20 42 130)"/>
-          <circle cx="30" cy="138" r="7" fill="#1A0A2E"/>
-          <circle cx="22" cy="132" r="6" fill="#1A0A2E"/>
-          <circle cx="28" cy="124" r="6" fill="#1A0A2E"/>
-          {/* Stubby right arm */}
-          <ellipse cx="158" cy="130" rx="16" ry="12" fill="#1A0A2E" transform="rotate(20 158 130)"/>
-          <circle cx="170" cy="138" r="7" fill="#1A0A2E"/>
-          <circle cx="178" cy="132" r="6" fill="#1A0A2E"/>
-          <circle cx="172" cy="124" r="6" fill="#1A0A2E"/>
+        {/* Flame glow from tail */}
+        <div style={{ position:"absolute", bottom:10, right:20, width:40, height:40, background:"radial-gradient(ellipse,#FF440060 0%,transparent 70%)", animation:"gengar-glow 2s ease-in-out infinite", borderRadius:"50%" }}/>
+        <svg width="180" height="200" viewBox="0 0 180 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+          {/* ── WINGS ── */}
+          {/* Left wing */}
+          <path d="M72 70 L10 20 L30 80 L20 120 L60 95 Z" fill="#1A0A0A"/>
+          {/* Right wing */}
+          <path d="M108 70 L170 15 L155 78 L168 118 L118 92 Z" fill="#1A0A0A"/>
+          {/* Wing membranes fingers - left */}
+          <line x1="72" y1="70" x2="10" y2="20" stroke="#2A0A0A" strokeWidth="2"/>
+          <line x1="72" y1="70" x2="22" y2="35" stroke="#2A0A0A" strokeWidth="1.5"/>
+          <line x1="72" y1="70" x2="30" y2="80" stroke="#2A0A0A" strokeWidth="1.5"/>
+          {/* Wing membranes fingers - right */}
+          <line x1="108" y1="70" x2="170" y2="15" stroke="#2A0A0A" strokeWidth="2"/>
+          <line x1="108" y1="70" x2="158" y2="30" stroke="#2A0A0A" strokeWidth="1.5"/>
+          <line x1="108" y1="70" x2="155" y2="78" stroke="#2A0A0A" strokeWidth="1.5"/>
+          {/* ── BODY ── */}
+          <ellipse cx="90" cy="120" rx="32" ry="38" fill="#1A0A0A"/>
+          {/* ── HEAD ── */}
+          <ellipse cx="90" cy="76" rx="26" ry="24" fill="#1A0A0A"/>
+          {/* Snout */}
+          <ellipse cx="100" cy="84" rx="14" ry="10" fill="#1A0A0A"/>
+          {/* Horn left */}
+          <polygon points="74,60 68,40 80,58" fill="#1A0A0A"/>
+          {/* Horn right */}
+          <polygon points="96,56 95,36 104,56" fill="#1A0A0A"/>
+          {/* ── EYES ── */}
+          <ellipse cx="82" cy="72" rx="6" ry="6" fill="#CC0000"/>
+          <ellipse cx="84" cy="70" rx="2.5" ry="2.5" fill="#FF6666" opacity="0.8"/>
+          <ellipse cx="98" cy="72" rx="6" ry="6" fill="#CC0000"/>
+          <ellipse cx="100" cy="70" rx="2.5" ry="2.5" fill="#FF6666" opacity="0.8"/>
+          {/* ── ARMS ── */}
+          {/* Left arm */}
+          <path d="M62 108 Q44 118 40 132 Q46 128 50 136 Q44 132 48 142 Q54 138 56 146" stroke="#1A0A0A" strokeWidth="10" strokeLinecap="round" fill="none"/>
+          {/* Right arm */}
+          <path d="M118 108 Q136 118 140 132 Q134 128 130 136 Q136 132 132 142 Q126 138 124 146" stroke="#1A0A0A" strokeWidth="10" strokeLinecap="round" fill="none"/>
+          {/* ── LEGS ── */}
+          <path d="M76 152 Q72 166 68 174 Q62 172 60 178" stroke="#1A0A0A" strokeWidth="12" strokeLinecap="round" fill="none"/>
+          <path d="M104 152 Q108 166 112 174 Q118 172 120 178" stroke="#1A0A0A" strokeWidth="12" strokeLinecap="round" fill="none"/>
           {/* Feet */}
-          <ellipse cx="72" cy="172" rx="18" ry="10" fill="#1A0A2E"/>
-          <ellipse cx="128" cy="172" rx="18" ry="10" fill="#1A0A2E"/>
-          {/* Gengar's spiky back */}
-          <polygon points="100,26 106,42 94,42" fill="#1A0A2E"/>
-          {/* Tail */}
-          <path d="M152 158 Q172 148 168 134 Q164 122 178 118" stroke="#1A0A2E" strokeWidth="10" strokeLinecap="round" fill="none"/>
+          <ellipse cx="64" cy="178" rx="12" ry="6" fill="#1A0A0A"/>
+          <ellipse cx="116" cy="178" rx="12" ry="6" fill="#1A0A0A"/>
+          {/* ── TAIL ── */}
+          <path d="M100 155 Q124 160 132 150 Q142 138 138 122 Q134 112 140 100" stroke="#1A0A0A" strokeWidth="10" strokeLinecap="round" fill="none"/>
+          {/* Tail tip flame */}
+          <ellipse cx="143" cy="94" rx="10" ry="14" fill="#FF4400" opacity="0.9"/>
+          <ellipse cx="143" cy="90" rx="6" ry="9" fill="#FF8800" opacity="0.9"/>
+          <ellipse cx="143" cy="87" rx="3" ry="5" fill="#FFDD00" opacity="0.9"/>
+          {/* Flame flicker */}
+          <ellipse cx="147" cy="96" rx="5" ry="8" fill="#FF4400" opacity="0.6"/>
+          {/* ── BELLY ── */}
+          <ellipse cx="88" cy="122" rx="18" ry="22" fill="#2A1010" opacity="0.6"/>
+          {/* Ground shadow */}
+          <ellipse cx="90" cy="192" rx="45" ry="7" fill="#CC0000" opacity="0.06"/>
         </svg>
       </div>
 
