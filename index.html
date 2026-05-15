@@ -785,7 +785,16 @@ function App() {
   const PASS = "shinyden2025";
 
   // ALL hooks declared first — React rules require this
-  const [unlocked, setUnlocked] = useState(() => { try { return sessionStorage.getItem("sd_auth") === "1"; } catch { return false; } });
+  // URL hash gate — access via #shinyden in URL, no login delay
+  const [unlocked, setUnlocked] = useState(() => {
+    try {
+      if (window.location.hash === "#shinyden") {
+        sessionStorage.setItem("sd_auth","1");
+        return true;
+      }
+      return sessionStorage.getItem("sd_auth") === "1";
+    } catch { return false; }
+  });
   const [attempt,  setAttempt]  = useState("");
   const [shake,    setShake]    = useState(false);
   const [deals,    setDeals]    = useState([]);
@@ -830,15 +839,114 @@ function App() {
     }
   }
 
+  // ── SCAN STATE ─────────────────────────────────────────────────────────────
+  const [scanProgress, setScanProgress] = useState({ active:false, retailer:"", found:0, total:0 });
+
+  // ── MARKET PRICES (for browser-side scoring) ──────────────────────────────
+  function getBrowserMarket(title) { return getMarket(title); }
+  function getBrowserRRP(title) { return getRRP(title); }
+
+  // ── LIVE BROWSER SCANNER ─────────────────────────────────────────────────
+  const RETAILERS_BROWSER = [
+    { name:"Total Cards",    base:"https://totalcards.net" },
+    { name:"Titan Cards",    base:"https://titancards.co.uk" },
+    { name:"Eterna Cards",   base:"https://eternacards.co.uk" },
+    { name:"Double Sleeved", base:"https://doublesleeved.co.uk" },
+    { name:"Toys N Geek",    base:"https://www.toysngeek.co.uk" },
+    { name:"The Card Vault", base:"https://thecardvault.co.uk" },
+    { name:"My TCG",         base:"https://mytcg.co.uk" },
+    { name:"Gathering Games",base:"https://gatheringgames.co.uk" },
+    { name:"Zatu Games",     base:"https://www.board-game.co.uk" },
+    { name:"Chaos Cards",    base:"https://www.chaoscards.co.uk" },
+  ];
+
+  const BLOCK_BROWSER = ["korean","japanese","yugioh","yu-gi-oh","lorcana","digimon","funko","plush","graded","psa","proxy","fake","lot of","panini","topps","cardfight","weiss","lorcana","magic the gathering"];
+
+  function isValidBrowser(title, price) {
+    const t = title.toLowerCase();
+    if (BLOCK_BROWSER.some(b => t.includes(b))) return false;
+    if (!t.includes("pokemon") && !t.includes("pokémon")) return false;
+    const hasType = ["booster box","elite trainer","etb","booster bundle","booster pack","tin","collection","blister","battle deck"].some(p => t.includes(p));
+    if (!hasType) return false;
+    if (price < 3 || price > 5000) return false;
+    return true;
+  }
+
+  async function scanRetailer(retailer) {
+    const cols = ["/collections/pokemon-sealed","/collections/pokemon-tcg","/collections/pokemon","/collections/all"];
+    for (const col of cols) {
+      try {
+        const r = await fetch(`${retailer.base}${col}/products.json?limit=250`, {
+          signal: AbortSignal.timeout(6000)
+        });
+        if (!r.ok) continue;
+        const data = await r.json();
+        const products = data.products || [];
+        if (!products.length) continue;
+        const found = [];
+        for (const p of products) {
+          const v = (p.variants||[]).find(v => v.available && parseFloat(v.price) > 0);
+          if (!v) continue;
+          const price = parseFloat(v.price);
+          if (!isValidBrowser(p.title, price)) continue;
+          const market = getBrowserMarket(p.title);
+          const rrp = getBrowserRRP(p.title);
+          const flipNet = market ? +(market - price - market*0.13 - 4).toFixed(2) : null;
+          const flipRoi = (flipNet && price > 0) ? Math.round(flipNet/price*100) : null;
+          found.push({
+            id: `${retailer.name}::${p.handle}`,
+            product: p.title,
+            retailer: retailer.name,
+            buyNow: price,
+            rrp,
+            resell: market,
+            url: `${retailer.base}/products/${p.handle}`,
+            image: p.images?.[0]?.src || null,
+            lastSeen: new Date().toISOString(),
+            flipNet,
+            flipRoi,
+          });
+        }
+        return found; // first working collection
+      } catch {}
+    }
+    return [];
+  }
+
+  async function liveScan() {
+    if (scanProgress.active) return;
+    setScanProgress({ active:true, retailer:"Starting...", found:0, total:RETAILERS_BROWSER.length });
+    setPulse(true);
+    const allDeals = [];
+
+    for (let i = 0; i < RETAILERS_BROWSER.length; i++) {
+      const retailer = RETAILERS_BROWSER[i];
+      setScanProgress({ active:true, retailer:retailer.name, found:allDeals.length, total:RETAILERS_BROWSER.length });
+      const found = await scanRetailer(retailer);
+      allDeals.push(...found);
+    }
+
+    // Sort by ROI desc
+    allDeals.sort((a,b) => (b.flipRoi??-999) - (a.flipRoi??-999));
+
+    if (allDeals.length > 0) {
+      setDeals(allDeals);
+      setLive(true);
+      setUpdated(new Date());
+      setLoading(false);
+      checkAlerts(allDeals);
+    }
+    setScanProgress({ active:false, retailer:"", found:allDeals.length, total:RETAILERS_BROWSER.length });
+    setPulse(false);
+  }
+
   async function load() {
     setPulse(true);
-    const minDelay = new Promise(r => setTimeout(r, 2000));
     try {
       const r = await fetch(`${DEALS_URL}?t=${Date.now()}`);
       if (r.ok) {
         const data = await r.json();
         if (Array.isArray(data) && data.length > 0) {
-          await minDelay;
           setDeals(data);
           setLive(true);
           setUpdated(new Date());
@@ -851,7 +959,6 @@ function App() {
     } catch (e) {
       console.log("Fetch error:", e.message);
     }
-    await minDelay;
     setDeals(DEMO);
     setLive(false);
     setUpdated(new Date());
@@ -861,10 +968,10 @@ function App() {
 
   useEffect(() => {
     if (!unlocked) return;
-    // 500ms — ensures React fully unmounts gate before fetch starts
-    const t = setTimeout(load, 500);
+    // Run immediately — no delay needed with hash-based gate
+    load();
     const i = setInterval(load, 600000);
-    return () => { clearTimeout(t); clearInterval(i); };
+    return () => clearInterval(i);
   }, [unlocked]);
 
   function tryUnlock() {
@@ -1151,15 +1258,28 @@ function App() {
             <div style={{ fontFamily:MONO, fontSize:10, color:"#FFD60A", letterSpacing:"0.06em" }}>● {buyN} BUY NOW</div>
             <div style={{ fontFamily:MONO, fontSize:10, color:"#555", letterSpacing:"0.06em" }}>● {deals.length} TOTAL</div>
           </div>
-          <button onClick={()=>load()} style={{ background:"#CC0000", border:"none", borderRadius:5, padding:"6px 0", width:68, color:"#fff", fontFamily:MONO, fontSize:10, letterSpacing:"0.08em", cursor:"pointer", boxShadow:"0 2px 12px rgba(204,0,0,0.4)", opacity:pulse?0.7:1, flexShrink:0, textAlign:"center" }}>
-            {pulse?"SCANNING":"⟳ SCAN"}
+          <button onClick={()=>liveScan()} disabled={scanProgress.active}
+            style={{ background:"#CC0000", border:"none", borderRadius:5, padding:"6px 0", width:68, color:"#fff", fontFamily:MONO, fontSize:10, letterSpacing:"0.06em", cursor:scanProgress.active?"not-allowed":"pointer", boxShadow:"0 2px 12px rgba(204,0,0,0.4)", opacity:scanProgress.active?0.7:1, flexShrink:0, textAlign:"center" }}>
+            {scanProgress.active?"...":"⟳ SCAN"}
           </button>
         </div>
       </div>
 
-      {/* Scan sweep bar — stays visible the whole time load() is running */}
-      <div style={{ height:2, background:"#07070D", overflow:"hidden", position:"relative" }}>
-        {pulse&&<div style={{ position:"absolute",top:0,height:"100%",width:"50%",background:"linear-gradient(90deg,transparent,#CC0000,transparent)",animation:"sweep 1.2s linear infinite" }}/>}
+      {/* Scan progress bar */}
+      <div style={{ height:scanProgress.active?28:2, background:"#07070D", overflow:"hidden", transition:"height 0.2s ease" }}>
+        {scanProgress.active&&(
+          <div style={{ padding:"4px 16px", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+            <div style={{ fontFamily:MONO, fontSize:9, color:"#CC0000", letterSpacing:"0.1em" }}>
+              SCANNING {scanProgress.retailer.toUpperCase()}...
+            </div>
+            <div style={{ fontFamily:MONO, fontSize:9, color:"#555" }}>
+              {scanProgress.found} found
+            </div>
+          </div>
+        )}
+        <div style={{ height:2, background:"#07070D", overflow:"hidden", position:"relative" }}>
+          {scanProgress.active&&<div style={{ position:"absolute",top:0,height:"100%",width:"50%",background:"linear-gradient(90deg,transparent,#CC0000,transparent)",animation:"sweep 1.2s linear infinite" }}/>}
+        </div>
       </div>
 
       <div style={{ padding:"14px 16px" }}>
