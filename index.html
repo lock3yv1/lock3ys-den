@@ -502,40 +502,58 @@ function HeatTab() {
   const DISP = "'Rajdhani', sans-serif";
   const MONO = "'Share Tech Mono','Courier New',monospace";
   const [expanded, setExpanded] = React.useState(null);
-  const [hoverIdx, setHoverIdx] = React.useState(null);
+  const [heatSearch, setHeatSearch] = React.useState("");
+  const [heatType, setHeatType] = React.useState("all");
 
-  // 24 months of price history (Jun 2024 → May 2026)
   const MONTHS = ["Jun","Jul","Aug","Sep","Oct","Nov","Dec","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec","Jan","Feb","Mar","Apr","May"];
 
   const sets = [
-    { n:"Base Set (WOTC) — Booster Box",      y1:25,  y2:60,  s:10, t:"rising",
-      history:[1600,1680,1750,1820,1900,1980,2050,2100,2180,2240,2310,2380,2430,2450,2470,2480,2490,2495,2498,2500,2502,2505,2503,2500] },
-    { n:"Evolving Skies — Booster Box",       y1:20,  y2:44,  s:10, t:"rising",
-      history:[148,152,158,163,169,175,180,186,191,196,200,205,208,210,211,212,213,214,215,215,216,215,215,215] },
-    { n:"Hidden Fates — Booster Box",         y1:15,  y2:32,  s:9,  t:"rising",
-      history:[290,298,306,315,324,333,341,348,355,361,367,372,376,378,380,381,382,383,384,385,385,385,385,385] },
-    { n:"Prismatic Evolutions — Booster Box", y1:25,  y2:56,  s:9,  t:"rising",
-      history:[null,null,null,null,null,null,null,95,115,138,155,170,178,182,184,186,187,188,189,190,190,190,190,190] },
-    { n:"151 — Booster Box",                  y1:15,  y2:32,  s:8,  t:"rising",
-      history:[125,128,132,136,140,144,148,152,156,160,163,166,169,171,173,174,175,176,177,178,178,178,178,178] },
-    { n:"Shining Fates — Elite Trainer Box",        y1:10,  y2:21,  s:8,  t:"stable",
-      history:[198,200,203,206,209,212,215,218,220,223,226,228,230,232,233,234,235,236,237,238,239,239,240,240] },
-    { n:"Champions Path — Elite Trainer Box",       y1:15,  y2:32,  s:8,  t:"rising",
-      history:[148,151,154,158,161,164,167,170,173,176,179,182,184,186,187,188,189,190,190,191,192,192,192,192] },
-    { n:"Surging Sparks — Booster Box",       y1:12,  y2:28,  s:6,  t:"rising",
-      history:[null,null,null,null,null,null,150,163,172,182,190,197,202,206,209,211,212,213,214,215,215,215,215,215] },
-    { n:"Chilling Reign — Booster Box",       y1:8,   y2:17,  s:6,  t:"rising",
-      history:[130,132,134,135,137,138,140,141,143,144,146,147,148,149,150,150,151,151,152,152,152,152,152,152] },
-    { n:"Phantasmal Flames — Booster Box",    y1:20,  y2:44,  s:7,  t:"rising",
-      history:[null,null,null,null,null,null,null,null,null,null,null,null,280,295,310,320,330,338,345,350,355,358,360,360] },
-    { n:"Chaos Rising — Booster Box",         y1:15,  y2:32,  s:7,  t:"rising",
-      history:[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,110,118,125,132,139,145] },
-    { n:"Paradox Rift — Booster Box",         y1:-2,  y2:-4,  s:4,  t:"declining",
-      history:[128,126,125,123,122,120,119,118,117,116,115,114,113,112,112,111,110,110,110,109,109,109,108,108] },
-    { n:"Obsidian Flames — Booster Box",      y1:-2,  y2:-4,  s:4,  t:"declining",
-      history:[140,138,136,134,133,131,130,129,128,127,126,125,124,123,122,121,120,120,119,119,118,118,118,118] },
-    { n:"Paldea Evolved — Booster Box",       y1:-5,  y2:-10, s:3,  t:"declining",
-      history:[125,122,119,116,114,112,110,108,107,106,105,103,102,101,100,99,98,97,96,95,94,93,92,92] },
+    // ── BOOSTER BOXES ─────────────────────────────────────────────────────
+    { n:"Evolving Skies",       type:"Booster Box",         y1:20, y2:44, s:10, t:"rising",   history:[148,152,158,163,169,175,180,186,191,196,200,205,208,210,211,212,213,214,215,215,216,215,215,215] },
+    { n:"Hidden Fates",         type:"Booster Box",         y1:15, y2:32, s:9,  t:"rising",   history:[290,298,306,315,324,333,341,348,355,361,367,372,376,378,380,381,382,383,384,385,385,385,385,385] },
+    { n:"Prismatic Evolutions", type:"Booster Box",         y1:25, y2:56, s:9,  t:"rising",   history:[null,null,null,null,null,null,null,95,115,138,155,170,178,182,184,186,187,188,189,190,190,190,190,190] },
+    { n:"151",                  type:"Booster Box",         y1:15, y2:32, s:8,  t:"rising",   history:[125,128,132,136,140,144,148,152,156,160,163,166,169,171,173,174,175,176,177,178,178,178,178,178] },
+    { n:"Surging Sparks",       type:"Booster Box",         y1:12, y2:28, s:6,  t:"rising",   history:[null,null,null,null,null,null,150,163,172,182,190,197,202,206,209,211,212,213,214,215,215,215,215,215] },
+    { n:"Phantasmal Flames",    type:"Booster Box",         y1:20, y2:44, s:7,  t:"rising",   history:[null,null,null,null,null,null,null,null,null,null,null,null,280,295,310,320,330,338,345,350,355,358,360,360] },
+    { n:"Chaos Rising",         type:"Booster Box",         y1:15, y2:32, s:7,  t:"rising",   history:[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,110,118,125,132,139,145] },
+    { n:"Perfect Order",        type:"Booster Box",         y1:12, y2:25, s:7,  t:"rising",   history:[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,105,110,116,121,126,129,130] },
+    { n:"Chilling Reign",       type:"Booster Box",         y1:8,  y2:17, s:6,  t:"rising",   history:[130,132,134,135,137,138,140,141,143,144,146,147,148,149,150,150,151,151,152,152,152,152,152,152] },
+    { n:"Ascended Heroes",      type:"Booster Box",         y1:10, y2:21, s:6,  t:"rising",   history:[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,108,115,120,123,125] },
+    { n:"Brilliant Stars",      type:"Booster Box",         y1:5,  y2:10, s:5,  t:"stable",   history:[128,129,130,131,132,133,134,135,136,137,138,139,140,140,141,141,142,142,142,142,142,142,142,142] },
+    { n:"Paldean Fates",        type:"Booster Box",         y1:8,  y2:17, s:6,  t:"stable",   history:[null,null,null,null,null,null,null,110,115,120,124,127,128,129,130,130,131,131,132,132,132,132,132,132] },
+    { n:"Paradox Rift",         type:"Booster Box",         y1:-2, y2:-4, s:4,  t:"declining",history:[128,126,125,123,122,120,119,118,117,116,115,114,113,112,112,111,110,110,110,109,109,109,108,108] },
+    { n:"Obsidian Flames",      type:"Booster Box",         y1:-2, y2:-4, s:4,  t:"declining",history:[140,138,136,134,133,131,130,129,128,127,126,125,124,123,122,121,120,120,119,119,118,118,118,118] },
+    { n:"Paldea Evolved",       type:"Booster Box",         y1:-5, y2:-10,s:3,  t:"declining",history:[125,122,119,116,114,112,110,108,107,106,105,103,102,101,100,99,98,97,96,95,94,93,92,92] },
+    { n:"Base Set (WOTC)",      type:"Booster Box",         y1:25, y2:60, s:10, t:"rising",   history:[1600,1680,1750,1820,1900,1980,2050,2100,2180,2240,2310,2380,2430,2450,2470,2480,2490,2495,2498,2500,2502,2505,2503,2500] },
+    // ── ELITE TRAINER BOXES ───────────────────────────────────────────────
+    { n:"Evolving Skies",       type:"Elite Trainer Box",   y1:18, y2:40, s:10, t:"rising",   history:[110,115,120,125,130,135,138,141,144,146,148,149,150,150,150,150,150,150,150,150,150,150,150,150] },
+    { n:"Hidden Fates",         type:"Elite Trainer Box",   y1:12, y2:25, s:9,  t:"rising",   history:[88,90,93,96,99,102,105,107,108,109,110,110,111,111,111,112,112,112,112,112,112,112,112,112] },
+    { n:"Shining Fates",        type:"Elite Trainer Box",   y1:10, y2:21, s:8,  t:"stable",   history:[98,100,103,106,109,112,115,118,120,122,224,226,228,230,232,233,234,235,236,237,238,239,239,240] },
+    { n:"Champions Path",       type:"Elite Trainer Box",   y1:15, y2:32, s:8,  t:"rising",   history:[148,151,154,158,161,164,167,170,173,176,179,182,184,186,187,188,189,190,190,191,192,192,192,192] },
+    { n:"Prismatic Evolutions", type:"Elite Trainer Box",   y1:10, y2:22, s:8,  t:"rising",   history:[null,null,null,null,null,null,null,65,70,74,77,79,80,80,80,80,80,80,80,80,80,80,80,80] },
+    { n:"Surging Sparks",       type:"Elite Trainer Box",   y1:5,  y2:12, s:5,  t:"stable",   history:[null,null,null,null,null,null,48,50,52,54,55,56,57,57,57,57,58,58,58,58,58,58,58,58] },
+    { n:"Ascended Heroes",      type:"Elite Trainer Box",   y1:10, y2:22, s:6,  t:"rising",   history:[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,140,148,154,158,160] },
+    { n:"Phantasmal Flames",    type:"Elite Trainer Box",   y1:18, y2:38, s:7,  t:"rising",   history:[null,null,null,null,null,null,null,null,null,null,null,null,90,95,102,108,112,115,117,119,120,120,120,120] },
+    // ── BOOSTER BUNDLES ───────────────────────────────────────────────────
+    { n:"Prismatic Evolutions", type:"Booster Bundle",      y1:8,  y2:18, s:7,  t:"rising",   history:[null,null,null,null,null,null,null,null,null,48,52,55,57,58,59,59,60,60,60,60,60,60,60,60] },
+    { n:"151",                  type:"Booster Bundle",      y1:10, y2:22, s:7,  t:"rising",   history:[38,39,40,41,42,43,44,45,46,47,48,49,49,50,50,50,50,50,50,50,50,50,50,50] },
+    { n:"Surging Sparks",       type:"Booster Bundle",      y1:5,  y2:10, s:5,  t:"stable",   history:[null,null,null,null,null,null,22,24,25,27,28,29,30,30,30,30,30,30,30,30,30,30,30,30] },
+    { n:"Evolving Skies",       type:"Booster Bundle",      y1:15, y2:30, s:8,  t:"rising",   history:[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null] },
+    // ── BOOSTER PACKS ─────────────────────────────────────────────────────
+    { n:"Evolving Skies",       type:"Booster Pack",        y1:15, y2:32, s:9,  t:"rising",   history:[18,19,20,21,22,23,23,24,24,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25] },
+    { n:"Hidden Fates",         type:"Booster Pack",        y1:10, y2:20, s:8,  t:"rising",   history:[11,11,12,12,12,13,13,13,13,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14] },
+    { n:"Prismatic Evolutions", type:"Booster Pack",        y1:8,  y2:18, s:7,  t:"rising",   history:[null,null,null,null,null,null,null,null,14,14,14,14,13,13,13,13,13,13,13,13,13,13,13,13] },
+    { n:"Shining Fates",        type:"Booster Pack",        y1:8,  y2:15, s:7,  t:"stable",   history:[13,13,14,14,14,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15] },
+    { n:"151",                  type:"Booster Pack",        y1:5,  y2:10, s:6,  t:"rising",   history:[6,6,7,7,7,7,7,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8] },
+    { n:"Surging Sparks",       type:"Booster Pack",        y1:3,  y2:8,  s:5,  t:"stable",   history:[null,null,null,null,null,null,6,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7] },
+    { n:"Champions Path",       type:"Booster Pack",        y1:12, y2:25, s:7,  t:"rising",   history:[18,19,20,21,22,22,23,23,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24] },
+    // ── TINS ──────────────────────────────────────────────────────────────
+    { n:"Hidden Fates",         type:"Tin",                 y1:10, y2:22, s:8,  t:"rising",   history:[34,35,36,37,38,39,40,41,42,42,43,43,44,44,44,44,44,44,44,44,44,44,44,44] },
+    { n:"Evolving Skies",       type:"Tin",                 y1:8,  y2:18, s:7,  t:"rising",   history:[28,29,30,31,32,33,34,35,36,37,38,39,39,40,40,40,40,40,40,40,40,40,40,40] },
+    { n:"Shining Fates",        type:"Tin",                 y1:6,  y2:14, s:6,  t:"stable",   history:[22,22,23,24,25,26,26,27,27,28,28,28,28,29,29,29,29,29,29,29,29,29,29,29] },
+    { n:"Surging Sparks",       type:"Tin",                 y1:2,  y2:5,  s:4,  t:"stable",   history:[null,null,null,null,null,null,18,19,20,20,21,21,22,22,22,22,22,22,22,22,22,22,22,22] },
+    { n:"Mega Charizard X ex",  type:"Tin",                 y1:8,  y2:18, s:6,  t:"rising",   history:[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,28,29,30,31,32,32,32] },
+    { n:"Mega Charizard Y ex",  type:"Tin",                 y1:8,  y2:18, s:6,  t:"rising",   history:[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,28,29,30,31,32,32,32] },
   ];
 
   function InteractiveChart({ data, color, months }) {
@@ -629,65 +647,133 @@ function HeatTab() {
 
   return (
     <div>
-      <div style={{ fontFamily:MONO, fontSize:9, color:"#555", marginBottom:16, letterSpacing:"0.12em" }}>
-        SET INVESTMENT HEAT MAP · TAP ROW · DRAG CHART TO EXPLORE
-      </div>
-      {sets.map(s => {
-        const tC = s.t==="rising"?"#39D98A":s.t==="declining"?"#FF3B3B":"#FF8C00";
-        const isOpen = expanded === s.n;
-        const currentPrice = s.history.filter(v=>v!==null).slice(-1)[0];
-        const startPrice = s.history.find(v=>v!==null);
-        const totalGain = (((currentPrice-startPrice)/startPrice)*100).toFixed(0);
-        const y1pos = s.y1 >= 0;
-        const y2pos = s.y2 >= 0;
-        return (
-          <div key={s.n} style={{ marginBottom:8 }}>
-            <div onClick={()=>setExpanded(isOpen?null:s.n)}
-              style={{ background:"#0A0A10", border:`1px solid ${isOpen?tC+"55":"rgba(255,255,255,0.06)"}`, borderLeft:`3px solid ${tC}`, borderRadius:isOpen?"8px 8px 0 0":8, padding:"11px 14px", cursor:"pointer" }}>
-              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-                <div style={{ flex:1, minWidth:0 }}>
-                  <div style={{ fontFamily:DISP, fontSize:14, fontWeight:500, color:"#FFFFFF" }}>{s.n}</div>
-                  <div style={{ display:"flex", gap:8, marginTop:3 }}>
-                    <span style={{ fontFamily:MONO, fontSize:9, color:tC }}>{s.t==="rising"?"↗ RISING":s.t==="declining"?"↘ FALLING":"→ STABLE"}</span>
-                    <span style={{ fontFamily:MONO, fontSize:9, color:"#444" }}>{s.s}/10</span>
-                    <span style={{ fontFamily:MONO, fontSize:9, color: Number(totalGain)>=0?tC:"#FF3B3B" }}>{Number(totalGain)>=0?"+":""}{totalGain}% (2yr)</span>
-                  </div>
-                </div>
-                <div style={{ textAlign:"right", flexShrink:0, marginLeft:12 }}>
-                  <div style={{ fontFamily:MONO, fontSize:12, color:"#FFFFFF" }}>£{currentPrice.toLocaleString()}</div>
-                  <div style={{ fontFamily:MONO, fontSize:9, color:y1pos?tC:"#FF3B3B" }}>{y1pos?"+":""}{s.y1}% / {y2pos?"+":""}{s.y2}%</div>
-                </div>
-                <div style={{ fontFamily:MONO, fontSize:10, color:"#444", marginLeft:8 }}>{isOpen?"▲":"▼"}</div>
-              </div>
-              <div style={{ marginTop:7, height:2, background:"rgba(255,255,255,0.05)", borderRadius:2 }}>
-                <div style={{ height:"100%", width:`${s.s*10}%`, background:tC, borderRadius:2, opacity:0.5 }}/>
-              </div>
-            </div>
+      {/* Search bar */}
+      <input
+        type="text"
+        value={heatSearch}
+        onChange={e=>setHeatSearch(e.target.value)}
+        placeholder="Search e.g. '151 pack' or 'Evolving Skies'..."
+        style={{ width:"100%", background:"#0F0F18", border:"1px solid #2A2A38", borderRadius:6, padding:"10px 14px", color:"#FFFFFF", fontFamily:MONO, fontSize:11, outline:"none", marginBottom:10 }}
+      />
 
-            {isOpen&&(
-              <div style={{ background:"#07070D", border:`1px solid ${tC}33`, borderTop:"none", borderRadius:"0 0 8px 8px", padding:"14px" }}>
-                <InteractiveChart data={s.history} color={tC} months={MONTHS}/>
-                <div style={{ display:"flex", gap:8, marginTop:12, marginBottom:10 }}>
-                  <div style={{ flex:1, background:"#0A0A10", borderRadius:6, padding:"10px", border:`1px solid ${y1pos?"rgba(0,255,136,0.15)":"rgba(255,59,59,0.15)"}` }}>
-                    <div style={{ fontFamily:MONO, fontSize:8, color:"#555", marginBottom:3 }}>EST. 1 YEAR</div>
-                    <div style={{ fontFamily:MONO, fontSize:14, fontWeight:700, color:y1pos?tC:"#FF3B3B" }}>£{Math.round(currentPrice*(1+s.y1/100)).toLocaleString()}</div>
-                    <div style={{ fontFamily:MONO, fontSize:9, color:y1pos?tC:"#FF3B3B" }}>{y1pos?"+":""}{s.y1}%</div>
-                  </div>
-                  <div style={{ flex:1, background:"#0A0A10", borderRadius:6, padding:"10px", border:`1px solid ${y2pos?"rgba(0,255,136,0.15)":"rgba(255,59,59,0.15)"}` }}>
-                    <div style={{ fontFamily:MONO, fontSize:8, color:"#555", marginBottom:3 }}>EST. 2 YEARS</div>
-                    <div style={{ fontFamily:MONO, fontSize:14, fontWeight:700, color:y2pos?tC:"#FF3B3B" }}>£{Math.round(currentPrice*(1+s.y2/100)).toLocaleString()}</div>
-                    <div style={{ fontFamily:MONO, fontSize:9, color:y2pos?tC:"#FF3B3B" }}>{y2pos?"+":""}{s.y2}%</div>
-                  </div>
-                </div>
-                <div style={{ fontFamily:MONO, fontSize:9, color:"#777", lineHeight:1.7, background:"#0A0A10", borderRadius:6, padding:"10px 12px" }}>
-                  💡 {s.t==="rising"?"Strong hold candidate. Prices consistently rising over 24 months.":s.t==="declining"?"Caution — prices trending down. Only buy if you plan to open.":"Stable set. Modest appreciation. Low risk, low reward."}
-                </div>
-                <div style={{ fontFamily:MONO, fontSize:8, color:"#2A2A38", textAlign:"center", marginTop:8 }}>Drag chart to explore · Prices estimated from eBay UK sold · Not financial advice</div>
-              </div>
-            )}
+      {/* Type filter */}
+      <div style={{ display:"flex", gap:5, marginBottom:14, overflowX:"auto", paddingBottom:2, WebkitOverflowScrolling:"touch", scrollbarWidth:"none" }}>
+        {["all","Booster Box","Elite Trainer Box","Booster Bundle","Booster Pack","Tin"].map(t=>(
+          <button key={t} onClick={()=>setHeatType(t)}
+            style={{ background:heatType===t?"#CC0000":"#161620", border:`1px solid ${heatType===t?"#CC0000":"#333345"}`, borderRadius:4, padding:"5px 10px", flexShrink:0, fontFamily:MONO, fontSize:9, color:heatType===t?"#fff":"#AAAAAA", cursor:"pointer", whiteSpace:"nowrap" }}>
+            {t==="all"?"ALL TYPES":t.toUpperCase()}
+          </button>
+        ))}
+      </div>
+
+      {/* Results */}
+      {(()=>{
+        const q = heatSearch.toLowerCase().trim();
+        const filtered = sets.filter(s => {
+          if (heatType !== "all" && s.type !== heatType) return false;
+          if (q && !`${s.n} ${s.type}`.toLowerCase().includes(q)) return false;
+          return true;
+        });
+
+        if (filtered.length === 0) return (
+          <div style={{ fontFamily:MONO, fontSize:11, color:"#444", textAlign:"center", padding:"32px 0" }}>
+            No results for "{heatSearch}"
           </div>
         );
-      })}
+
+        return filtered.map(s => {
+          const key = `${s.n}|${s.type}`;
+          const validHistory = s.history.filter(v=>v!==null);
+          if (validHistory.length < 2) return null;
+          const currentPrice = validHistory[validHistory.length-1];
+          const startPrice = validHistory[0];
+          const totalGain = (((currentPrice-startPrice)/startPrice)*100).toFixed(0);
+          const tC = s.t==="rising"?"#39D98A":s.t==="declining"?"#FF3B3B":"#FF8C00";
+          const isOpen = expanded === key;
+          const y1p = Math.round(currentPrice*(1+s.y1/100));
+          const y2p = Math.round(currentPrice*(1+s.y2/100));
+          // 3yr and 4yr — extrapolate from trend
+          const y3rate = s.y1>=0 ? s.y1*0.9 : s.y1*0.7;
+          const y4rate = s.y1>=0 ? s.y1*1.8 : s.y1*1.2;
+          const y3p = Math.round(currentPrice*(1+y3rate/100));
+          const y4p = Math.round(currentPrice*(1+y4rate/100));
+          // Is this a declining item that might be worth holding?
+          const potentialHold = s.t==="declining" && s.s>=5;
+          const longTermGain = y4p > currentPrice;
+
+          return (
+            <div key={key} style={{ marginBottom:8 }}>
+              {/* Row */}
+              <div onClick={()=>setExpanded(isOpen?null:key)}
+                style={{ background:"#0A0A10", border:`1px solid ${isOpen?tC+"55":"rgba(255,255,255,0.06)"}`, borderLeft:`3px solid ${tC}`, borderRadius:isOpen?"8px 8px 0 0":8, padding:"11px 14px", cursor:"pointer" }}>
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+                  <div style={{ flex:1, minWidth:0 }}>
+                    <div style={{ fontFamily:DISP, fontSize:14, fontWeight:500, color:"#FFFFFF" }}>{s.n}</div>
+                    <div style={{ fontFamily:MONO, fontSize:9, color:"#555", marginTop:1 }}>{s.type}</div>
+                    <div style={{ display:"flex", gap:8, marginTop:3, flexWrap:"wrap" }}>
+                      <span style={{ fontFamily:MONO, fontSize:9, color:tC }}>{s.t==="rising"?"↗ RISING":s.t==="declining"?"↘ FALLING":"→ STABLE"}</span>
+                      <span style={{ fontFamily:MONO, fontSize:9, color:"#444" }}>{s.s}/10</span>
+                      <span style={{ fontFamily:MONO, fontSize:9, color:Number(totalGain)>=0?"#39D98A":"#FF3B3B" }}>{Number(totalGain)>=0?"+":""}{totalGain}% since launch</span>
+                      {potentialHold&&longTermGain&&<span style={{ fontFamily:MONO, fontSize:8, color:"#B388FF", background:"rgba(179,136,255,0.1)", padding:"1px 5px", borderRadius:3 }}>HOLD POTENTIAL</span>}
+                    </div>
+                  </div>
+                  <div style={{ textAlign:"right", flexShrink:0, marginLeft:12 }}>
+                    <div style={{ fontFamily:MONO, fontSize:13, color:"#FFFFFF" }}>£{currentPrice.toLocaleString()}</div>
+                    <div style={{ fontFamily:MONO, fontSize:9, color:s.y1>=0?tC:"#FF3B3B" }}>{s.y1>=0?"+":""}{s.y1}% yr1</div>
+                  </div>
+                  <div style={{ fontFamily:MONO, fontSize:10, color:"#444", marginLeft:8 }}>{isOpen?"▲":"▼"}</div>
+                </div>
+                <div style={{ marginTop:7, height:2, background:"rgba(255,255,255,0.05)", borderRadius:2 }}>
+                  <div style={{ height:"100%", width:`${s.s*10}%`, background:tC, borderRadius:2, opacity:0.5 }}/>
+                </div>
+              </div>
+
+              {/* Expanded */}
+              {isOpen&&(
+                <div style={{ background:"#07070D", border:`1px solid ${tC}33`, borderTop:"none", borderRadius:"0 0 8px 8px", padding:"14px" }}>
+                  {/* Chart */}
+                  <InteractiveChart data={s.history} color={tC} months={MONTHS}/>
+
+                  {/* Projections — all 4 years */}
+                  <div style={{ marginTop:12, marginBottom:10 }}>
+                    <div style={{ fontFamily:MONO, fontSize:8, color:"#444", letterSpacing:"0.1em", marginBottom:8 }}>ESTIMATED VALUE IF HELD SEALED</div>
+                    <div style={{ display:"flex", gap:6 }}>
+                      {[{l:"1 YR",v:y1p,r:s.y1},{l:"2 YR",v:y2p,r:s.y2},{l:"3 YR",v:y3p,r:y3rate},{l:"4 YR",v:y4p,r:y4rate}].map(({l,v,r})=>(
+                        <div key={l} style={{ flex:1, background:"#0A0A10", borderRadius:6, padding:"8px 6px", border:`1px solid ${r>=0?"rgba(0,255,136,0.12)":"rgba(255,59,59,0.12)"}`, textAlign:"center" }}>
+                          <div style={{ fontFamily:MONO, fontSize:7, color:"#555", marginBottom:3 }}>{l}</div>
+                          <div style={{ fontFamily:MONO, fontSize:12, fontWeight:700, color:r>=0?"#39D98A":"#FF3B3B" }}>£{v.toLocaleString()}</div>
+                          <div style={{ fontFamily:MONO, fontSize:8, color:r>=0?"#39D98A":"#FF3B3B" }}>{r>=0?"+":""}{Math.round(r)}%</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Declining but hold potential banner */}
+                  {potentialHold&&longTermGain&&(
+                    <div style={{ background:"rgba(179,136,255,0.06)", border:"1px solid rgba(179,136,255,0.25)", borderRadius:6, padding:"10px 12px", marginBottom:10 }}>
+                      <div style={{ fontFamily:MONO, fontSize:9, color:"#B388FF", fontWeight:700, marginBottom:3 }}>📦 AVOID NOW — POSSIBLE LONG TERM HOLD</div>
+                      <div style={{ fontFamily:MONO, fontSize:8, color:"#888", lineHeight:1.6 }}>
+                        Currently declining and not worth flipping. However the 3-4 year projection suggests potential recovery. Only consider if you can hold sealed for 3+ years without needing the capital.
+                      </div>
+                    </div>
+                  )}
+
+                  <div style={{ fontFamily:MONO, fontSize:9, color:"#777", lineHeight:1.7, background:"#0A0A10", borderRadius:6, padding:"10px 12px" }}>
+                    💡 {s.t==="rising"?"Strong hold. Prices rising consistently.":s.t==="declining"?"Prices falling. Avoid for investment unless holding 3-4+ years.":"Stable. Modest appreciation. Low risk, low reward."}
+                  </div>
+                  <div style={{ fontFamily:MONO, fontSize:7, color:"#2A2A38", textAlign:"center", marginTop:8 }}>
+                    Drag chart · eBay UK sold data estimates · Not financial advice
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        });
+      })()}
+
+      <div style={{ fontFamily:MONO, fontSize:8, color:"#2A2A38", textAlign:"center", marginTop:16, paddingBottom:8 }}>
+        {sets.length} products tracked · Updated May 2026
+      </div>
     </div>
   );
 }
