@@ -1089,17 +1089,6 @@ function App() {
 
       <div style={{ padding:"14px 16px" }}>
 
-        {/* DEMO BANNER */}
-        {!live&&!loading&&!pulse&&tab==="deals"&&(
-          <div style={{ background:"rgba(255,140,0,0.08)", border:"1px solid rgba(255,140,0,0.3)", borderRadius:6, padding:"10px 14px", marginBottom:14, display:"flex", gap:10, alignItems:"flex-start" }}>
-            <span style={{ fontSize:12, flexShrink:0 }}>⚠️</span>
-            <div>
-              <div style={{ fontFamily:DISP, fontSize:12, fontWeight:500, color:"#FF8C00", letterSpacing:"0.08em" }}>DEMO MODE</div>
-              <div style={{ fontFamily:MONO, fontSize:9, color:"#FF8C00", marginTop:2, lineHeight:1.6 }}>Example data. Run the GitHub Action to pull live deals from 16 UK retailers.</div>
-            </div>
-          </div>
-        )}
-
         {/* BEST DEAL SPOTLIGHT */}
         {best&&tab==="deals"&&(()=>{
           const{net:bn}=calcFlip(best.buyNow,best.resell);
