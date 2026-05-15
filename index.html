@@ -567,12 +567,12 @@ function App() {
   const [ebayLoaded,   setEbayLoaded]   = useState(false);
 
   async function load() {
-    setPulse(true); setTimeout(()=>setPulse(false),1500);
+    setPulse(true);
     try {
       const r = await fetch(`${DEALS_URL}?t=${Date.now()}`);
-      if (r.ok) { const d=await r.json(); if(Array.isArray(d)&&d.length>0){setDeals(d);setLive(true);setUpdated(new Date());setLoading(false);return;} }
+      if (r.ok) { const d=await r.json(); if(Array.isArray(d)&&d.length>0){setDeals(d);setLive(true);setUpdated(new Date());setLoading(false);setPulse(false);return;} }
     } catch {}
-    setDeals(DEMO); setLive(false); setUpdated(new Date()); setLoading(false);
+    setDeals(DEMO); setLive(false); setUpdated(new Date()); setLoading(false); setPulse(false);
   }
 
   useEffect(()=>{if(unlocked){load();const i=setInterval(load,600000);return()=>clearInterval(i);}},[unlocked]);
@@ -591,10 +591,55 @@ function App() {
   // ── PASSWORD GATE (conditional render, no hooks below this) ──────────────
   if (!unlocked) return (
     <div style={{ minHeight:"100vh", background:"#07070D", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:24 }}>
-      <style>{`@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}`}</style>
-      <img src="banner.png" alt="Shiny Den" style={{ width:"100%", maxWidth:340, marginBottom:32, borderRadius:8 }}/>
-      <div style={{ width:"100%", maxWidth:320, animation:shake?"shake 0.4s ease":"none" }}>
-        <div style={{ fontFamily:MONO, fontSize:10, color:"#555", letterSpacing:"0.14em", marginBottom:10, textAlign:"center" }}>ENTER ACCESS CODE</div>
+      <style>{`
+        @keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+        @keyframes gengar-float{0%,100%{transform:translateY(0px)}50%{transform:translateY(-10px)}}
+        @keyframes gengar-glow{0%,100%{opacity:0.15}50%{opacity:0.28}}
+      `}</style>
+
+      {/* Gengar SVG — shadow silhouette, floating */}
+      <div style={{ position:"relative", marginBottom:16, animation:"gengar-float 4s ease-in-out infinite" }}>
+        {/* Glow behind */}
+        <div style={{ position:"absolute", inset:0, borderRadius:"50%", background:"radial-gradient(ellipse,#CC000040 0%,transparent 70%)", animation:"gengar-glow 4s ease-in-out infinite", transform:"scaleX(1.4) translateY(10px)" }}/>
+        <svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+          {/* Body */}
+          <ellipse cx="80" cy="100" rx="52" ry="46" fill="#1A0A2A" opacity="0.9"/>
+          {/* Head */}
+          <ellipse cx="80" cy="68" rx="46" ry="44" fill="#1A0A2A" opacity="0.9"/>
+          {/* Ears */}
+          <polygon points="40,44 28,14 56,38" fill="#1A0A2A" opacity="0.9"/>
+          <polygon points="120,44 132,14 104,38" fill="#1A0A2A" opacity="0.9"/>
+          {/* Eyes — glowing red */}
+          <ellipse cx="64" cy="62" rx="9" ry="10" fill="#CC0000" opacity="0.9"/>
+          <ellipse cx="96" cy="62" rx="9" ry="10" fill="#CC0000" opacity="0.9"/>
+          {/* Eye shine */}
+          <ellipse cx="67" cy="59" rx="3" ry="3" fill="#FF6060" opacity="0.7"/>
+          <ellipse cx="99" cy="59" rx="3" ry="3" fill="#FF6060" opacity="0.7"/>
+          {/* Mouth — grin */}
+          <path d="M58 80 Q80 96 102 80" stroke="#CC0000" strokeWidth="3" strokeLinecap="round" fill="none" opacity="0.8"/>
+          {/* Teeth */}
+          <polygon points="68,80 73,90 63,90" fill="#FFFFFF" opacity="0.6"/>
+          <polygon points="80,83 85,93 75,93" fill="#FFFFFF" opacity="0.6"/>
+          <polygon points="92,80 97,90 87,90" fill="#FFFFFF" opacity="0.6"/>
+          {/* Claws bottom */}
+          <path d="M44 130 L38 148 M52 136 L48 152 M60 138 L58 154" stroke="#1A0A2A" strokeWidth="5" strokeLinecap="round" opacity="0.8"/>
+          <path d="M116 130 L122 148 M108 136 L112 152 M100 138 L102 154" stroke="#1A0A2A" strokeWidth="5" strokeLinecap="round" opacity="0.8"/>
+          {/* Shadow cast on floor */}
+          <ellipse cx="80" cy="155" rx="50" ry="6" fill="#CC0000" opacity="0.08"/>
+        </svg>
+      </div>
+
+      {/* Title */}
+      <div style={{ marginBottom:28, textAlign:"center" }}>
+        <div style={{ fontFamily:DISP, fontSize:28, fontWeight:700, color:"#FFFFFF", letterSpacing:"0.04em", lineHeight:1 }}>
+          SHINY <span style={{ color:"#CC0000" }}>DEN</span>
+        </div>
+        <div style={{ fontFamily:MONO, fontSize:9, color:"#333", marginTop:6, letterSpacing:"0.14em" }}>POKÉMON DEAL FINDER</div>
+      </div>
+
+      {/* Input */}
+      <div style={{ width:"100%", maxWidth:300, animation:shake?"shake 0.4s ease":"none" }}>
+        <div style={{ fontFamily:MONO, fontSize:9, color:"#444", letterSpacing:"0.14em", marginBottom:10, textAlign:"center" }}>ENTER ACCESS CODE</div>
         <input
           type="password" value={attempt}
           onChange={e=>setAttempt(e.target.value)}
@@ -820,12 +865,10 @@ function App() {
         </div>
       </div>
 
-      {/* Scan sweep bar */}
-      {pulse&&(
-        <div style={{ height:2, background:"#07070D", overflow:"hidden", position:"relative" }}>
-          <div style={{ position:"absolute",top:0,height:"100%",width:"50%",background:"linear-gradient(90deg,transparent,#CC0000,transparent)",animation:"sweep 1s linear infinite" }}/>
-        </div>
-      )}
+      {/* Scan sweep bar — stays visible the whole time load() is running */}
+      <div style={{ height:2, background:"#07070D", overflow:"hidden", position:"relative" }}>
+        {pulse&&<div style={{ position:"absolute",top:0,height:"100%",width:"50%",background:"linear-gradient(90deg,transparent,#CC0000,transparent)",animation:"sweep 1.2s linear infinite" }}/>}
+      </div>
 
       <div style={{ padding:"14px 16px" }}>
 
@@ -864,12 +907,7 @@ function App() {
           );
         })()}
 
-        {/* TAB BAR */}
-        <div style={{ display:"flex", gap:2, marginBottom:14, background:"#0F0F18", border:"1px solid #252535", borderRadius:7, padding:3 }}>
-          {[{id:"deals",l:"🎯 DEALS"},{id:"ebay",l:"🛒 EBAY"},{id:"market",l:"🏷 MARKET"},{id:"heat",l:"🔥 HEAT"}].map(t=>(
-            <button key={t.id} onClick={()=>setTab(t.id)} style={{ flex:1, background:tab===t.id?"#CC0000":"transparent", border:"none", borderRadius:5, padding:"9px 4px", color:tab===t.id?"#fff":"#AAAAAA", fontFamily:DISP, fontSize:12, letterSpacing:"0.08em", cursor:"pointer", transition:"all 0.15s" }}>{t.l}</button>
-          ))}
-        </div>
+        {/* ── CONTENT ── */}
 
         {/* ── DEALS ── */}
         {tab==="deals"&&<>
