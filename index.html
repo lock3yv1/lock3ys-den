@@ -570,12 +570,24 @@ function App() {
     setPulse(true);
     try {
       const r = await fetch(`${DEALS_URL}?t=${Date.now()}`);
-      if (r.ok) { const d=await r.json(); if(Array.isArray(d)&&d.length>0){setDeals(d);setLive(true);setUpdated(new Date());setLoading(false);setPulse(false);return;} }
+      if (r.ok) {
+        const d = await r.json();
+        if (Array.isArray(d) && d.length > 0) {
+          setDeals(d); setLive(true); setUpdated(new Date()); setLoading(false);
+          setPulse(false); return;
+        }
+      }
     } catch {}
+    // Fallback to demo
     setDeals(DEMO); setLive(false); setUpdated(new Date()); setLoading(false); setPulse(false);
   }
 
-  useEffect(()=>{if(unlocked){load();const i=setInterval(load,600000);return()=>clearInterval(i);}},[unlocked]);
+  useEffect(() => {
+    if (!unlocked) return;
+    load();
+    const i = setInterval(load, 600000);
+    return () => clearInterval(i);
+  }, [unlocked]);
 
   function tryUnlock() {
     if (attempt === PASS) {
