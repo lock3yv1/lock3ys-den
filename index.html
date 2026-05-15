@@ -1,1 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+  <meta name="theme-color" content="#07070D"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <title>Lock3y's Den — UK Pokemon TCG Deals</title>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>*{box-sizing:border-box;margin:0;padding:0}body{background:#07070D;color:#fff;overflow-x:hidden}</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" data-presets="react">
+const { useState, useEffect } = React;
+
+const DEALS_URL = "https://raw.githubusercontent.com/lock3yv1/lock3ys-den/main/deals.json";
+const EF = 0.13, POST = 4;
+
+// ─── HOLD DATA ────────────────────────────────────────────────────────────────
+const HOLD = {
+  // Sources: PriceCharting, eBay UK sold, Bleeding Cool Value Watch Jan 2026,
+  // Athlon Sports TCG Investing Guide Jan 2026, Resell Calendar Nov 2025
+  "evolving skies":       { score:10, trend:"rising",   yr1:1.18, yr2:1.40, note:"Umbreon VMAX Alt Art $1,771 raw, 449% long-term. Boxes $260-310 in March 2026." },
+  "hidden fates":         { score:9,  trend:"rising",   yr1:1.15, yr2:1.32, note:"Shiny Vault. Consistently appreciates every year without fail." },
+  "prismatic evolutions": { score:9,  trend:"rising",   yr1:1.22, yr2:1.50, note:"ETBs £90 mid-2026. Umbreon ex SIR $1,005 raw. Eevee demand is permanent." },
+  "shining fates":        { score:8,  trend:"stable",   yr1:1.10, yr2:1.21, note:"Shiny Charizard VMAX. Strong floor. Steady appreciation." },
+  "champions path":       { score:8,  trend:"rising",   yr1:1.15, yr2:1.32, note:"Tiny print run. Shiny Charizard V. Very limited supply." },
+  "cosmic eclipse":       { score:7,  trend:"stable",   yr1:1.08, yr2:1.17, note:"Last Sun & Moon set. Nostalgia premium building steadily." },
+  "151":                  { score:8,  trend:"rising",   yr1:1.15, yr2:1.32, note:"Original 151. Evergreen nostalgia. Bundles still appreciating." },
+  "phantasmal flames":    { score:7,  trend:"rising",   yr1:1.18, yr2:1.40, note:"ME05. Mega Gengar ex SIR. Grade early for 3-5x multipliers." },
+  "chaos rising":         { score:7,  trend:"rising",   yr1:1.15, yr2:1.32, note:"ME04. Just launched May 2026. Early buyer window is open NOW." },
+  "perfect order":        { score:7,  trend:"rising",   yr1:1.12, yr2:1.25, note:"ME03. Mega Zygarde ex SIR at £300+." },
+  "ascended heroes":      { score:6,  trend:"rising",   yr1:1.10, yr2:1.21, note:"ME01. Mega Era is 2026's dominant market force." },
+  "destined rivals":      { score:5,  trend:"stable",   yr1:1.05, yr2:1.10, note:"ME02. Settling post-launch. Moderate hold." },
+  "surging sparks":       { score:6,  trend:"rising",   yr1:1.12, yr2:1.28, note:"Boxes up 150-250% over 18 months. Pikachu ex SIR at $271." },
+  "paldean fates":        { score:6,  trend:"stable",   yr1:1.08, yr2:1.17, note:"Shiny vault. Strong collector demand. Steady floor." },
+  "stellar crown":        { score:5,  trend:"rising",   yr1:1.08, yr2:1.20, note:"Terapagos ex. Sealed boxes up 50% to $150. Underrated." },
+  "journey together":     { score:5,  trend:"stable",   yr1:1.04, yr2:1.08, note:"Recent release. Still finding its floor." },
+  "brilliant stars":      { score:5,  trend:"stable",   yr1:1.05, yr2:1.10, note:"Charizard VSTAR. Consistent demand." },
+  "chilling reign":       { score:6,  trend:"rising",   yr1:1.08, yr2:1.17, note:"Ice/Shadow Rider Calyrex. Criminally underrated set." },
+  "battle styles":        { score:5,  trend:"stable",   yr1:1.05, yr2:1.10, note:"Urshifu V. Solid competitive + collector demand." },
+  "darkness ablaze":      { score:5,  trend:"stable",   yr1:1.04, yr2:1.08, note:"Charizard VMAX. Fan favourite. Stable floor." },
+  "unified minds":        { score:6,  trend:"stable",   yr1:1.05, yr2:1.10, note:"Tag Team era. Steady year-on-year gains." },
+  "unbroken bonds":       { score:6,  trend:"stable",   yr1:1.05, yr2:1.10, note:"Strong Tag Team lineup." },
+  "silver tempest":       { score:5,  trend:"stable",   yr1:1.05, yr2:1.10, note:"Lugia V alt art. Consistent premium." },
+  "base set":             { score:10, trend:"rising",   yr1:1.25, yr2:1.60, note:"WOTC Base Set. The original. Vintage TCG up 30-50% in 2026." },
+  "jungle":               { score:9,  trend:"rising",   yr1:1.20, yr2:1.44, note:"WOTC Jungle. Scarce sealed supply. Vintage surge ongoing." },
+  "fossil":               { score:9,  trend:"rising",   yr1:1.18, yr2:1.40, note:"WOTC Fossil. Classic chase. Vintage market hot in 2026." },
+  "team rocket":          { score:8,  trend:"rising",   yr1:1.15, yr2:1.32, note:"WOTC Team Rocket. Dark cards premium. Strong floor." },
+  "gym heroes":           { score:8,  trend:"rising",   yr1:1.15, yr2:1.32, note:"WOTC Gym Heroes. Leader chase. Appreciating." },
+  "gym challenge":        { score:8,  trend:"rising",   yr1:1.15, yr2:1.32, note:"WOTC Gym Challenge. Strong collector demand." },
+  "neo genesis":          { score:9,  trend:"rising",   yr1:1.20, yr2:1.44, note:"WOTC Neo Genesis. Lugia. Vintage market surge 2026." },
+  "neo destiny":          { score:8,  trend:"rising",   yr1:1.18, yr2:1.40, note:"WOTC Neo Destiny. Dark & Shining chase cards." },
+  "celebrations":         { score:7,  trend:"stable",   yr1:1.08, yr2:1.17, note:"25th anniversary keepsake. Steady collector demand." },
+  "evolutions":           { score:7,  trend:"rising",   yr1:1.10, yr2:1.21, note:"XY Evolutions. Base Set art nostalgia. Appreciating." },
+  "fusion strike":        { score:4,  trend:"stable",   yr1:1.02, yr2:1.04, note:"Mew VMAX. Large print run limits ceiling." },
+  "twilight masquerade":  { score:4,  trend:"stable",   yr1:1.02, yr2:1.04, note:"Standard modern. Slow appreciation." },
+  "temporal forces":      { score:4,  trend:"stable",   yr1:1.02, yr2:1.04, note:"Standard modern. Slow appreciation." },
+  "paradox rift":         { score:3,  trend:"declining",yr1:0.96, yr2:0.92, note:"High print run. Softening market. Avoid holding." },
+  "obsidian flames":      { score:3,  trend:"declining",yr1:0.96, yr2:0.92, note:"Charizard ex fatigue. Declining." },
+  "crown zenith":         { score:4,  trend:"stable",   yr1:1.03, yr2:1.06, note:"Last SwSh set. Steady." },
+  "paldea evolved":       { score:2,  trend:"declining",yr1:0.92, yr2:0.85, note:"Oversupplied. Declining. Don't hold." },
+  "shrouded fable":       { score:4,  trend:"stable",   yr1:1.02, yr2:1.04, note:"Low hype. Modest potential." },
+};
+
+const DEMO = [
+  { id:"d1",  product:"Surging Sparks Booster Box",             retailer:"Total Cards",    buyNow:109.99, rrp:144.99, resell:215, url:"https://totalcards.net/products/pokemon-scarlet-violet-surging-sparks-booster-box-36-boosters",             lastSeen:new Date(Date.now()-4*60000).toISOString() },
+  { id:"d2",  product:"Evolving Skies Booster Pack",            retailer:"Double Sleeved", buyNow:26.95,  rrp:4.99,   resell:32,  url:"https://www.doublesleeved.co.uk/products/pokemon-tcg-evolving-skies-booster-pack",                          lastSeen:new Date(Date.now()-2*60000).toISOString() },
+  { id:"d3",  product:"151 Booster Bundle",                     retailer:"Total Cards",    buyNow:24.99,  rrp:24.99,  resell:50,  url:"https://totalcards.net/products/pokemon-scarlet-violet-151-booster-bundle",                                  lastSeen:new Date(Date.now()-10*60000).toISOString() },
+  { id:"d4",  product:"Prismatic Evolutions Elite Trainer Box", retailer:"Double Sleeved", buyNow:79.99,  rrp:49.99,  resell:92,  url:"https://www.doublesleeved.co.uk/products/pokemon-tcg-prismatic-evolutions-elite-trainer-box",               lastSeen:new Date(Date.now()-8*60000).toISOString() },
+  { id:"d5",  product:"Shining Fates Elite Trainer Box",        retailer:"Double Sleeved", buyNow:89.99,  rrp:49.99,  resell:112, url:"https://www.doublesleeved.co.uk/products/pokemon-tcg-shining-fates-elite-trainer-box",                      lastSeen:new Date(Date.now()-20*60000).toISOString() },
+  { id:"d6",  product:"Surging Sparks Elite Trainer Box",       retailer:"Total Cards",    buyNow:44.99,  rrp:49.99,  resell:58,  url:"https://totalcards.net/products/pokemon-scarlet-violet-surging-sparks-elite-trainer-box",                   lastSeen:new Date(Date.now()-6*60000).toISOString() },
+  { id:"d7",  product:"Evolving Skies Elite Trainer Box",       retailer:"Double Sleeved", buyNow:159.99, rrp:49.99,  resell:172, url:"https://www.doublesleeved.co.uk/products/pokemon-tcg-evolving-skies-etb-sylveon",                           lastSeen:new Date(Date.now()-9*60000).toISOString() },
+  { id:"d8",  product:"Chilling Reign Booster Box",             retailer:"Double Sleeved", buyNow:149.95, rrp:144.99, resell:152, url:"https://www.doublesleeved.co.uk/products/pokemon-tcg-chilling-reign-booster-box",                           lastSeen:new Date(Date.now()-18*60000).toISOString() },
+  { id:"d9",  product:"Destined Rivals Booster Box",            retailer:"Eterna Cards",   buyNow:98.99,  rrp:144.99, resell:105, url:"https://eternacards.co.uk/products/pokemon-tcg-destined-rivals-booster-box",                                lastSeen:new Date(Date.now()-3*60000).toISOString() },
+  { id:"d10", product:"Battle Styles Booster Box",              retailer:"Double Sleeved", buyNow:279.95, rrp:144.99, resell:172, url:"https://www.doublesleeved.co.uk/products/pokemon-tcg-battle-styles-booster-box",                            lastSeen:new Date(Date.now()-15*60000).toISOString() },
+  { id:"d11", product:"Surging Sparks Booster Bundle",          retailer:"Total Cards",    buyNow:22.99,  rrp:24.99,  resell:30,  url:"https://totalcards.net/products/pokemon-scarlet-violet-surging-sparks-booster-bundle",                      lastSeen:new Date(Date.now()-11*60000).toISOString() },
+  { id:"d12", product:"Battle Styles Booster Pack",             retailer:"Double Sleeved", buyNow:9.99,   rrp:4.99,   resell:11,  url:"https://www.doublesleeved.co.uk/products/pokemon-tcg-battle-styles-booster-pack",                           lastSeen:new Date(Date.now()-5*60000).toISOString() },
+];
+
+// ─── LOGIC ────────────────────────────────────────────────────────────────────
+function calcFlip(buy, sell) {
+  if (!sell) return { net:null, roi:null, fees:null };
+  const fees = +(sell * EF).toFixed(2);
+  const net  = +(sell - buy - fees - POST).toFixed(2);
+  return { net, roi: buy > 0 ? Math.round(net / buy * 100) : null, fees };
+}
+
+function calcHold(sell, title) {
+  if (!sell || !title) return null;
+  const key = Object.keys(HOLD).find(k => title.toLowerCase().includes(k));
+  if (!key) return null;
+  const h = HOLD[key];
+  const y1 = Math.round(sell * h.yr1), y2 = Math.round(sell * h.yr2);
+  const n1 = +(y1 - sell - y1*EF - POST).toFixed(2);
+  const n2 = +(y2 - sell - y2*EF - POST).toFixed(2);
+  return { ...h, yr1val:y1, yr2val:y2, yr1net:n1, yr2net:n2,
+    yr1roi:Math.round(n1/sell*100), yr2roi:Math.round(n2/sell*100),
+    yr1pct:Math.round((h.yr1-1)*100), yr2pct:Math.round((h.yr2-1)*100) };
+}
+
+// Colour system: green=money, red=danger, white=neutral, all on near-black
+const G = {
+  S: { key:"S", label:"FIRE DEAL",   c:"#00FF88", bg:"rgba(0,255,136,0.08)", border:"rgba(0,255,136,0.3)" },
+  A: { key:"A", label:"STRONG BUY", c:"#39D98A", bg:"rgba(57,217,138,0.07)", border:"rgba(57,217,138,0.25)" },
+  B: { key:"B", label:"GOOD DEAL",  c:"#FFD60A", bg:"rgba(255,214,10,0.07)", border:"rgba(255,214,10,0.25)" },
+  C: { key:"C", label:"MARGINAL",   c:"#FF8C00", bg:"rgba(255,140,0,0.07)",  border:"rgba(255,140,0,0.25)" },
+  H: { key:"H", label:"BUY & HOLD", c:"#B388FF", bg:"rgba(179,136,255,0.07)",border:"rgba(179,136,255,0.25)" },
+  D: { key:"D", label:"AVOID",      c:"#FF3B3B", bg:"rgba(255,59,59,0.07)",  border:"rgba(255,59,59,0.25)" },
+  "?":{ key:"?",label:"IN STOCK",   c:"#8899AA", bg:"rgba(136,153,170,0.05)",border:"rgba(136,153,170,0.15)" },
+};
+
+function getGradeKey(roi, hs=0) {
+  if (roi===null) return "?";
+  if (roi>=25) return "S"; if (roi>=15) return "A"; if (roi>=8) return "B";
+  if (roi>=2) return "C"; if (hs>=8) return "H"; if (hs>=6) return "H";
+  return "D";
+}
+
+function getVerdict(roi, net, hs=0, h=null) {
+  if (roi===null) return { v1:"IN STOCK", v2:"No resell data yet" };
+  if (roi>=25)   return { v1:`${roi}% ROI · FLIP IT`, v2:`+£${net?.toFixed(2)} profit after eBay 13% + £4 post` };
+  if (roi>=15)   return { v1:`${roi}% ROI · STRONG BUY`, v2:`+£${net?.toFixed(2)} after all fees. Pull the trigger.` };
+  if (roi>=8)    return { v1:`${roi}% ROI · WORTH IT`, v2:`+£${net?.toFixed(2)} profit. Solid flip.` };
+  if (roi>=2)    return { v1:`MARGINAL`, v2:`+£${net?.toFixed(2)} — only buy if you want to keep it` };
+  if (hs>=8)     return { v1:`BUY & HOLD`, v2:`Bad flip (−£${Math.abs(net)?.toFixed(2)}) BUT +${h?.yr1pct}% yr1 / +${h?.yr2pct}% yr2` };
+  if (hs>=6)     return { v1:`HOLD PLAY`, v2:`−£${Math.abs(net)?.toFixed(2)} flip but hold score ${hs}/10` };
+  if (roi>=-8)   return { v1:`SLIM LOSS`, v2:`−£${Math.abs(net)?.toFixed(2)} after fees. Weak hold too.` };
+  return           { v1:`AVOID`, v2:`−£${Math.abs(net)?.toFixed(2)} loss after eBay fees` };
+}
+
+function getPtype(t) {
+  const l = t.toLowerCase();
+  if (l.includes("booster box") && !l.includes("half")) return { l:"BOX",    c:"#FF3B3B" };
+  if (l.includes("half"))                               return { l:"½ BOX",  c:"#FF8C00" };
+  if (l.includes("elite trainer") || l.includes("etb"))return { l:"ETB",    c:"#B388FF" };
+  if (l.includes("booster bundle"))                    return { l:"BUNDLE", c:"#FF8C00" };
+  if (l.includes("booster pack"))                      return { l:"PACK",   c:"#38B6FF" };
+  if (l.includes("tin"))                               return { l:"TIN",    c:"#00CCC0" };
+  if (l.includes("blister"))                           return { l:"BLISTER",c:"#00CCC0" };
+  if (l.includes("collection"))                        return { l:"COLL.",  c:"#C44DFF" };
+  if (l.includes("deck"))                              return { l:"DECK",   c:"#39D98A" };
+  return { l:"SEALED", c:"#8899AA" };
+}
+
+function packCost(title, price) {
+  const t = title.toLowerCase();
+  if (t.includes("booster box") && !t.includes("half")) return +(price/36).toFixed(2);
+  if (t.includes("half")) return +(price/18).toFixed(2);
+  if (t.includes("bundle")) return +(price/6).toFixed(2);
+  return null;
+}
+
+function ago(iso) {
+  const m = Math.floor((Date.now()-new Date(iso))/60000);
+  return m<1?"now":m<60?`${m}m`:`${Math.floor(m/60)}h`;
+}
+
+// ─── CARD ─────────────────────────────────────────────────────────────────────
+function Card({ d, rank }) {
+  const [open, setOpen] = useState(false);
+  const { net, roi, fees } = calcFlip(d.buyNow, d.resell);
+  const h   = calcHold(d.resell, d.product);
+  const gk  = getGradeKey(roi, h?.score??0);
+  const gr  = G[gk];
+  const vd  = getVerdict(roi, net, h?.score??0, h);
+  const pt  = getPtype(d.product);
+  const pp  = packCost(d.product, d.buyNow);
+  const vsM = d.resell ? Math.round((d.buyNow-d.resell)/d.resell*100) : null;
+  const vsR = d.rrp    ? Math.round((d.buyNow-d.rrp)/d.rrp*100)      : null;
+  const tc  = h?.trend==="rising"?"#39D98A":h?.trend==="declining"?"#FF3B3B":"#FF8C00";
+  const DISP = "'Rajdhani', sans-serif";
+  const MONO = "'Share Tech Mono', 'Courier New', monospace";
+  const SUB  = "'Rajdhani', 'Arial', sans-serif";
+
+  return (
+    <div onClick={()=>setOpen(o=>!o)} style={{
+      background:"#0A0A10",
+      border:`1px solid ${open ? gr.border : "rgba(255,255,255,0.06)"}`,
+      borderRadius:8,
+      overflow:"hidden",
+      cursor:"pointer",
+      marginBottom:10,
+      transition:"border-color 0.15s, box-shadow 0.15s",
+      boxShadow: open ? `0 4px 40px ${gr.bg}` : "none",
+    }}>
+      {/* Grade accent stripe */}
+      <div style={{ height:3, background:`linear-gradient(90deg,${gr.c},${gr.c}55,transparent)` }}/>
+
+      {/* ── TOP ROW ── */}
+      <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"10px 14px 0" }}>
+        {/* Grade badge */}
+        <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+          <div style={{
+            width:34, height:34, borderRadius:6,
+            background:`linear-gradient(135deg,${gr.bg},transparent)`,
+            border:`2px solid ${gr.c}`,
+            display:"flex", alignItems:"center", justifyContent:"center",
+            flexShrink:0,
+            boxShadow:`0 0 16px ${gr.c}44`,
+          }}>
+            <span style={{ fontFamily:DISP, fontSize:12, fontWeight:500, color:gr.c, lineHeight:1 }}>{gk}</span>
+          </div>
+          <div>
+            <div style={{ fontFamily:DISP, fontSize:11, fontWeight:500, color:gr.c, letterSpacing:"0.08em", lineHeight:1 }}>{gr.label}</div>
+            {rank<=5 && <div style={{ fontFamily:MONO, fontSize:8, color:"#777", marginTop:2, letterSpacing:"0.08em" }}>#{rank} right now</div>}
+          </div>
+        </div>
+        {/* Type + time */}
+        <div style={{ display:"flex", alignItems:"center", gap:7 }}>
+          <span style={{ fontFamily:DISP, fontSize:11, fontWeight:500, color:pt.c, background:`${pt.c}22`, border:`1px solid ${pt.c}55`, padding:"3px 8px", borderRadius:3, letterSpacing:"0.08em" }}>{pt.l}</span>
+          <span style={{ fontFamily:MONO, fontSize:9, color:"#B0B0B0" }}>{ago(d.lastSeen)}</span>
+          <span style={{ fontFamily:MONO, fontSize:8, color:"#999", transform:open?"rotate(180deg)":"none", transition:"transform 0.2s" }}>▼</span>
+        </div>
+      </div>
+
+      {/* ── PRODUCT + PRICE ── */}
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", padding:"10px 14px 0", gap:12 }}>
+        <div style={{ flex:1, minWidth:0 }}>
+          <div style={{ fontFamily:DISP, fontSize:14, fontWeight:500, color:"#FFFFFF", lineHeight:1.3, letterSpacing:"0.01em", wordBreak:"break-word" }}>{d.product}</div>
+          <div style={{ fontFamily:MONO, fontSize:10, color:"#888", marginTop:3, letterSpacing:"0.04em" }}>{d.retailer}</div>
+        </div>
+        <div style={{ textAlign:"right", flexShrink:0 }}>
+          <div style={{ fontFamily:MONO, fontSize:18, fontWeight:400, color:"#FFFFFF", lineHeight:1, letterSpacing:"0.02em" }}>£{d.buyNow.toFixed(2)}</div>
+          {net!==null&&(
+            <div style={{
+              display:"inline-block", marginTop:4,
+              fontFamily:MONO, fontSize:11, letterSpacing:"0.04em",
+              color: net>=0?"#00FF88":"#FF3B3B",
+              background: net>=0?"rgba(0,255,136,0.1)":"rgba(255,59,59,0.1)",
+              border:`1px solid ${net>=0?"rgba(0,255,136,0.35)":"rgba(255,59,59,0.35)"}`,
+              padding:"2px 8px", borderRadius:3,
+            }}>{net>=0?"+":"-"}£{Math.abs(net).toFixed(2)} flip</div>
+          )}
+        </div>
+      </div>
+
+      {/* ── STAT PILLS ── */}
+      <div style={{ display:"flex", gap:5, flexWrap:"wrap", padding:"10px 14px 14px" }}>
+
+        {/* #1 — eBay comparison: most critical, biggest, most vibrant */}
+        {d.resell&&vsM!==null&&(
+          <div style={{
+            fontFamily:DISP, fontSize:12, fontWeight:500, letterSpacing:"0.08em",
+            padding:"5px 11px", borderRadius:4,
+            background: vsM<=-15?"rgba(0,255,136,0.15)":vsM<=-5?"rgba(0,255,136,0.1)":vsM<=0?"rgba(57,217,138,0.08)":"rgba(255,59,59,0.12)",
+            color:       vsM<=-15?"#00FF88":vsM<=-5?"#39D98A":vsM<=0?"#39D98A":"#FF3B3B",
+            border:`1px solid ${vsM<=0?"rgba(0,255,136,0.4)":"rgba(255,59,59,0.4)"}`,
+          }}>
+            {vsM<=-15?`🔥 ${Math.abs(vsM)}% BELOW EBAY`:vsM<0?`↓ ${Math.abs(vsM)}% BELOW EBAY`:`↑ ${vsM}% ABOVE EBAY`}
+          </div>
+        )}
+
+        {/* #2 — eBay resell: green = buying below market (profit possible), red = above */}
+        {d.resell&&(
+          <div style={{
+            fontFamily:MONO, fontSize:11, fontWeight:700,
+            padding:"5px 10px", borderRadius:4,
+            background: vsM<0 ? "rgba(0,255,136,0.1)" : "rgba(255,59,59,0.1)",
+            color:       vsM<0 ? "#00FF88" : "#FF3B3B",
+            border:`1px solid ${vsM<0?"rgba(0,255,136,0.3)":"rgba(255,59,59,0.3)"}`,
+          }}>eBay £{d.resell.toFixed(2)}</div>
+        )}
+
+        {/* #3 — RRP: warm gold so it's clearly different from the eBay price */}
+        {d.rrp&&vsR!==null&&(
+          <div style={{
+            fontFamily:MONO, fontSize:11,
+            padding:"5px 10px", borderRadius:4,
+            background:"rgba(255,196,0,0.08)", color:"#FFC400",
+            border:"1px solid rgba(255,196,0,0.25)",
+          }}>RRP £{d.rrp.toFixed(2)}{vsR<0?` · ${Math.abs(vsR)}% OFF`:"" }</div>
+        )}
+
+        {/* #4 — Per pack: cyan, clearly different */}
+        {pp&&(
+          <div style={{
+            fontFamily:MONO, fontSize:11,
+            padding:"5px 10px", borderRadius:4,
+            background:"rgba(0,200,200,0.08)", color:"#00CCC0",
+            border:"1px solid rgba(0,200,200,0.25)",
+          }}>£{pp}/PACK</div>
+        )}
+
+        {/* #5 — Hold trend */}
+        {h&&(
+          <div style={{
+            fontFamily:MONO, fontSize:11,
+            padding:"5px 10px", borderRadius:4,
+            background:`${tc}12`, color:tc,
+            border:`1px solid ${tc}40`,
+          }}>{h.trend==="rising"?"↗":h.trend==="declining"?"↘":"→"} {h.yr1pct>=0?"+":""}{h.yr1pct}% EST YR1</div>
+        )}
+      </div>
+
+      {/* ── QUICK BUY ── */}
+      <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"0 14px 12px" }} onClick={e=>e.stopPropagation()}>
+        <a href={d.url} target="_blank" rel="noopener noreferrer"
+          style={{
+            background:"#CC0000", borderRadius:4, padding:"6px 16px",
+            color:"#fff", fontFamily:MONO, fontSize:10,
+            letterSpacing:"0.1em", display:"inline-flex", alignItems:"center", gap:5,
+          }}>BUY NOW →</a>
+        <div style={{ fontFamily:MONO, fontSize:9, color:"#444", cursor:"pointer" }}>
+          {open ? "▲ less" : "▼ details"}
+        </div>
+      </div>
+
+      {/* ══ EXPANDED ══ */}
+      {open&&(
+        <div style={{ borderTop:"1px solid rgba(255,255,255,0.06)", padding:"14px" }}>
+
+          {/* FLIP CALCULATOR */}
+          {net!==null&&(
+            <div style={{ background:"rgba(0,0,0,0.5)", border:"1px solid rgba(255,255,255,0.08)", borderRadius:6, padding:"14px", marginBottom:10 }}>
+              <div style={{ fontFamily:MONO, fontSize:9, color:"#888", letterSpacing:"0.15em", marginBottom:12 }}>FLIP CALCULATOR</div>
+              <div style={{ display:"grid", gridTemplateColumns:"1fr auto", gap:"8px 20px" }}>
+                <span style={{ fontFamily:MONO, fontSize:12, color:"#C8C8C8" }}>eBay resell price</span>
+                <span style={{ fontFamily:MONO, fontSize:12, color:"#00FF88", fontWeight:500 }}>£{d.resell?.toFixed(2)}</span>
+
+                <span style={{ fontFamily:MONO, fontSize:12, color:"#C8C8C8" }}>eBay fees (13%)</span>
+                <span style={{ fontFamily:MONO, fontSize:12, color:"#FF6060" }}>−£{fees?.toFixed(2)}</span>
+
+                <span style={{ fontFamily:MONO, fontSize:12, color:"#C8C8C8" }}>Postage</span>
+                <span style={{ fontFamily:MONO, fontSize:12, color:"#FF6060" }}>−£{POST.toFixed(2)}</span>
+
+                <span style={{ fontFamily:MONO, fontSize:12, color:"#C8C8C8" }}>Buy price</span>
+                <span style={{ fontFamily:MONO, fontSize:12, color:"#FF6060" }}>−£{d.buyNow.toFixed(2)}</span>
+
+                <div style={{ gridColumn:"1/-1", height:1, background:"rgba(255,255,255,0.08)", margin:"2px 0" }}/>
+
+                <span style={{ fontFamily:DISP, fontSize:12, fontWeight:500, color:net>=0?"#00FF88":"#FF3B3B", letterSpacing:"0.06em" }}>NET PROFIT</span>
+                <span style={{ fontFamily:DISP, fontSize:12, fontWeight:500, color:net>=0?"#00FF88":"#FF3B3B" }}>
+                  {net>=0?"+":"-"}£{Math.abs(net).toFixed(2)}
+                  <span style={{ fontFamily:MONO, fontSize:11, opacity:0.6 }}> ({roi>=0?"+":""}{roi}%)</span>
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* HOLD ANALYSIS */}
+          {h&&(()=>{
+            const tC = h.trend==="rising"?"#39D98A":h.trend==="declining"?"#FF3B3B":"#FF8C00";
+            // Calculate profit vs what user ACTUALLY PAYS (buyNow), not market price
+            const yr1fees = +(h.yr1val * EF + POST).toFixed(2);
+            const yr2fees = +(h.yr2val * EF + POST).toFixed(2);
+            const yr1profit = +(h.yr1val - yr1fees - d.buyNow).toFixed(2);
+            const yr2profit = +(h.yr2val - yr2fees - d.buyNow).toFixed(2);
+            const yr1roi    = Math.round(yr1profit / d.buyNow * 100);
+            const yr2roi    = Math.round(yr2profit / d.buyNow * 100);
+            return (
+              <div style={{ background:"rgba(0,0,0,0.5)", border:"1px solid rgba(255,255,255,0.08)", borderRadius:6, padding:"14px", marginBottom:10 }}>
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12 }}>
+                  <div style={{ fontFamily:MONO, fontSize:9, color:"#888", letterSpacing:"0.15em" }}>HOLD ANALYSIS</div>
+                  <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+                    <span style={{ fontFamily:MONO, fontSize:10, color:tC }}>{h.trend==="rising"?"↗ RISING":h.trend==="declining"?"↘ FALLING":"→ STABLE"}</span>
+                    <span style={{ fontFamily:MONO, fontSize:12, color:h.score>=7?"#00FF88":h.score>=5?"#FF8C00":"#FF3B3B" }}>{h.score}/10</span>
+                  </div>
+                </div>
+
+                {/* 1yr */}
+                {(() => {
+                  const g1 = yr1roi>=80?"#00FF88":yr1roi>=40?"#00EE77":yr1roi>=15?"#39D98A":"#2ECC71";
+                  return (
+                    <div style={{ background:yr1profit>=0?"rgba(0,255,136,0.06)":"rgba(255,59,59,0.06)", border:`1px solid ${yr1profit>=0?"rgba(0,255,136,0.25)":"rgba(255,59,59,0.25)"}`, borderRadius:6, padding:"12px", marginBottom:7 }}>
+                      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+                        <div style={{ flex:1, marginRight:12 }}>
+                          <div style={{ fontFamily:MONO, fontSize:10, color:"#CCCCCC", fontWeight:700, marginBottom:5 }}>HOLD 1 YEAR</div>
+                          <div style={{ fontFamily:MONO, fontSize:9, color:"#AAAAAA", lineHeight:1.6 }}>
+                            Buy for <span style={{color:"#FFFFFF"}}>£{d.buyNow.toFixed(2)}</span> · sell in 12 months for est. <span style={{color:"#FFFFFF"}}>£{h.yr1val}</span> · after eBay fees &amp; postage you walk away with:
+                          </div>
+                        </div>
+                        <div style={{ textAlign:"right", flexShrink:0 }}>
+                          <div style={{ fontFamily:MONO, fontSize:16, fontWeight:700, color:yr1profit>=0?g1:"#FF3B3B" }}>
+                            {yr1profit>=0?"+":"-"}£{Math.abs(yr1profit).toFixed(2)}
+                          </div>
+                          <div style={{ fontFamily:MONO, fontSize:9, color:yr1roi>=0?g1:"#FF3B3B", marginTop:2 }}>{yr1roi>=0?"+":""}{yr1roi}% ROI</div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
+
+                {/* 2yr */}
+                {(() => {
+                  const g2 = yr2roi>=80?"#00FF88":yr2roi>=40?"#00EE77":yr2roi>=15?"#39D98A":"#2ECC71";
+                  return (
+                    <div style={{ background:yr2profit>=0?"rgba(0,255,136,0.06)":"rgba(255,59,59,0.06)", border:`1px solid ${yr2profit>=0?"rgba(0,255,136,0.25)":"rgba(255,59,59,0.25)"}`, borderRadius:6, padding:"12px", marginBottom:10 }}>
+                      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+                        <div style={{ flex:1, marginRight:12 }}>
+                          <div style={{ fontFamily:MONO, fontSize:10, color:"#CCCCCC", fontWeight:700, marginBottom:5 }}>HOLD 2 YEARS</div>
+                          <div style={{ fontFamily:MONO, fontSize:9, color:"#AAAAAA", lineHeight:1.6 }}>
+                            Buy for <span style={{color:"#FFFFFF"}}>£{d.buyNow.toFixed(2)}</span> · sell in 24 months for est. <span style={{color:"#FFFFFF"}}>£{h.yr2val}</span> · after eBay fees &amp; postage you walk away with:
+                          </div>
+                        </div>
+                        <div style={{ textAlign:"right", flexShrink:0 }}>
+                          <div style={{ fontFamily:MONO, fontSize:16, fontWeight:700, color:yr2profit>=0?g2:"#FF3B3B" }}>
+                            {yr2profit>=0?"+":"-"}£{Math.abs(yr2profit).toFixed(2)}
+                          </div>
+                          <div style={{ fontFamily:MONO, fontSize:9, color:yr2roi>=0?g2:"#FF3B3B", marginTop:2 }}>{yr2roi>=0?"+":""}{yr2roi}% ROI</div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
+
+                <div style={{ fontFamily:MONO, fontSize:10, color:"#C8C8C8", lineHeight:1.6 }}>💡 {h.note}</div>
+              </div>
+            );
+          })()}
+
+          {/* VERDICT — FLIP NOW */}
+          <div style={{ background:gr.bg, border:`1px solid ${gr.border}`, borderRadius:6, padding:"12px 14px", marginBottom:12 }}>
+            <div style={{ fontFamily:MONO, fontSize:9, color:gr.c, opacity:0.5, letterSpacing:"0.12em", marginBottom:5 }}>FLIP NOW — BUY &amp; SELL ON EBAY IMMEDIATELY</div>
+            <div style={{ fontFamily:DISP, fontSize:13, fontWeight:600, color:gr.c, letterSpacing:"0.06em", marginBottom:3 }}>🏆 {vd.v1}</div>
+            <div style={{ fontFamily:MONO, fontSize:10, color:gr.c, opacity:0.7 }}>{vd.v2}</div>
+          </div>
+
+          {/* BUTTONS */}
+          <div style={{ display:"flex", gap:8 }}>
+            <a href={d.url} target="_blank" rel="noopener noreferrer" onClick={e=>e.stopPropagation()}
+              style={{ flex:1, background:"#CC0000", borderRadius:5, padding:"10px", color:"#fff", fontFamily:MONO, fontSize:11, letterSpacing:"0.1em", display:"flex", alignItems:"center", justifyContent:"center", boxShadow:"0 2px 12px rgba(204,0,0,0.35)" }}>
+              BUY NOW →
+            </a>
+            <button onClick={e=>{e.stopPropagation();window.open(`https://wa.me/?text=${encodeURIComponent(`${gr.label}: ${d.product}\n£${d.buyNow.toFixed(2)} @ ${d.retailer}\n${vd.v1} — ${vd.v2}\n${d.url}`)}`,"_blank");}}
+              style={{ width:44, background:"transparent", border:"1px solid #2a2a3a", borderRadius:5, color:"#777", fontSize:14, cursor:"pointer" }}>📤</button>
+          </div>
+          <div style={{ marginTop:8, fontFamily:MONO, fontSize:8, color:"#888", lineHeight:1.6 }}>
+            * 13% eBay final value fee · £4 postage estimate · Hold projections are estimates, not financial advice
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── HEAT TAB ─────────────────────────────────────────────────────────────────
+function HeatTab() {
+  const DISP = "'Rajdhani', sans-serif";
+  const MONO = "'Share Tech Mono','Courier New',monospace";
+  const sets = [
+    {n:"Base Set (WOTC)",      y1:"+25%",y2:"+60%",s:10,t:"rising"},
+    {n:"Neo Genesis (WOTC)",   y1:"+20%",y2:"+44%",s:9, t:"rising"},
+    {n:"Evolving Skies",       y1:"+20%",y2:"+44%",s:10,t:"rising"},
+    {n:"Prismatic Evolutions", y1:"+25%",y2:"+56%",s:9, t:"rising"},
+    {n:"Hidden Fates",         y1:"+15%",y2:"+32%",s:9, t:"rising"},
+    {n:"151",                  y1:"+15%",y2:"+32%",s:8, t:"rising"},
+    {n:"Shining Fates",        y1:"+10%",y2:"+21%",s:8, t:"stable"},
+    {n:"Champions Path",       y1:"+15%",y2:"+32%",s:8, t:"rising"},
+    {n:"Phantasmal Flames",    y1:"+20%",y2:"+44%",s:7, t:"rising"},
+    {n:"Chaos Rising",         y1:"+15%",y2:"+32%",s:7, t:"rising"},
+    {n:"Perfect Order",        y1:"+12%",y2:"+25%",s:7, t:"rising"},
+    {n:"XY Evolutions",        y1:"+10%",y2:"+21%",s:7, t:"rising"},
+    {n:"Chilling Reign",       y1:"+8%", y2:"+17%",s:6, t:"rising"},
+    {n:"Paradox Rift",         y1:"−2%", y2:"−4%", s:4, t:"declining"},
+    {n:"Obsidian Flames",      y1:"−2%", y2:"−4%", s:4, t:"declining"},
+    {n:"Paldea Evolved",       y1:"−5%", y2:"−10%",s:3, t:"declining"},
+  ];
+  return (
+    <div>
+      <div style={{ fontFamily:MONO, fontSize:9, color:"#B0B0B0", marginBottom:16, letterSpacing:"0.14em" }}>SET INVESTMENT MAP · PROJECTED eBay UK APPRECIATION</div>
+      {sets.map(s => {
+        const tC = s.t==="rising"?"#39D98A":s.t==="declining"?"#FF3B3B":"#FF8C00";
+        const up = s.y1.startsWith("+");
+        return (
+          <div key={s.n} style={{ background:"#0A0A10", border:"1px solid rgba(255,255,255,0.06)", borderLeft:`3px solid ${tC}`, borderRadius:8, padding:"11px 14px", marginBottom:7 }}>
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+              <div>
+                <div style={{ fontFamily:DISP, fontSize:14, fontWeight:500, color:"#FFFFFF", letterSpacing:"0.02em" }}>{s.n}</div>
+                <div style={{ display:"flex", gap:8, marginTop:3 }}>
+                  <span style={{ fontFamily:MONO, fontSize:9, color:tC, fontWeight:500 }}>{s.t==="rising"?"↗ RISING":s.t==="declining"?"↘ FALLING":"→ STABLE"}</span>
+                  <span style={{ fontFamily:MONO, fontSize:9, color:"#B0B0B0" }}>HOLD {s.s}/10</span>
+                </div>
+              </div>
+              <div style={{ textAlign:"right" }}>
+                <div style={{ fontFamily:DISP, fontSize:12, fontWeight:500, color:up?tC:"#FF3B3B" }}>{s.y1} <span style={{ fontSize:10, opacity:0.4 }}>1YR</span></div>
+                <div style={{ fontFamily:DISP, fontSize:12, fontWeight:500, color:up?tC:"#FF3B3B" }}>{s.y2} <span style={{ fontSize:10, opacity:0.4 }}>2YR</span></div>
+              </div>
+            </div>
+            <div style={{ marginTop:8, height:3, background:"rgba(255,255,255,0.05)", borderRadius:2 }}>
+              <div style={{ height:"100%", width:`${s.s*10}%`, background:tC, borderRadius:2, opacity:0.7 }}/>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// ─── MAIN APP ─────────────────────────────────────────────────────────────────
+function App() {
+  const [deals,   setDeals]   = useState([]);
+  const [live,    setLive]    = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [updated, setUpdated] = useState(null);
+  const [filter,  setFilter]  = useState("all");
+  const [typeF,   setTypeF]   = useState("all");
+  const [tab,     setTab]     = useState("deals");
+  const [pulse,   setPulse]   = useState(false);
+
+  async function load() {
+    setPulse(true); setTimeout(()=>setPulse(false),1500);
+    try {
+      const r = await fetch(`${DEALS_URL}?t=${Date.now()}`);
+      if (r.ok) { const d=await r.json(); if(Array.isArray(d)&&d.length>0){setDeals(d);setLive(true);setUpdated(new Date());setLoading(false);return;} }
+    } catch {}
+    setDeals(DEMO); setLive(false); setUpdated(new Date()); setLoading(false);
+  }
+
+  useEffect(()=>{load();const i=setInterval(load,600000);return()=>clearInterval(i);},[]);
+
+  const sorted=[...deals].sort((a,b)=>(calcFlip(b.buyNow,b.resell).roi??-999)-(calcFlip(a.buyNow,a.resell).roi??-999));
+  const filtered=sorted.filter(d=>{
+    const t=d.product.toLowerCase();
+    if(typeF==="boxes") return t.includes("booster box")&&!t.includes("half");
+    if(typeF==="half")  return t.includes("half");
+    if(typeF==="etbs")  return t.includes("elite trainer")||t.includes("etb");
+    if(typeF==="packs") return t.includes("booster pack");
+    if(typeF==="bundles")return t.includes("bundle");
+    if(typeF==="tins")  return t.includes("tin")||t.includes("blister")||t.includes("collection");
+    return true;
+  }).filter(d=>{
+    const r=calcFlip(d.buyNow,d.resell).roi;
+    if(filter==="buy")  return r!==null&&r>=8;
+    if(filter==="flip") return r!==null&&r>0;
+    if(filter==="avoid")return r!==null&&r<0;
+    return true;
+  });
+
+  const buyN=sorted.filter(d=>(calcFlip(d.buyNow,d.resell).roi??-999)>=8).length;
+  const excN=sorted.filter(d=>(calcFlip(d.buyNow,d.resell).roi??-999)>=15).length;
+  const now=updated?updated.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}):"--:--";
+  const best=sorted[0];
+  const DISP="'Rajdhani', sans-serif";
+  const MONO="'Share Tech Mono','Courier New',monospace";
+  const SUB="'Rajdhani','Arial',sans-serif";
+
+  return (<>
+    <style>{`
+      @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap');
+      *{box-sizing:border-box;margin:0;padding:0}
+      body{background:#07070D;color:#FFFFFF;-webkit-font-smoothing:antialiased}
+      @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+      @keyframes sweep{0%{left:-60%}100%{left:120%}}
+      @keyframes fadeup{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+      @keyframes spotlight-pulse{0%,100%{box-shadow:0 0 20px rgba(0,255,136,0.08),0 0 40px rgba(0,255,136,0.04)}50%{box-shadow:0 0 28px rgba(0,255,136,0.14),0 0 56px rgba(0,255,136,0.07)}}
+      ::-webkit-scrollbar{width:2px}::-webkit-scrollbar-thumb{background:#CC0000}
+      a{text-decoration:none;color:inherit}
+    `}</style>
+
+    {/* Subtle scanline overlay — Dr Disrespect signature */}
+    <div style={{ position:"fixed", inset:0, pointerEvents:"none", zIndex:9999,
+      background:"repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px)" }}/>
+
+    <div style={{ minHeight:"100vh", background:"#07070D", paddingBottom:84 }}>
+
+      {/* ══ HEADER ══ */}
+      <div style={{ background:"rgba(7,7,13,0.98)", borderBottom:"1px solid rgba(255,255,255,0.08)", padding:"0 16px", position:"sticky", top:0, zIndex:100, backdropFilter:"blur(20px)" }}>
+
+        {/* Ticker — classic Dr Disrespect footer text */}
+        <div style={{ display:"flex", justifyContent:"space-between", padding:"5px 0", borderBottom:"1px solid rgba(255,255,255,0.04)", fontSize:9, fontFamily:MONO, letterSpacing:"0.16em" }}>
+          <span style={{ color:"#CC0000", opacity:0.7 }}>VIOLENCE · SPEED · MOMENTUM</span>
+          <div style={{ display:"flex", alignItems:"center", gap:7 }}>
+            <div style={{ width:6, height:6, borderRadius:"50%", background:live?"#00FF88":"#FF8C00", boxShadow:live?"0 0 10px #00FF88":"0 0 10px #FF8C00", animation:"blink 2s infinite" }}/>
+            <span style={{ fontSize:9, fontFamily:MONO, color:live?"#00FF88":"#FF8C00" }}>{live?"LIVE":"DEMO"} · {now}</span>
+          </div>
+        </div>
+
+        {/* Logo row */}
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"10px 0 8px" }}>
+          <div>
+            {/* THE Dr Disrespect font treatment — condensed bold, red accent */}
+            <div style={{ display:"flex", alignItems:"baseline", gap:0, lineHeight:1 }}>
+              <span style={{ fontFamily:DISP, fontSize:22, fontWeight:600, color:"#FFFFFF", letterSpacing:"0.02em" }}>LOCK3Y'S</span>
+              <span style={{ fontFamily:DISP, fontSize:22, fontWeight:600, color:"#CC0000", letterSpacing:"0.03em", textShadow:"0 0 24px rgba(204,0,0,0.6)", marginLeft:7 }}>DEN</span>
+              <span style={{ fontFamily:MONO, fontSize:8, color:"#CC0000", background:"rgba(204,0,0,0.15)", border:"1px solid rgba(204,0,0,0.4)", padding:"2px 6px", borderRadius:2, marginLeft:8, letterSpacing:"0.1em" }}>BETA</span>
+            </div>
+            <div style={{ fontFamily:MONO, fontSize:9, color:"#B0B0B0", marginTop:3, letterSpacing:"0.08em" }}>UK POKEMON TCG · {deals.length} DEALS · REFRESH 10MIN</div>
+          </div>
+          <button onClick={load} style={{ background:"#CC0000", border:"none", borderRadius:5, padding:"7px 0", width:80, color:"#fff", fontFamily:MONO, fontSize:10, letterSpacing:"0.08em", cursor:"pointer", boxShadow:"0 2px 12px rgba(204,0,0,0.4)", transition:"opacity 0.15s", opacity:pulse?0.7:1, flexShrink:0, textAlign:"center" }}>
+            {pulse?"...":"⟳ SCAN"}
+          </button>
+        </div>
+
+        {/* Stat strip */}
+        <div style={{ display:"flex", gap:20, paddingBottom:10 }}>
+          <div style={{ fontFamily:MONO, fontSize:10, color:"#00FF88", letterSpacing:"0.06em" }}>● {excN} EXCELLENT</div>
+          <div style={{ fontFamily:MONO, fontSize:10, color:"#FFD60A", letterSpacing:"0.06em" }}>● {buyN} BUY NOW</div>
+          <div style={{ fontFamily:MONO, fontSize:10, color:"#666", letterSpacing:"0.06em" }}>● {deals.length} TOTAL</div>
+        </div>
+      </div>
+
+      {/* Scan sweep bar */}
+      {pulse&&(
+        <div style={{ height:2, background:"#07070D", overflow:"hidden", position:"relative" }}>
+          <div style={{ position:"absolute",top:0,height:"100%",width:"50%",background:"linear-gradient(90deg,transparent,#CC0000,transparent)",animation:"sweep 1s linear infinite" }}/>
+        </div>
+      )}
+
+      <div style={{ padding:"14px 16px" }}>
+
+        {/* DEMO BANNER */}
+        {!live&&(
+          <div style={{ background:"rgba(255,140,0,0.08)", border:"1px solid rgba(255,140,0,0.3)", borderRadius:6, padding:"10px 14px", marginBottom:14, display:"flex", gap:10, alignItems:"flex-start" }}>
+            <span style={{ fontSize:12, flexShrink:0 }}>⚠️</span>
+            <div>
+              <div style={{ fontFamily:DISP, fontSize:12, fontWeight:500, color:"#FF8C00", letterSpacing:"0.08em" }}>DEMO MODE</div>
+              <div style={{ fontFamily:MONO, fontSize:9, color:"#FF8C00", marginTop:2, lineHeight:1.6 }}>Example data. Run the GitHub Action to pull live deals from 16 UK retailers.</div>
+            </div>
+          </div>
+        )}
+
+        {/* BEST DEAL SPOTLIGHT */}
+        {best&&tab==="deals"&&(()=>{
+          const{net:bn}=calcFlip(best.buyNow,best.resell);
+          const bh=calcHold(best.resell,best.product);
+          const bg=G[getGradeKey(calcFlip(best.buyNow,best.resell).roi,bh?.score??0)];
+          return (
+            <div style={{ background:"#0C0C14", border:"1px solid rgba(0,255,136,0.15)", borderRadius:8, padding:"14px 16px", marginBottom:14, position:"relative", overflow:"hidden", boxShadow:"0 0 20px rgba(0,255,136,0.08), 0 0 40px rgba(0,255,136,0.04)", animation:"spotlight-pulse 3s ease-in-out infinite" }}>
+              <div style={{ position:"absolute",top:0,left:0,right:0,height:1,background:"linear-gradient(90deg,transparent,rgba(0,255,136,0.4),transparent)" }}/>
+              <div style={{ fontFamily:MONO, fontSize:8, color:"#00FF88", opacity:0.5, letterSpacing:"0.16em", marginBottom:8 }}>★ BEST OPPORTUNITY RIGHT NOW</div>
+              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:12 }}>
+                <div style={{ flex:1 }}>
+                  <div style={{ fontFamily:DISP, fontSize:12, fontWeight:500, color:"#FFFFFF", lineHeight:1.2, marginBottom:4 }}>{best.product}</div>
+                  <div style={{ fontFamily:MONO, fontSize:9, color:"#C8C8C8" }}>{best.retailer}{bn>0?` · +£${bn.toFixed(2)} FLIP`:""}</div>
+                </div>
+                <div style={{ textAlign:"right", flexShrink:0 }}>
+                  <div style={{ fontFamily:MONO, fontSize:17, fontWeight:400, color:"#FFFFFF", lineHeight:1 }}>£{best.buyNow.toFixed(2)}</div>
+                  <a href={best.url} target="_blank" rel="noopener noreferrer"
+                    style={{ fontFamily:DISP, fontSize:12, fontWeight:500, color:"#fff", background:"#CC0000", padding:"4px 12px", borderRadius:4, display:"inline-block", marginTop:6, letterSpacing:"0.08em" }}>BUY →</a>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
+
+        {/* TAB BAR */}
+        <div style={{ display:"flex", gap:2, marginBottom:14, background:"#0F0F18", border:"1px solid #252535", borderRadius:7, padding:3 }}>
+          {[{id:"deals",l:"🎯 DEALS"},{id:"heat",l:"🔥 HEAT"},{id:"stats",l:"📊 STATS"},{id:"shops",l:"🏪 SHOPS"}].map(t=>(
+            <button key={t.id} onClick={()=>setTab(t.id)} style={{ flex:1, background:tab===t.id?"#CC0000":"transparent", border:"none", borderRadius:5, padding:"9px 4px", color:tab===t.id?"#fff":"#AAAAAA", fontFamily:DISP, fontSize:12, letterSpacing:"0.08em", cursor:"pointer", transition:"all 0.15s" }}>{t.l}</button>
+          ))}
+        </div>
+
+        {/* ── DEALS ── */}
+        {tab==="deals"&&<>
+          {/* Type filter */}
+          <div style={{ display:"flex", gap:5, marginBottom:8, flexWrap:"wrap" }}>
+            {[{id:"all",l:"ALL"},{id:"boxes",l:"📦 BOXES"},{id:"half",l:"½ BOX"},{id:"etbs",l:"🎁 ETB"},{id:"packs",l:"🃏 PACK"},{id:"bundles",l:"📫 BUNDLE"},{id:"tins",l:"🥫 TINS+"}].map(f=>(
+              <button key={f.id} onClick={()=>setTypeF(f.id)} style={{
+                background: typeF===f.id ? "#CC0000" : "#161620",
+                border: `1px solid ${typeF===f.id ? "#CC0000" : "#333345"}`,
+                borderRadius:4, padding:"5px 11px",
+                fontFamily:MONO, fontSize:9,
+                color: typeF===f.id ? "#FFFFFF" : "#BBBBBB",
+                cursor:"pointer", letterSpacing:"0.06em",
+                transition:"all 0.12s",
+              }}>{f.l}</button>
+            ))}
+          </div>
+          {/* Deal filter */}
+          <div style={{ display:"flex", gap:5, marginBottom:14, flexWrap:"wrap" }}>
+            {[
+              {id:"all",  l:"ALL",       ac:"#FFFFFF", bg:"#1E1E2A"},
+              {id:"buy",  l:"✅ BUY",    ac:"#00FF88", bg:"#002A18"},
+              {id:"flip", l:"💰 FLIP",   ac:"#FFD60A", bg:"#2A2200"},
+              {id:"avoid",l:"❌ AVOID",  ac:"#FF3B3B", bg:"#2A0808"},
+            ].map(f=>(
+              <button key={f.id} onClick={()=>setFilter(f.id)} style={{
+                background: filter===f.id ? f.bg : "#161620",
+                border: `1px solid ${filter===f.id ? f.ac : "#333345"}`,
+                borderRadius:4, padding:"5px 12px",
+                fontFamily:MONO, fontSize:9,
+                color: filter===f.id ? f.ac : "#BBBBBB",
+                cursor:"pointer", transition:"all 0.12s",
+                letterSpacing:"0.06em",
+              }}>{f.l}</button>
+            ))}
+          </div>
+          <div style={{ fontFamily:MONO, fontSize:9, color:"#888", marginBottom:10, letterSpacing:"0.06em" }}>{filtered.length} RESULTS · BY ROI · TAP FOR FULL BREAKDOWN</div>
+          {loading
+            ?<div style={{ textAlign:"center",padding:"48px 0",fontFamily:MONO,color:"#B0B0B0",fontSize:11,letterSpacing:"0.1em" }}>SCANNING RETAILERS...</div>
+            :filtered.length===0
+            ?<div style={{ textAlign:"center",padding:"48px 0",fontFamily:MONO,color:"#B0B0B0",fontSize:11,letterSpacing:"0.1em" }}>NO DEALS MATCH</div>
+            :<div style={{animation:"fadeup 0.3s ease"}}>{filtered.map((d,i)=><Card key={d.id||i} d={d} rank={i+1}/>)}</div>
+          }
+        </>}
+
+        {tab==="heat"&&<HeatTab/>}
+
+        {/* ── STATS ── */}
+        {tab==="stats"&&(
+          <div style={{animation:"fadeup 0.3s ease"}}>
+            {/* Grade breakdown */}
+            <div style={{ background:"#0A0A10", border:"1px solid rgba(255,255,255,0.07)", borderRadius:8, padding:"16px", marginBottom:10 }}>
+              <div style={{ fontFamily:DISP, fontSize:12, fontWeight:500, color:"#FFFFFF", marginBottom:16, letterSpacing:"0.06em" }}>DEAL GRADES</div>
+              {[
+                {k:"S",l:"FIRE DEAL (25%+ ROI)"},
+                {k:"A",l:"STRONG BUY (15–25%)"},
+                {k:"B",l:"GOOD DEAL (8–15%)"},
+                {k:"C",l:"MARGINAL (2–8%)"},
+                {k:"H",l:"BUY & HOLD"},
+                {k:"D",l:"AVOID"},
+              ].map(row=>{
+                let n=0;
+                const gd=G[row.k];
+                if(row.k==="S")n=sorted.filter(d=>(calcFlip(d.buyNow,d.resell).roi??-999)>=25).length;
+                else if(row.k==="A")n=sorted.filter(d=>{const r=calcFlip(d.buyNow,d.resell).roi??-999;return r>=15&&r<25;}).length;
+                else if(row.k==="B")n=sorted.filter(d=>{const r=calcFlip(d.buyNow,d.resell).roi??-999;return r>=8&&r<15;}).length;
+                else if(row.k==="C")n=sorted.filter(d=>{const r=calcFlip(d.buyNow,d.resell).roi??-999;return r>=2&&r<8;}).length;
+                else if(row.k==="H")n=sorted.filter(d=>{const r=calcFlip(d.buyNow,d.resell).roi??0;const h=calcHold(d.resell,d.product);return r<2&&h&&h.score>=6;}).length;
+                else n=sorted.filter(d=>{const r=calcFlip(d.buyNow,d.resell).roi??1;const h=calcHold(d.resell,d.product);return r<2&&(!h||h.score<6)&&calcFlip(d.buyNow,d.resell).roi!==null;}).length;
+                return (
+                  <div key={row.k} style={{ display:"flex", alignItems:"center", gap:12, marginBottom:12 }}>
+                    <div style={{ width:36,height:36,borderRadius:6,background:gd.bg,border:`2px solid ${gd.c}`,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:DISP,fontSize:12,fontWeight:500,color:gd.c,flexShrink:0 }}>{row.k}</div>
+                    <div style={{ flex:1 }}>
+                      <div style={{ fontFamily:DISP, fontSize:11, fontWeight:500, color:gd.c, letterSpacing:"0.06em", marginBottom:4 }}>{row.l}</div>
+                      <div style={{ height:4,background:"rgba(255,255,255,0.05)",borderRadius:2,overflow:"hidden" }}>
+                        <div style={{ height:"100%",width:`${deals.length?(n/deals.length*100):0}%`,background:gd.c,borderRadius:2,transition:"width 0.5s" }}/>
+                      </div>
+                    </div>
+                    <div style={{ fontFamily:DISP, fontSize:12, fontWeight:500, color:gd.c, minWidth:24, textAlign:"right" }}>{n}</div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Top flips */}
+            <div style={{ background:"#0A0A10", border:"1px solid rgba(255,255,255,0.07)", borderRadius:8, padding:"16px", marginBottom:10 }}>
+              <div style={{ fontFamily:DISP, fontSize:12, fontWeight:500, color:"#FFFFFF", marginBottom:14, letterSpacing:"0.06em" }}>TOP FLIP PLAYS</div>
+              {sorted.filter(d=>(calcFlip(d.buyNow,d.resell).net??-999)>0).slice(0,5).map((d,i)=>{
+                const{net:n,roi:r}=calcFlip(d.buyNow,d.resell);
+                return (
+                  <div key={d.id||i} style={{ display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 0",borderBottom:"1px solid rgba(255,255,255,0.06)" }}>
+                    <div style={{ flex:1,minWidth:0,marginRight:12 }}>
+                      <div style={{ fontFamily:DISP,fontSize:12,fontWeight:500,color:"#FFFFFF",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",letterSpacing:"0.02em" }}>{d.product}</div>
+                      <div style={{ fontFamily:MONO,fontSize:9,color:"#C0C0C0",marginTop:2 }}>{d.retailer} · £{d.buyNow.toFixed(2)}</div>
+                    </div>
+                    <div style={{ textAlign:"right",flexShrink:0 }}>
+                      <div style={{ fontFamily:DISP,fontSize:12,fontWeight:500,color:"#00FF88" }}>+£{n.toFixed(2)}</div>
+                      <div style={{ fontFamily:MONO,fontSize:9,color:"#C0C0C0" }}>{r}% ROI</div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Best holds */}
+            <div style={{ background:"#0A0A10", border:"1px solid rgba(255,255,255,0.07)", borderRadius:8, padding:"16px" }}>
+              <div style={{ fontFamily:DISP, fontSize:12, fontWeight:500, color:"#FFFFFF", marginBottom:14, letterSpacing:"0.06em" }}>BEST HOLD PLAYS</div>
+              {sorted.filter(d=>{const h=calcHold(d.resell,d.product);return h&&h.score>=7;}).slice(0,5).map((d,i)=>{
+                const h=calcHold(d.resell,d.product);
+                return (
+                  <div key={d.id||i} style={{ display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 0",borderBottom:"1px solid rgba(255,255,255,0.06)" }}>
+                    <div style={{ flex:1,minWidth:0,marginRight:12 }}>
+                      <div style={{ fontFamily:DISP,fontSize:12,fontWeight:500,color:"#FFFFFF",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",letterSpacing:"0.02em" }}>{d.product}</div>
+                      <div style={{ fontFamily:MONO,fontSize:9,color:"#C0C0C0",marginTop:2 }}>{d.retailer} · SCORE {h?.score}/10</div>
+                    </div>
+                    <div style={{ textAlign:"right",flexShrink:0 }}>
+                      <div style={{ fontFamily:DISP,fontSize:12,fontWeight:500,color:"#39D98A" }}>+{h?.yr1pct}% YR1</div>
+                      <div style={{ fontFamily:DISP,fontSize:12,fontWeight:500,color:"#39D98A" }}>+{h?.yr2pct}% YR2</div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* ── SHOPS ── */}
+        {tab==="shops"&&(
+          <div style={{animation:"fadeup 0.3s ease"}}>
+            <div style={{ fontFamily:MONO,fontSize:9,color:"#B0B0B0",marginBottom:14,letterSpacing:"0.12em" }}>16 UK RETAILERS · SCANNED EVERY 10 MINUTES</div>
+            {[
+              ["Total Cards","https://totalcards.net"],["Titan Cards","https://titancards.co.uk"],
+              ["Eterna Cards","https://eternacards.co.uk"],["PACKRAT","https://packratt.co.uk"],
+              ["Double Sleeved","https://doublesleeved.co.uk"],["Toys N Geek","https://www.toysngeek.co.uk"],
+              ["The Card Vault","https://thecardvault.co.uk"],["My TCG","https://mytcg.co.uk"],
+              ["Gathering Games","https://gatheringgames.co.uk"],["Magic Madhouse","https://magicmadhouse.co.uk"],
+              ["Japan2UK","https://japan2uk.com"],["Big Orbit Cards","https://www.bigorbitcards.co.uk"],
+              ["Zatu Games","https://www.board-game.co.uk"],["Smyths","https://www.smythstoys.com"],
+              ["Amazon UK","https://www.amazon.co.uk"],["Pokemon Center UK","https://www.pokemoncenter.com"],
+            ].map(([name,url])=>(
+              <a href={url} target="_blank" rel="noopener noreferrer" key={name}
+                style={{ display:"flex",justifyContent:"space-between",alignItems:"center",background:"#0A0A10",border:"1px solid rgba(255,255,255,0.07)",borderRadius:7,padding:"12px 14px",marginBottom:6 }}>
+                <div>
+                  <div style={{ fontFamily:DISP,fontSize:12,fontWeight:500,color:"#FFFFFF",letterSpacing:"0.03em" }}>{name}</div>
+                  <div style={{ fontFamily:MONO,fontSize:9,color:"#B0B0B0",marginTop:2 }}>{url.replace("https://","")}</div>
+                </div>
+                <div style={{ display:"flex",alignItems:"center",gap:6 }}>
+                  <div style={{ width:7,height:7,borderRadius:"50%",background:"#00FF88",boxShadow:"0 0 8px #00FF88" }}/>
+                  <span style={{ fontFamily:MONO,fontSize:9,color:"#00CC70" }}>ACTIVE</span>
+                </div>
+              </a>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+
+    {/* ══ BOTTOM NAV ══ */}
+    <div style={{ position:"fixed",bottom:0,left:0,right:0,background:"rgba(7,7,13,0.98)",borderTop:"1px solid rgba(255,255,255,0.07)",display:"flex",padding:"10px 0 24px",zIndex:100,backdropFilter:"blur(20px)" }}>
+      {[{id:"deals",icon:"🎯",l:"DEALS"},{id:"heat",icon:"🔥",l:"HEAT"},{id:"stats",icon:"📊",l:"STATS"},{id:"shops",icon:"🏪",l:"SHOPS"}].map(n=>(
+        <button key={n.id} onClick={()=>setTab(n.id)} style={{ flex:1,background:"transparent",border:"none",color:tab===n.id?"#CC0000":"#888",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:3,fontFamily:DISP,fontSize:11,fontWeight:500,letterSpacing:"0.1em",transition:"color 0.15s" }}>
+          <span style={{ fontSize:19 }}>{n.icon}</span>{n.l}
+        </button>
+      ))}
+    </div>
+  </>);
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
+</script>
+</body>
+</html>
 
