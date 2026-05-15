@@ -782,21 +782,7 @@ function HeatTab() {
 function App() {
   const MONO = "'Share Tech Mono','Courier New',monospace";
   const DISP = "'Rajdhani',sans-serif";
-  const PASS = "shinyden2025";
-
   // ALL hooks declared first — React rules require this
-  // URL hash gate — access via #shinyden in URL, no login delay
-  const [unlocked, setUnlocked] = useState(() => {
-    try {
-      if (window.location.hash === "#shinyden") {
-        sessionStorage.setItem("sd_auth","1");
-        return true;
-      }
-      return sessionStorage.getItem("sd_auth") === "1";
-    } catch { return false; }
-  });
-  const [attempt,  setAttempt]  = useState("");
-  const [shake,    setShake]    = useState(false);
   const [deals,    setDeals]    = useState([]);
   const [live,     setLive]     = useState(false);
   const [loading,  setLoading]  = useState(true);
@@ -967,82 +953,14 @@ function App() {
   }
 
   useEffect(() => {
-    if (!unlocked) return;
-    // Run immediately — no delay needed with hash-based gate
     load();
     const i = setInterval(load, 600000);
     return () => clearInterval(i);
-  }, [unlocked]);
+  }, []);
 
-  function tryUnlock() {
-    if (attempt === PASS) {
-      try { sessionStorage.setItem("sd_auth","1"); } catch {}
-      setUnlocked(true);
-    } else {
-      setShake(true);
-      setTimeout(() => setShake(false), 500);
-      setAttempt("");
-    }
-  }
+
 
   // ── PASSWORD GATE (conditional render, no hooks below this) ──────────────
-  if (!unlocked) return (
-    <div style={{ minHeight:"100vh", background:"#07070D", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:24 }}>
-      <style>{`
-        @keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
-        @keyframes gengar-float{0%,100%{transform:translateY(0px)}50%{transform:translateY(-12px)}}
-        @keyframes gengar-glow{0%,100%{opacity:0.3}50%{opacity:0.8}}
-      `}</style>
-
-      {/* Shiny Charizard — official sprite from PokeAPI, dark ominous treatment */}
-      <div style={{ position:"relative", marginBottom:8, animation:"gengar-float 4s ease-in-out infinite" }}>
-        {/* Dark red glow behind */}
-        <div style={{
-          position:"absolute", inset:-20,
-          background:"radial-gradient(ellipse at center, rgba(180,0,0,0.35) 0%, rgba(100,0,0,0.15) 40%, transparent 70%)",
-          animation:"gengar-glow 3s ease-in-out infinite",
-          borderRadius:"50%",
-        }}/>
-        {/* Charizard sprite — shiny version, darkened + red-tinted via CSS */}
-        <img
-          src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/6.png"
-          alt="Shiny Charizard"
-          style={{
-            width:180, height:180,
-            objectFit:"contain",
-            position:"relative",
-            filter:"brightness(0.55) sepia(0.4) saturate(2) hue-rotate(-10deg) drop-shadow(0 0 18px rgba(200,0,0,0.6))",
-          }}
-          onError={e=>{e.target.style.display="none"}}
-        />
-      </div>
-
-      {/* Title */}
-      <div style={{ marginBottom:28, textAlign:"center" }}>
-        <div style={{ fontFamily:DISP, fontSize:28, fontWeight:700, color:"#FFFFFF", letterSpacing:"0.04em", lineHeight:1 }}>
-          SHINY <span style={{ color:"#CC0000" }}>DEN</span>
-        </div>
-        <div style={{ fontFamily:MONO, fontSize:9, color:"#333", marginTop:6, letterSpacing:"0.14em" }}>POKÉMON DEAL FINDER</div>
-      </div>
-
-      {/* Input */}
-      <div style={{ width:"100%", maxWidth:300, animation:shake?"shake 0.4s ease":"none" }}>
-        <div style={{ fontFamily:MONO, fontSize:9, color:"#444", letterSpacing:"0.14em", marginBottom:10, textAlign:"center" }}>ENTER ACCESS CODE</div>
-        <input
-          type="password" value={attempt}
-          onChange={e=>setAttempt(e.target.value)}
-          onKeyDown={e=>e.key==="Enter"&&tryUnlock()}
-          autoFocus placeholder="••••••••••••"
-          style={{ width:"100%", background:"#0F0F18", border:`1px solid ${shake?"#FF3B3B":"#2A2A38"}`, borderRadius:6, padding:"13px 16px", color:"#FFFFFF", fontFamily:MONO, fontSize:14, letterSpacing:"0.1em", outline:"none", marginBottom:10, textAlign:"center" }}
-        />
-        <button onClick={tryUnlock}
-          style={{ width:"100%", background:"#CC0000", border:"none", borderRadius:6, padding:"13px", color:"#fff", fontFamily:DISP, fontSize:15, fontWeight:600, letterSpacing:"0.1em", cursor:"pointer" }}
-        >UNLOCK →</button>
-        <div style={{ fontFamily:MONO, fontSize:9, color:"#333", textAlign:"center", marginTop:16 }}>Private access only</div>
-      </div>
-    </div>
-  );
-
   // ── MAIN APP (unlocked) ───────────────────────────────────────────────────
 
   // ── eBay deal scoring (rule-based only, no ML) ────────────────────────────
@@ -1244,10 +1162,7 @@ function App() {
               <div style={{ width:6, height:6, borderRadius:"50%", background:live?"#00FF88":"#FF8C00", boxShadow:live?"0 0 10px #00FF88":"0 0 10px #FF8C00", animation:"blink 2s infinite" }}/>
               <span style={{ fontSize:9, fontFamily:MONO, color:live?"#00FF88":"#FF8C00" }}>{live?"LIVE":"SCANNING"} · {now}</span>
             </div>
-            <button onClick={()=>{try{sessionStorage.removeItem("sd_auth")}catch{}setUnlocked(false);}}
-              style={{ background:"none", border:"none", color:"#2A2A38", fontFamily:MONO, fontSize:8, cursor:"pointer", letterSpacing:"0.08em", padding:"2px 4px" }}>
-              lock
-            </button>
+
           </div>
         </div>
 
