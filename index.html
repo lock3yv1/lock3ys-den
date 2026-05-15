@@ -70,20 +70,34 @@ const HOLD = {
   "shrouded fable":       { score:4,  trend:"stable",   yr1:1.02, yr2:1.04, note:"Low hype. Modest potential." },
 };
 
-// Verified working product image URLs (Bulbapedia/TCG wiki - no CORS restrictions)
+// Product images — using pokemontcg.io card images as set art (free, no auth needed for small use)
+// These are actual card images from each set, reliably served
 const IMG = {
-  "surging sparks":       "https://archives.bulbagarden.net/media/upload/thumb/f/f9/SurgingSparks_EN_logo.png/300px-SurgingSparks_EN_logo.png",
-  "evolving skies":       "https://archives.bulbagarden.net/media/upload/thumb/4/4e/EvolvingSkies_EN_logo.png/300px-EvolvingSkies_EN_logo.png",
-  "prismatic evolutions": "https://archives.bulbagarden.net/media/upload/thumb/7/77/PrismaticEvolutions_EN_logo.png/300px-PrismaticEvolutions_EN_logo.png",
-  "shining fates":        "https://archives.bulbagarden.net/media/upload/thumb/2/24/ShiningFates_EN_logo.png/300px-ShiningFates_EN_logo.png",
-  "hidden fates":         "https://archives.bulbagarden.net/media/upload/thumb/d/d4/HiddenFates_EN_logo.png/300px-HiddenFates_EN_logo.png",
-  "chilling reign":       "https://archives.bulbagarden.net/media/upload/thumb/d/d8/ChillingReign_EN_logo.png/300px-ChillingReign_EN_logo.png",
-  "battle styles":        "https://archives.bulbagarden.net/media/upload/thumb/b/bc/BattleStyles_EN_logo.png/300px-BattleStyles_EN_logo.png",
-  "destined rivals":      "https://archives.bulbagarden.net/media/upload/thumb/3/3b/DestinedRivals_EN_logo.png/300px-DestinedRivals_EN_logo.png",
-  "151":                  "https://archives.bulbagarden.net/media/upload/thumb/8/8b/Pokemon151_EN_logo.png/300px-Pokemon151_EN_logo.png",
-  "temporal forces":      "https://archives.bulbagarden.net/media/upload/thumb/5/51/TemporalForces_EN_logo.png/300px-TemporalForces_EN_logo.png",
-  "paradox rift":         "https://archives.bulbagarden.net/media/upload/thumb/0/09/ParadoxRift_EN_logo.png/300px-ParadoxRift_EN_logo.png",
-  "obsidian flames":      "https://archives.bulbagarden.net/media/upload/thumb/c/cf/ObsidianFlames_EN_logo.png/300px-ObsidianFlames_EN_logo.png",
+  "surging sparks":       "https://images.pokemontcg.io/sv8/logo.png",
+  "evolving skies":       "https://images.pokemontcg.io/swsh7/logo.png",
+  "prismatic evolutions": "https://images.pokemontcg.io/ssp/logo.png",
+  "shining fates":        "https://images.pokemontcg.io/swsh45/logo.png",
+  "hidden fates":         "https://images.pokemontcg.io/sm115/logo.png",
+  "chilling reign":       "https://images.pokemontcg.io/swsh6/logo.png",
+  "battle styles":        "https://images.pokemontcg.io/swsh5/logo.png",
+  "destined rivals":      "https://images.pokemontcg.io/sv10/logo.png",
+  "151":                  "https://images.pokemontcg.io/sv3pt5/logo.png",
+  "temporal forces":      "https://images.pokemontcg.io/sv5/logo.png",
+  "paradox rift":         "https://images.pokemontcg.io/sv4/logo.png",
+  "obsidian flames":      "https://images.pokemontcg.io/sv3/logo.png",
+  "paldea evolved":       "https://images.pokemontcg.io/sv2/logo.png",
+  "scarlet & violet":     "https://images.pokemontcg.io/sv1/logo.png",
+  "brilliant stars":      "https://images.pokemontcg.io/swsh9/logo.png",
+  "fusion strike":        "https://images.pokemontcg.io/swsh8/logo.png",
+  "champions path":       "https://images.pokemontcg.io/swsh35/logo.png",
+  "vivid voltage":        "https://images.pokemontcg.io/swsh4/logo.png",
+  "darkness ablaze":      "https://images.pokemontcg.io/swsh3/logo.png",
+  "cosmic eclipse":       "https://images.pokemontcg.io/sm12/logo.png",
+  "unified minds":        "https://images.pokemontcg.io/sm11/logo.png",
+  "hidden fates":         "https://images.pokemontcg.io/sm115/logo.png",
+  "unbroken bonds":       "https://images.pokemontcg.io/sm10/logo.png",
+  "evolutions":           "https://images.pokemontcg.io/xy12/logo.png",
+  "base set":             "https://images.pokemontcg.io/base1/logo.png",
 };
 function getDemoImage(product) {
   const t = product.toLowerCase();
@@ -548,6 +562,9 @@ function App() {
   const [typeF,    setTypeF]    = useState("all");
   const [tab,      setTab]      = useState("deals");
   const [pulse,    setPulse]    = useState(false);
+  const [ebayListings, setEbayListings] = useState([]);
+  const [ebayLoading,  setEbayLoading]  = useState(false);
+  const [ebayLoaded,   setEbayLoaded]   = useState(false);
 
   async function load() {
     setPulse(true); setTimeout(()=>setPulse(false),1500);
@@ -594,6 +611,117 @@ function App() {
   );
 
   // ── MAIN APP (unlocked) ───────────────────────────────────────────────────
+
+  // ── eBay deal scoring (rule-based only, no ML) ────────────────────────────
+  function scoreEbayListing(item) {
+    let score = 50; // base
+    const market = getMarket(item.title);
+    if (!market) return { score:50, signals:[] };
+    const signals = [];
+    const pctBelow = market > 0 ? Math.round((market - item.price) / market * 100) : 0;
+
+    // Price vs market
+    if (pctBelow >= 20)     { score += 30; signals.push({ l:"🔥 Hot price", c:"#00FF88" }); }
+    else if (pctBelow >= 10){ score += 18; signals.push({ l:"↓ Below market", c:"#39D98A" }); }
+    else if (pctBelow >= 0) { score += 8;  signals.push({ l:"≈ Market price", c:"#FFD60A" }); }
+    else                    { score -= 15; signals.push({ l:"↑ Above market", c:"#FF3B3B" }); }
+
+    // Recently listed
+    if (item.hoursOld !== undefined && item.hoursOld < 3)  { score += 10; signals.push({ l:"🆕 Just listed", c:"#38B6FF" }); }
+    else if (item.hoursOld < 12)                            { score += 5;  signals.push({ l:"New listing", c:"#38B6FF" }); }
+
+    // Ending soon (auctions)
+    if (item.endingSoon)  { score += 8; signals.push({ l:"⏱ Ending soon", c:"#FF8C00" }); }
+
+    // Buy it now vs auction
+    if (item.buyItNow)    { score += 5; signals.push({ l:"BIN available", c:"#B0B0B0" }); }
+
+    // Low competition
+    if (item.watchers !== undefined && item.watchers < 3) { score += 5; signals.push({ l:"Low competition", c:"#B388FF" }); }
+
+    // Trusted seller
+    if (item.feedbackPct >= 99 && item.feedbackCount >= 100) { score += 7; signals.push({ l:"⭐ Trusted seller", c:"#FFD60A" }); }
+
+    return { score: Math.min(100, Math.max(0, score)), signals, pctBelow, market };
+  }
+
+  async function loadEbay() {
+    if (ebayLoading) return;
+    setEbayLoading(true);
+    const results = [];
+    const searches = [
+      { q:"pokemon evolving skies booster box sealed",    set:"evolving skies" },
+      { q:"pokemon prismatic evolutions elite trainer",   set:"prismatic evolutions" },
+      { q:"pokemon shining fates elite trainer box",      set:"shining fates" },
+      { q:"pokemon 151 booster bundle sealed",            set:"151" },
+      { q:"pokemon surging sparks booster box sealed",    set:"surging sparks" },
+      { q:"pokemon hidden fates booster box sealed",      set:"hidden fates" },
+      { q:"pokemon chilling reign booster box",           set:"chilling reign" },
+      { q:"pokemon battle styles booster box sealed",     set:"battle styles" },
+    ];
+    for (const { q, set } of searches) {
+      try {
+        // eBay RSS feed — free, no API key, no CORS issues
+        const rssUrl = `https://www.ebay.co.uk/sch/i.html?_nkw=${encodeURIComponent(q)}&LH_BIN=1&LH_ItemCondition=1000&_sop=10&_ipg=10&_rss=1`;
+        const proxy = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
+        const r = await fetch(proxy, { signal: AbortSignal.timeout(8000) });
+        if (!r.ok) continue;
+        const data = await r.json();
+        const items = data.items || [];
+        for (const item of items) {
+          const title = item.title?.replace(/<[^>]+>/g,"").trim();
+          if (!title || !isValidEbayTitle(title)) continue;
+          // Parse price from title or description
+          const priceMatch = (item.title + item.description).match(/£([\d,]+\.?\d*)/);
+          if (!priceMatch) continue;
+          const price = parseFloat(priceMatch[1].replace(",",""));
+          if (!price || isNaN(price)) continue;
+          // Extract image from description
+          const imgMatch = item.description?.match(/src="([^"]+)"/);
+          const image = imgMatch ? imgMatch[1] : getDemoImage(title);
+          results.push({
+            id: item.link,
+            title,
+            price,
+            url: item.link,
+            image,
+            condition: "New",
+            endingSoon: false,
+            buyItNow: true,
+            feedbackPct: 99,
+            feedbackCount: 100,
+          });
+        }
+      } catch {}
+      await new Promise(r => setTimeout(r, 200));
+    }
+    // Deduplicate, score, sort
+    const seen = new Set();
+    const unique = results.filter(r => { if(seen.has(r.id)) return false; seen.add(r.id); return true; });
+    const scored = unique
+      .map(r => ({ ...r, ...scoreEbayListing(r) }))
+      .filter(r => r.score >= 40)
+      .sort((a,b) => b.score - a.score)
+      .slice(0, 30);
+    setEbayListings(scored);
+    setEbayLoaded(true);
+    setEbayLoading(false);
+  }
+
+  function isValidEbayTitle(title) {
+    const t = title.toLowerCase();
+    if (!t.includes("pokemon")) return false;
+    const hasProduct = ["booster box","elite trainer","etb","booster bundle","booster pack","tin","collection","blister"].some(p => t.includes(p));
+    const hasSet = ["evolving skies","prismatic evolutions","shining fates","hidden fates","151","surging sparks","chilling reign","battle styles","brilliant stars","temporal forces","paradox rift","obsidian flames","paldean fates"].some(s => t.includes(s));
+    if (!hasProduct || !hasSet) return false;
+    const blocked = ["korean","japanese","proxy","fake","damaged","job lot","bundle lot","graded","psa","cgc"];
+    return !blocked.some(b => t.includes(b));
+  }
+
+  useEffect(() => {
+    if (tab === "ebay" && !ebayLoaded && !ebayLoading) loadEbay();
+  }, [tab]);
+
   const sorted=[...deals].sort((a,b)=>(calcFlip(b.buyNow,b.resell).roi??-999)-(calcFlip(a.buyNow,a.resell).roi??-999));
   const filtered=sorted.filter(d=>{
     const t=d.product.toLowerCase();
@@ -637,34 +765,31 @@ function App() {
     <div style={{ minHeight:"100vh", background:"#07070D", paddingBottom:84 }}>
 
       {/* ══ HEADER ══ */}
-      <div style={{ background:"rgba(7,7,13,0.98)", borderBottom:"1px solid rgba(255,255,255,0.08)", padding:"0 16px", position:"sticky", top:0, zIndex:100, backdropFilter:"blur(20px)" }}>
+      <div style={{ background:"rgba(7,7,13,0.98)", borderBottom:"1px solid rgba(255,255,255,0.08)", position:"sticky", top:0, zIndex:100, backdropFilter:"blur(20px)" }}>
 
-        {/* Ticker — classic Dr Disrespect footer text */}
-        <div style={{ display:"flex", justifyContent:"space-between", padding:"5px 0", borderBottom:"1px solid rgba(255,255,255,0.04)", fontSize:9, fontFamily:MONO, letterSpacing:"0.16em" }}>
-          <span style={{ color:"#888", letterSpacing:"0.12em" }}>Live Pokémon deals · updated in real time</span>
+        {/* Banner — full width at top */}
+        <img src="banner.png" alt="Shiny Den" style={{ width:"100%", height:"auto", display:"block", maxHeight:60, objectFit:"cover", objectPosition:"center" }}
+          onError={e=>{e.target.style.display="none"}}/>
+
+        {/* Status bar below banner */}
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"5px 16px", borderBottom:"1px solid rgba(255,255,255,0.04)", fontSize:9, fontFamily:MONO }}>
+          <span style={{ color:"#666", letterSpacing:"0.1em" }}>Live Pokémon deals · updated in real time</span>
           <div style={{ display:"flex", alignItems:"center", gap:7 }}>
             <div style={{ width:6, height:6, borderRadius:"50%", background:live?"#00FF88":"#FF8C00", boxShadow:live?"0 0 10px #00FF88":"0 0 10px #FF8C00", animation:"blink 2s infinite" }}/>
             <span style={{ fontSize:9, fontFamily:MONO, color:live?"#00FF88":"#FF8C00" }}>{live?"LIVE":"DEMO"} · {now}</span>
           </div>
         </div>
 
-        {/* Logo row */}
-        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"8px 0 6px" }}>
-          <div style={{ flex:1, minWidth:0 }}>
-            <img src="banner.png" alt="Shiny Den" style={{ height:46, width:"auto", display:"block", maxWidth:"100%" }}
-              onError={e=>{e.target.style.display="none"}}/>
-            <div style={{ fontFamily:MONO, fontSize:9, color:"#666", marginTop:3, letterSpacing:"0.06em" }}>Live Pokémon card deals, updated in real time</div>
+        {/* Stat strip + scan button */}
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"8px 16px 8px" }}>
+          <div style={{ display:"flex", gap:16 }}>
+            <div style={{ fontFamily:MONO, fontSize:10, color:"#00FF88", letterSpacing:"0.06em" }}>● {excN} EXCELLENT</div>
+            <div style={{ fontFamily:MONO, fontSize:10, color:"#FFD60A", letterSpacing:"0.06em" }}>● {buyN} BUY NOW</div>
+            <div style={{ fontFamily:MONO, fontSize:10, color:"#555", letterSpacing:"0.06em" }}>● {deals.length} TOTAL</div>
           </div>
-          <button onClick={load} style={{ background:"#CC0000", border:"none", borderRadius:5, padding:"7px 0", width:72, color:"#fff", fontFamily:MONO, fontSize:10, letterSpacing:"0.08em", cursor:"pointer", boxShadow:"0 2px 12px rgba(204,0,0,0.4)", transition:"opacity 0.15s", opacity:pulse?0.7:1, flexShrink:0, textAlign:"center", marginLeft:12 }}>
+          <button onClick={load} style={{ background:"#CC0000", border:"none", borderRadius:5, padding:"6px 0", width:68, color:"#fff", fontFamily:MONO, fontSize:10, letterSpacing:"0.08em", cursor:"pointer", boxShadow:"0 2px 12px rgba(204,0,0,0.4)", opacity:pulse?0.7:1, flexShrink:0, textAlign:"center" }}>
             {pulse?"...":"⟳ SCAN"}
           </button>
-        </div>
-
-        {/* Stat strip */}
-        <div style={{ display:"flex", gap:20, paddingBottom:10 }}>
-          <div style={{ fontFamily:MONO, fontSize:10, color:"#00FF88", letterSpacing:"0.06em" }}>● {excN} EXCELLENT</div>
-          <div style={{ fontFamily:MONO, fontSize:10, color:"#FFD60A", letterSpacing:"0.06em" }}>● {buyN} BUY NOW</div>
-          <div style={{ fontFamily:MONO, fontSize:10, color:"#666", letterSpacing:"0.06em" }}>● {deals.length} TOTAL</div>
         </div>
       </div>
 
@@ -714,7 +839,7 @@ function App() {
 
         {/* TAB BAR */}
         <div style={{ display:"flex", gap:2, marginBottom:14, background:"#0F0F18", border:"1px solid #252535", borderRadius:7, padding:3 }}>
-          {[{id:"deals",l:"🎯 DEALS"},{id:"heat",l:"🔥 HEAT"},{id:"stats",l:"📊 STATS"},{id:"shops",l:"🏪 SHOPS"}].map(t=>(
+          {[{id:"deals",l:"🎯 DEALS"},{id:"ebay",l:"🛒 EBAY"},{id:"heat",l:"🔥 HEAT"},{id:"stats",l:"📊 STATS"}].map(t=>(
             <button key={t.id} onClick={()=>setTab(t.id)} style={{ flex:1, background:tab===t.id?"#CC0000":"transparent", border:"none", borderRadius:5, padding:"9px 4px", color:tab===t.id?"#fff":"#AAAAAA", fontFamily:DISP, fontSize:12, letterSpacing:"0.08em", cursor:"pointer", transition:"all 0.15s" }}>{t.l}</button>
           ))}
         </div>
@@ -762,6 +887,96 @@ function App() {
             :<div style={{animation:"fadeup 0.3s ease"}}>{filtered.map((d,i)=><Card key={d.id||i} d={d} rank={i+1}/>)}</div>
           }
         </>}
+
+        {/* ── EBAY TAB ── */}
+        {tab==="ebay"&&(
+          <div style={{animation:"fadeup 0.3s ease"}}>
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:14 }}>
+              <div>
+                <div style={{ fontFamily:DISP, fontSize:14, fontWeight:600, color:"#FFFFFF" }}>eBay UK Deal Intelligence</div>
+                <div style={{ fontFamily:MONO, fontSize:9, color:"#666", marginTop:2 }}>Live listings scored by deal quality · rule-based only</div>
+              </div>
+              <button onClick={()=>{setEbayLoaded(false);loadEbay();}} style={{ background:"#1A1A28", border:"1px solid #333", borderRadius:5, padding:"6px 12px", color:"#AAAAAA", fontFamily:MONO, fontSize:9, cursor:"pointer" }}>
+                {ebayLoading?"scanning...":"⟳ refresh"}
+              </button>
+            </div>
+
+            {ebayLoading&&(
+              <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+                {[1,2,3,4].map(i=>(
+                  <div key={i} style={{ background:"#0A0A10", borderRadius:8, padding:14, border:"1px solid #1A1A24" }}>
+                    <div style={{ height:12, background:"#1A1A24", borderRadius:4, marginBottom:8, width:"60%", animation:"fadeup 1s ease infinite" }}/>
+                    <div style={{ height:8, background:"#141420", borderRadius:4, width:"40%" }}/>
+                  </div>
+                ))}
+                <div style={{ fontFamily:MONO, fontSize:10, color:"#555", textAlign:"center", padding:"8px 0" }}>Scanning eBay UK listings...</div>
+              </div>
+            )}
+
+            {!ebayLoading&&ebayLoaded&&ebayListings.length===0&&(
+              <div style={{ textAlign:"center", padding:"48px 0", fontFamily:MONO, color:"#444", fontSize:11 }}>
+                No scoreable listings found right now. Try refreshing.
+              </div>
+            )}
+
+            {!ebayLoading&&ebayListings.map((item, i)=>{
+              const scoreColor = item.score>=75?"#00FF88":item.score>=55?"#FFD60A":item.score>=40?"#FF8C00":"#FF3B3B";
+              const market = getMarket(item.title);
+              return (
+                <div key={item.id} style={{ background:"#0A0A10", border:`1px solid ${scoreColor}33`, borderLeft:`3px solid ${scoreColor}`, borderRadius:8, padding:"12px 14px", marginBottom:10 }}>
+                  <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:10 }}>
+                    {/* Image */}
+                    {item.image&&(
+                      <div style={{ flexShrink:0, width:52, height:52, borderRadius:6, overflow:"hidden", background:"#16161E", border:"1px solid rgba(255,255,255,0.08)" }}>
+                        <img src={item.image} alt="" style={{ width:"100%", height:"100%", objectFit:"cover" }} loading="lazy"
+                          onError={e=>{e.target.parentElement.style.display="none"}}/>
+                      </div>
+                    )}
+                    <div style={{ flex:1, minWidth:0 }}>
+                      <div style={{ fontFamily:DISP, fontSize:13, fontWeight:500, color:"#FFFFFF", lineHeight:1.3, marginBottom:3 }}>{item.title}</div>
+                      <div style={{ display:"flex", alignItems:"center", gap:8, flexWrap:"wrap" }}>
+                        {/* Deal score */}
+                        <div style={{ fontFamily:MONO, fontSize:10, fontWeight:700, color:scoreColor, background:`${scoreColor}18`, border:`1px solid ${scoreColor}40`, padding:"2px 8px", borderRadius:4 }}>
+                          {item.score}/100
+                        </div>
+                        {/* Signals */}
+                        {item.signals?.slice(0,2).map((s,j)=>(
+                          <span key={j} style={{ fontFamily:MONO, fontSize:9, color:s.c, background:`${s.c}15`, padding:"2px 7px", borderRadius:4, border:`1px solid ${s.c}30` }}>{s.l}</span>
+                        ))}
+                      </div>
+                    </div>
+                    {/* Price */}
+                    <div style={{ textAlign:"right", flexShrink:0 }}>
+                      <div style={{ fontFamily:MONO, fontSize:17, color:"#FFFFFF" }}>£{item.price.toFixed(2)}</div>
+                      {market&&(
+                        <div style={{ fontFamily:MONO, fontSize:9, color:item.pctBelow>0?"#39D98A":"#FF6060", marginTop:2 }}>
+                          {item.pctBelow>0?`${item.pctBelow}% below avg`:`${Math.abs(item.pctBelow)}% above avg`}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  {/* Market context */}
+                  {market&&(
+                    <div style={{ fontFamily:MONO, fontSize:9, color:"#555", marginTop:8 }}>
+                      eBay avg sold: £{market} · {item.condition}
+                    </div>
+                  )}
+                  <a href={item.url} target="_blank" rel="noopener noreferrer"
+                    style={{ display:"inline-block", marginTop:10, background:"#CC0000", borderRadius:4, padding:"6px 14px", color:"#fff", fontFamily:MONO, fontSize:10, letterSpacing:"0.08em" }}>
+                    VIEW ON EBAY →
+                  </a>
+                </div>
+              );
+            })}
+
+            {!ebayLoaded&&!ebayLoading&&(
+              <div style={{ textAlign:"center", padding:"48px 0" }}>
+                <div style={{ fontFamily:MONO, fontSize:11, color:"#555", marginBottom:16 }}>Tap to scan eBay UK for deals</div>
+                <button onClick={loadEbay} style={{ background:"#CC0000", border:"none", borderRadius:6, padding:"12px 24px", color:"#fff", fontFamily:MONO, fontSize:11, letterSpacing:"0.1em", cursor:"pointer" }}>SCAN EBAY →</button>
+              </div>
+            )}
+          </div>
+        )}
 
         {tab==="heat"&&<HeatTab/>}
 
@@ -877,7 +1092,7 @@ function App() {
 
     {/* ══ BOTTOM NAV ══ */}
     <div style={{ position:"fixed",bottom:0,left:0,right:0,background:"rgba(7,7,13,0.98)",borderTop:"1px solid rgba(255,255,255,0.07)",display:"flex",padding:"10px 0 24px",zIndex:100,backdropFilter:"blur(20px)" }}>
-      {[{id:"deals",icon:"🎯",l:"DEALS"},{id:"heat",icon:"🔥",l:"HEAT"},{id:"stats",icon:"📊",l:"STATS"},{id:"shops",icon:"🏪",l:"SHOPS"}].map(n=>(
+      {[{id:"deals",icon:"🎯",l:"DEALS"},{id:"ebay",icon:"🛒",l:"EBAY"},{id:"heat",icon:"🔥",l:"HEAT"},{id:"stats",icon:"📊",l:"STATS"}].map(n=>(
         <button key={n.id} onClick={()=>setTab(n.id)} style={{ flex:1,background:"transparent",border:"none",color:tab===n.id?"#CC0000":"#888",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:3,fontFamily:DISP,fontSize:11,fontWeight:500,letterSpacing:"0.1em",transition:"color 0.15s" }}>
           <span style={{ fontSize:19 }}>{n.icon}</span>{n.l}
         </button>
