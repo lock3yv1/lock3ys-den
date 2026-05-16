@@ -119,17 +119,17 @@ function getDemoImage(product) {
 
 const DEMO = [
   { id:"d1",  product:"Surging Sparks Booster Box",             retailer:"Total Cards",    buyNow:109.99, rrp:144.99, resell:215, url:"https://totalcards.net/products/pokemon-scarlet-violet-surging-sparks-booster-box-36-boosters",             lastSeen:new Date(Date.now()-4*60000).toISOString() },
-  { id:"d2",  product:"Evolving Skies Booster Pack",            retailer:"Double Sleeved", buyNow:26.95,  rrp:4.99,   resell:32,  url:"https://www.doublesleeved.co.uk/products/pokemon-tcg-evolving-skies-booster-pack",                          lastSeen:new Date(Date.now()-2*60000).toISOString() },
+  { id:"d2",  product:"Evolving Skies Booster Pack",            retailer:"Double Sleeved", buyNow:21.95,  rrp:4.99,   resell:25,  url:"https://www.doublesleeved.co.uk/products/pokemon-tcg-evolving-skies-booster-pack",                          lastSeen:new Date(Date.now()-2*60000).toISOString() },
   { id:"d3",  product:"151 Booster Bundle",                     retailer:"Total Cards",    buyNow:24.99,  rrp:24.99,  resell:50,  url:"https://totalcards.net/products/pokemon-scarlet-violet-151-booster-bundle",                                  lastSeen:new Date(Date.now()-10*60000).toISOString() },
-  { id:"d4",  product:"Prismatic Evolutions Elite Trainer Box", retailer:"Double Sleeved", buyNow:79.99,  rrp:49.99,  resell:92,  url:"https://www.doublesleeved.co.uk/products/pokemon-tcg-prismatic-evolutions-elite-trainer-box",               lastSeen:new Date(Date.now()-8*60000).toISOString() },
-  { id:"d5",  product:"Shining Fates Elite Trainer Box",        retailer:"Double Sleeved", buyNow:89.99,  rrp:49.99,  resell:112, url:"https://www.doublesleeved.co.uk/products/pokemon-tcg-shining-fates-elite-trainer-box",                      lastSeen:new Date(Date.now()-20*60000).toISOString() },
+  { id:"d4",  product:"Prismatic Evolutions Elite Trainer Box", retailer:"Double Sleeved", buyNow:69.99,  rrp:49.99,  resell:80,  url:"https://www.doublesleeved.co.uk/products/pokemon-tcg-prismatic-evolutions-elite-trainer-box",               lastSeen:new Date(Date.now()-8*60000).toISOString() },
+  { id:"d5",  product:"Shining Fates Elite Trainer Box",        retailer:"Double Sleeved", buyNow:89.99,  rrp:49.99,  resell:240, url:"https://www.doublesleeved.co.uk/products/pokemon-tcg-shining-fates-elite-trainer-box",                      lastSeen:new Date(Date.now()-20*60000).toISOString() },
   { id:"d6",  product:"Surging Sparks Elite Trainer Box",       retailer:"Total Cards",    buyNow:44.99,  rrp:49.99,  resell:58,  url:"https://totalcards.net/products/pokemon-scarlet-violet-surging-sparks-elite-trainer-box",                   lastSeen:new Date(Date.now()-6*60000).toISOString() },
-  { id:"d7",  product:"Evolving Skies Elite Trainer Box",       retailer:"Double Sleeved", buyNow:159.99, rrp:49.99,  resell:172, url:"https://www.doublesleeved.co.uk/products/pokemon-tcg-evolving-skies-etb-sylveon",                           lastSeen:new Date(Date.now()-9*60000).toISOString() },
+  { id:"d7",  product:"Evolving Skies Elite Trainer Box",       retailer:"Double Sleeved", buyNow:139.99, rrp:49.99,  resell:150, url:"https://www.doublesleeved.co.uk/products/pokemon-tcg-evolving-skies-etb-sylveon",                           lastSeen:new Date(Date.now()-9*60000).toISOString() },
   { id:"d8",  product:"Chilling Reign Booster Box",             retailer:"Double Sleeved", buyNow:149.95, rrp:144.99, resell:152, url:"https://www.doublesleeved.co.uk/products/pokemon-tcg-chilling-reign-booster-box",                           lastSeen:new Date(Date.now()-18*60000).toISOString() },
-  { id:"d9",  product:"Destined Rivals Booster Box",            retailer:"Eterna Cards",   buyNow:98.99,  rrp:144.99, resell:105, url:"https://eternacards.co.uk/products/pokemon-tcg-destined-rivals-booster-box",                                lastSeen:new Date(Date.now()-3*60000).toISOString() },
-  { id:"d10", product:"Battle Styles Booster Box",              retailer:"Double Sleeved", buyNow:279.95, rrp:144.99, resell:172, url:"https://www.doublesleeved.co.uk/products/pokemon-tcg-battle-styles-booster-box",                            lastSeen:new Date(Date.now()-15*60000).toISOString() },
+  { id:"d9",  product:"Destined Rivals Booster Box",            retailer:"Eterna Cards",   buyNow:98.99,  rrp:99.99,  resell:105, url:"https://eternacards.co.uk/products/pokemon-tcg-destined-rivals-booster-box",                                lastSeen:new Date(Date.now()-3*60000).toISOString() },
+  { id:"d10", product:"Battle Styles Booster Box",              retailer:"Double Sleeved", buyNow:159.95, rrp:144.99, resell:172, url:"https://www.doublesleeved.co.uk/products/pokemon-tcg-battle-styles-booster-box",                            lastSeen:new Date(Date.now()-15*60000).toISOString() },
   { id:"d11", product:"Surging Sparks Booster Bundle",          retailer:"Total Cards",    buyNow:22.99,  rrp:24.99,  resell:30,  url:"https://totalcards.net/products/pokemon-scarlet-violet-surging-sparks-booster-bundle",                      lastSeen:new Date(Date.now()-11*60000).toISOString() },
-  { id:"d12", product:"Battle Styles Booster Pack",             retailer:"Double Sleeved", buyNow:9.99,   rrp:4.99,   resell:11,  url:"https://www.doublesleeved.co.uk/products/pokemon-tcg-battle-styles-booster-pack",                           lastSeen:new Date(Date.now()-5*60000).toISOString() },
+  { id:"d12", product:"Battle Styles Booster Pack",             retailer:"Double Sleeved", buyNow:9.99,   rrp:4.99,   resell:10,  url:"https://www.doublesleeved.co.uk/products/pokemon-tcg-battle-styles-booster-pack",                           lastSeen:new Date(Date.now()-5*60000).toISOString() },
 ].map(d => ({ ...d, image: getDemoImage(d.product) }));
 
 // ─── LOGIC ────────────────────────────────────────────────────────────────────
@@ -1214,6 +1214,7 @@ function App() {
       body{background:#07070D;color:#FFFFFF;-webkit-font-smoothing:antialiased}
       @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
       @keyframes sweep{0%{left:-60%}100%{left:120%}}
+      @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
       @keyframes fadeup{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
       @keyframes spotlight-pulse{0%,100%{box-shadow:0 0 20px rgba(0,255,136,0.08),0 0 40px rgba(0,255,136,0.04)}50%{box-shadow:0 0 28px rgba(0,255,136,0.14),0 0 56px rgba(0,255,136,0.07)}}
       ::-webkit-scrollbar{width:2px}::-webkit-scrollbar-thumb{background:#CC0000}
@@ -1262,25 +1263,24 @@ function App() {
       </div>
 
       {/* Scan progress */}
-      <div style={{ height:scanProgress.active?36:2, background:"#07070D", overflow:"hidden", transition:"height 0.3s ease" }}>
+      <div style={{ height:scanProgress.active?44:2, background:"#07070D", overflow:"hidden", transition:"height 0.3s ease" }}>
         {scanProgress.active&&(
-          <div style={{ padding:"6px 16px" }}>
-            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:4 }}>
-              <div style={{ fontFamily:MONO, fontSize:9, color:"#CC0000", letterSpacing:"0.08em" }}>
-                ⟳ {scanProgress.retailer.toUpperCase()}
+          <div style={{ padding:"6px 16px 4px" }}>
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:5 }}>
+              <div style={{ fontFamily:MONO, fontSize:9, color:"#CC0000", letterSpacing:"0.08em", display:"flex", alignItems:"center", gap:6 }}>
+                <span style={{ display:"inline-block", width:6, height:6, borderRadius:"50%", background:"#CC0000", animation:"blink 0.8s infinite" }}/>
+                {scanProgress.retailer.toUpperCase()}
               </div>
-              <div style={{ fontFamily:MONO, fontSize:8, color:"#444" }}>
-                Updates every 5 min automatically
+              <div style={{ fontFamily:MONO, fontSize:9, color:"#555" }}>
+                {scanProgress.found > 0 ? `${scanProgress.found} deals found` : "searching..."}
               </div>
             </div>
-            <div style={{ height:2, background:"rgba(255,255,255,0.05)", borderRadius:2, overflow:"hidden" }}>
-              <div style={{ height:"100%", width:"40%", background:"linear-gradient(90deg,transparent,#CC0000,transparent)", animation:"sweep 1.5s linear infinite" }}/>
+            <div style={{ height:3, background:"rgba(255,255,255,0.05)", borderRadius:2, overflow:"hidden" }}>
+              <div style={{ height:"100%", background:"linear-gradient(90deg,#CC0000,#FF4444,#CC0000)", backgroundSize:"200% 100%", animation:"shimmer 1.5s linear infinite", borderRadius:2 }}/>
             </div>
           </div>
         )}
-        {!scanProgress.active&&(
-          <div style={{ height:2, background:"rgba(255,255,255,0.03)" }}/>
-        )}
+        {!scanProgress.active&&<div style={{ height:2, background:"rgba(255,255,255,0.03)" }}/>}
       </div>
 
       <div style={{ padding:"14px 16px" }}>
