@@ -282,8 +282,8 @@ function Card({ d, rank }) {
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", padding:"10px 14px 0", gap:10 }}>
         {/* Thumbnail — always visible */}
         {d.image && (
-          <div style={{ flexShrink:0, width:52, height:52, borderRadius:6, overflow:"hidden", background:"#16161E", border:"1px solid rgba(255,255,255,0.08)" }}>
-            <img src={d.image} alt="" style={{ width:"100%", height:"100%", objectFit:"cover" }} loading="lazy"
+          <div style={{ flexShrink:0, width:52, height:52, borderRadius:6, background:"#111118", border:"1px solid rgba(255,255,255,0.07)", display:"flex", alignItems:"center", justifyContent:"center", padding:4 }}>
+            <img src={d.image} alt="" style={{ width:"100%", height:"100%", objectFit:"contain", display:"block" }} loading="lazy"
               onError={e=>{e.target.parentElement.style.display="none"}}/>
           </div>
         )}
@@ -306,20 +306,15 @@ function Card({ d, rank }) {
         </div>
       </div>
 
-      {/* ── QUICK BUY ROW ── */}
-      <div style={{ display:"flex", alignItems:"center", gap:8, padding:"6px 14px 0" }}>
-        <a href={d.url} target="_blank" rel="noopener noreferrer"
-          onClick={e=>e.stopPropagation()}
-          style={{ flex:1, display:"block", textAlign:"center", background:gr.c, color: gk==="D"||gk==="?"?"#FFFFFF":"#07070D", fontFamily:MONO, fontSize:10, fontWeight:700, letterSpacing:"0.1em", padding:"8px 0", borderRadius:5, textDecoration:"none" }}>
-          BUY NOW →
-        </a>
-        {pp&&(
-          <div style={{ fontFamily:MONO, fontSize:9, color:"#555", textAlign:"right", lineHeight:1.4, flexShrink:0 }}>
-            <div style={{ color:"#888" }}>per pack</div>
-            <div style={{ color:"#FFFFFF", fontSize:11 }}>£{pp}</div>
+      {/* ── PER PACK COST — keep, useful intel ── */}
+      {pp&&(
+        <div style={{ padding:"6px 14px 0", display:"flex", justifyContent:"flex-end" }}>
+          <div style={{ fontFamily:MONO, fontSize:9, color:"#555", textAlign:"right", lineHeight:1.4 }}>
+            <span style={{ color:"#666" }}>per pack · </span>
+            <span style={{ color:"#AAA", fontSize:10 }}>£{pp}</span>
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* ── STAT PILLS ── */}
       <div style={{ display:"flex", gap:5, flexWrap:"wrap", padding:"12px 14px 14px" }}>
@@ -379,15 +374,9 @@ function Card({ d, rank }) {
         )}
       </div>
 
-      {/* ── QUICK BUY ── */}
-      <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"0 14px 12px" }} onClick={e=>e.stopPropagation()}>
-        <a href={d.url} target="_blank" rel="noopener noreferrer"
-          style={{
-            background:"#CC0000", borderRadius:4, padding:"6px 16px",
-            color:"#fff", fontFamily:MONO, fontSize:10,
-            letterSpacing:"0.1em", display:"inline-flex", alignItems:"center", gap:5,
-          }}>BUY NOW →</a>
-        <div style={{ fontFamily:MONO, fontSize:9, color:"#444", cursor:"pointer" }}>
+      {/* ── EXPAND TOGGLE ── */}
+      <div style={{ display:"flex", justifyContent:"flex-end", padding:"0 14px 12px" }} onClick={e=>e.stopPropagation()}>
+        <div style={{ fontFamily:MONO, fontSize:9, color:"#444", cursor:"pointer", letterSpacing:"0.06em" }}>
           {open ? "▲ less" : "▼ details"}
         </div>
       </div>
@@ -398,7 +387,7 @@ function Card({ d, rank }) {
 
           {/* Product image — larger in expanded view */}
           {d.image&&(
-            <div style={{ marginBottom:14, borderRadius:8, overflow:"hidden", background:"#16161E", border:"1px solid rgba(255,255,255,0.08)", maxHeight:180, display:"flex", alignItems:"center", justifyContent:"center" }}>
+            <div style={{ marginBottom:14, borderRadius:8, overflow:"hidden", background:"#111118", border:"1px solid rgba(255,255,255,0.07)", maxHeight:180, display:"flex", alignItems:"center", justifyContent:"center", padding:"8px" }}>
               <img src={d.image} alt={d.product} style={{ width:"100%", maxHeight:180, objectFit:"contain" }} loading="lazy"
                 onError={e=>{e.target.parentElement.style.display="none"}}/>
             </div>
@@ -494,14 +483,10 @@ function Card({ d, rank }) {
             <div style={{ fontFamily:MONO, fontSize:10, color:gr.c, opacity:0.7 }}>{vd.v2}</div>
           </div>
 
-          {/* BUTTONS */}
-          <div style={{ display:"flex", gap:8 }}>
-            <a href={d.url} target="_blank" rel="noopener noreferrer" onClick={e=>e.stopPropagation()}
-              style={{ flex:1, background:"#CC0000", borderRadius:5, padding:"10px", color:"#fff", fontFamily:MONO, fontSize:11, letterSpacing:"0.1em", display:"flex", alignItems:"center", justifyContent:"center", boxShadow:"0 2px 12px rgba(204,0,0,0.35)" }}>
-              BUY NOW →
-            </a>
+          {/* SHARE */}
+          <div style={{ display:"flex", justifyContent:"flex-end" }}>
             <button onClick={e=>{e.stopPropagation();window.open(`https://wa.me/?text=${encodeURIComponent(`${gr.label}: ${d.product}\n£${d.buyNow.toFixed(2)} @ ${d.retailer}\n${vd.v1} — ${vd.v2}\n${d.url}`)}`,"_blank");}}
-              style={{ width:44, background:"transparent", border:"1px solid #2a2a3a", borderRadius:5, color:"#777", fontSize:14, cursor:"pointer" }}>📤</button>
+              style={{ background:"transparent", border:"1px solid #1E1E2A", borderRadius:5, color:"#555", fontSize:13, cursor:"pointer", padding:"6px 10px", fontFamily:MONO, fontSize:9, letterSpacing:"0.06em" }}>📤 share</button>
           </div>
           <div style={{ marginTop:8, fontFamily:MONO, fontSize:8, color:"#888", lineHeight:1.6 }}>
             * 13% eBay final value fee · £4 postage estimate · Hold projections are estimates, not financial advice
@@ -1355,7 +1340,7 @@ function App() {
                 <div style={{ textAlign:"right", flexShrink:0 }}>
                   <div style={{ fontFamily:MONO, fontSize:17, fontWeight:400, color:"#FFFFFF", lineHeight:1 }}>£{best.buyNow.toFixed(2)}</div>
                   <a href={best.url} target="_blank" rel="noopener noreferrer"
-                    style={{ fontFamily:DISP, fontSize:12, fontWeight:500, color:"#fff", background:"#CC0000", padding:"4px 12px", borderRadius:4, display:"inline-block", marginTop:6, letterSpacing:"0.08em" }}>BUY →</a>
+                    style={{ fontFamily:MONO, fontSize:9, color:"rgba(0,255,136,0.6)", letterSpacing:"0.1em", marginTop:6, display:"inline-block" }}>VIEW AT RETAILER ↗</a>
                 </div>
               </div>
             </div>
@@ -1471,8 +1456,8 @@ function App() {
                   <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:10 }}>
                     {/* Image */}
                     {item.image&&(
-                      <div style={{ flexShrink:0, width:52, height:52, borderRadius:6, overflow:"hidden", background:"#16161E", border:"1px solid rgba(255,255,255,0.08)" }}>
-                        <img src={item.image} alt="" style={{ width:"100%", height:"100%", objectFit:"cover" }} loading="lazy"
+                      <div style={{ flexShrink:0, width:52, height:52, borderRadius:6, background:"#111118", border:"1px solid rgba(255,255,255,0.07)", display:"flex", alignItems:"center", justifyContent:"center", padding:4 }}>
+                        <img src={item.image} alt="" style={{ width:"100%", height:"100%", objectFit:"contain", display:"block" }} loading="lazy"
                           onError={e=>{e.target.parentElement.style.display="none"}}/>
                       </div>
                     )}
