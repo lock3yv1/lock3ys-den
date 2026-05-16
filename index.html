@@ -327,7 +327,7 @@ function Card({ d, rank, isNew=false, dropDelay=0 }) {
         <div style={{ flex:1, minWidth:0 }}>
           <div style={{ fontFamily:DISP, fontSize:15, fontWeight:600, color:"#FFFFFF", lineHeight:1.25, letterSpacing:"0.01em", wordBreak:"break-word" }}>{d.product}</div>
           <div style={{ marginTop:4, display:"flex", alignItems:"baseline", gap:5 }}>
-            <span style={{ fontFamily:MONO, fontSize:8, color:"#444", letterSpacing:"0.06em" }}>RETAILER</span>
+            <span style={{ fontFamily:MONO, fontSize:8, color:"#555", letterSpacing:"0.06em" }}>RETAILER</span>
             <span style={{ fontFamily:MONO, fontSize:10, color:"#888", letterSpacing:"0.03em" }}>{d.retailer}</span>
           </div>
         </div>
@@ -369,7 +369,7 @@ function Card({ d, rank, isNew=false, dropDelay=0 }) {
         {/* eBay price row — the most important number */}
         {d.resell&&vsM!==null&&(
           <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"8px 10px", borderBottom:"1px solid rgba(255,255,255,0.04)" }}>
-            <span style={{ fontFamily:MONO, fontSize:9, color:"#777" }}>eBay market price</span>
+            <span style={{ fontFamily:MONO, fontSize:9, color:"#999" }}>eBay market price</span>
             <div style={{ display:"flex", alignItems:"center", gap:6 }}>
               <span style={{ fontFamily:MONO, fontSize:14, fontWeight:700, color:"#FFFFFF", lineHeight:1 }}>£{d.resell.toFixed(2)}</span>
               <span style={{
@@ -388,7 +388,7 @@ function Card({ d, rank, isNew=false, dropDelay=0 }) {
         {/* Flip profit — plain English */}
         {net!==null&&(
           <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"8px 10px", borderBottom:"1px solid rgba(255,255,255,0.04)" }}>
-            <span style={{ fontFamily:MONO, fontSize:9, color:"#777" }}>Flip profit after fees</span>
+            <span style={{ fontFamily:MONO, fontSize:9, color:"#999" }}>Flip profit after fees</span>
             <span style={{ fontFamily:MONO, fontSize:12, fontWeight:700, color:net>=0?"#00FF88":"#FF3B3B" }}>
               {net>=0?"+":"-"}£{Math.abs(net).toFixed(2)} ({roi>=0?"+":""}{roi}%)
             </span>
@@ -476,8 +476,8 @@ function Card({ d, rank, isNew=false, dropDelay=0 }) {
 
             const HoldRow = ({label, val}) => {
               const trendC = h.trend==="rising"?"#39D98A":h.trend==="declining"?"#FF3B3B":"#FF8C00";
-              const pct = Math.round((val / h.yr1val.toString().replace ? (val/d.resell-1)*100 : (val/d.resell-1)*100));
-              const gain = Math.round((val - d.resell) / d.resell * 100);
+              const pct = val && d.buyNow ? Math.round((val / d.buyNow - 1) * 100) : 0;
+              const gain = val && d.resell ? Math.round((val - d.resell) / d.resell * 100) : 0;
               return (
                 <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"9px 0", borderBottom:"1px solid rgba(255,255,255,0.05)" }}>
                   <div style={{ fontFamily:MONO, fontSize:9, color:"#666" }}>{label}</div>
@@ -498,7 +498,7 @@ function Card({ d, rank, isNew=false, dropDelay=0 }) {
                   </div>
                   <div style={{ display:"flex", alignItems:"center", gap:8 }}>
                     <span style={{ fontFamily:MONO, fontSize:9, color:tC }}>{h.trend==="rising"?"↗ RISING":h.trend==="declining"?"↘ FALLING":"→ STABLE"}</span>
-                    <span style={{ fontFamily:MONO, fontSize:11, color:h.score>=7?"#00FF88":h.score>=5?"#FF8C00":"#FF3B3B" }}>{h.score}/10</span>
+                    <span style={{ fontFamily:MONO, fontSize:11, color:(h.score||0)>=7?"#00FF88":(h.score||0)>=5?"#FF8C00":"#FF3B3B" }}>{h.score||"?"}/10</span>
                   </div>
                 </div>
                 <HoldRow label="1 YEAR"  val={yr1v}/>
@@ -1200,6 +1200,9 @@ function App() {
         if (deals.length > 0) {
           setEbayListings(deals.sort((a,b) => b.roi - a.roi));
         }
+      } else {
+        // 404 = ebay_deals.json not created yet (needs first scan with new scraper)
+        console.log("eBay deals file not found — run a scan to populate");
       }
     } catch (e) {
       console.log("eBay tab load error:", e.message);
@@ -1448,7 +1451,7 @@ function App() {
               }}>{f.l}</button>
             ))}
           </div>
-          <div style={{ fontFamily:MONO, fontSize:9, color:"#666", marginBottom:10, letterSpacing:"0.06em", textAlign:"center" }}>{filtered.length} deals · sorted by ROI · tap to expand</div>
+          <div style={{ fontFamily:MONO, fontSize:9, color:"#888", marginBottom:10, letterSpacing:"0.06em", textAlign:"center" }}>{filtered.length} deals · sorted by ROI · tap to expand</div>
           {loading
             ?<div style={{ textAlign:"center",padding:"48px 0",fontFamily:MONO,color:"#B0B0B0",fontSize:11,letterSpacing:"0.1em" }}>SCANNING RETAILERS...</div>
             :filtered.length===0
@@ -1496,11 +1499,7 @@ function App() {
               </div>
             )}
 
-            {!ebayLoading&&ebayLoaded&&ebayListings.length===0&&(
-              <div style={{ textAlign:"center", padding:"48px 0", fontFamily:MONO, color:"#666", fontSize:11 }}>
-                No scoreable listings found right now. Try refreshing.
-              </div>
-            )}
+
 
             {!ebayLoading&&ebayListings.length>0&&(
               <>
@@ -1549,7 +1548,7 @@ function App() {
                         </div>
                       </div>
                       {/* Intel */}
-                      <div style={{ margin:"0 14px 10px", background:"rgba(255,255,255,0.025)", borderRadius:6, overflow:"hidden", border:"1px solid rgba(255,255,255,0.05)" }}>
+                      <div style={{ margin:"0 14px 10px", background:"rgba(255,255,255,0.04)", borderRadius:6, overflow:"hidden", border:"1px solid rgba(255,255,255,0.08)" }}>
                         <div style={{ display:"flex", justifyContent:"space-between", padding:"7px 10px", borderBottom:"1px solid rgba(255,255,255,0.04)" }}>
                           <span style={{ fontFamily:MONO, fontSize:9, color:"#666" }}>Market avg (UK)</span>
                           <div style={{ display:"flex", alignItems:"center", gap:6 }}>
