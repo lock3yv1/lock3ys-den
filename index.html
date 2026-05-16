@@ -221,7 +221,7 @@ function ago(iso) {
 }
 
 // ─── CARD ─────────────────────────────────────────────────────────────────────
-function Card({ d, rank }) {
+function Card({ d, rank, isNew=false, dropDelay=0 }) {
   const [open, setOpen] = useState(false);
   const { net, roi, fees } = calcFlip(d.buyNow, d.resell);
   const h   = calcHold(d.resell, d.product);
@@ -239,15 +239,21 @@ function Card({ d, rank }) {
 
   return (
     <div onClick={()=>setOpen(o=>!o)} style={{
+      position:"relative",
       background:"linear-gradient(160deg,#0E0E18,#0A0A12)",
-      border:`1px solid ${open ? gr.border : "rgba(255,255,255,0.09)"}`,
+      border:`1px solid ${open ? gr.border : isNew ? gr.c+"55" : "rgba(255,255,255,0.09)"}`,
       borderRadius:8,
       overflow:"hidden",
       cursor:"pointer",
       marginBottom:12,
-      transition:"border-color 0.15s, box-shadow 0.15s",
-      boxShadow: open ? `0 4px 40px ${gr.bg}, 0 0 0 1px ${gr.c}22` : `0 2px 16px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.03)`,
+      transition:"border-color 0.3s, box-shadow 0.3s",
+      boxShadow: open ? `0 4px 40px ${gr.bg}, 0 0 0 1px ${gr.c}22` : isNew ? `0 0 20px ${gr.c}22, 0 2px 16px rgba(0,0,0,0.4)` : `0 2px 16px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.03)`,
+      animation: isNew ? `dropIn 0.4s cubic-bezier(0.34,1.56,0.64,1) ${dropDelay*60}ms both` : `fadeup 0.18s ease ${dropDelay*25}ms both`,
     }}>
+    {/* NEW badge — appears on freshly scanned cards */}
+    {isNew&&(
+      <div style={{ position:"absolute", top:8, right:8, background:"#CC0000", borderRadius:3, padding:"2px 6px", fontFamily:MONO, fontSize:7, color:"#fff", letterSpacing:"0.1em", zIndex:10, pointerEvents:"none" }}>NEW</div>
+    )}
       {/* Grade accent stripe */}
       <div style={{ height:3, background:`linear-gradient(90deg,${gr.c}EE,${gr.c}99,${gr.c}22,transparent)`, boxShadow:`0 0 8px ${gr.c}40` }}/>
 
@@ -358,7 +364,7 @@ function Card({ d, rank }) {
               color:       vsM<0 ? "#00FF88" : "#FF3B3B",
               border:`1px solid ${vsM<0?"rgba(0,255,136,0.3)":"rgba(255,59,59,0.3)"}`,
             }}>eBay £{d.resell.toFixed(2)}</div>
-            {d.resellSource==="ebay_sold" ? (
+            {(d.resellSource==="ebay_sold"||d.resellSource==="ebay_browse") ? (
               <div style={{
                 fontFamily:MONO, fontSize:7, letterSpacing:"0.06em",
                 padding:"2px 5px", borderRadius:3,
@@ -428,7 +434,7 @@ function Card({ d, rank }) {
               <div style={{ fontFamily:MONO, fontSize:9, color:"#888", letterSpacing:"0.15em", marginBottom:12 }}>FLIP CALCULATOR</div>
               <div style={{ display:"grid", gridTemplateColumns:"1fr auto", gap:"8px 20px" }}>
                 <span style={{ fontFamily:MONO, fontSize:12, color:"#C8C8C8" }}>
-                eBay resell {d.resellSource==="ebay_sold" ? <span style={{fontSize:9,color:d.resellConfidence==="HIGH"?"#00FF88":"#FFD60A"}}>● {d.resellConfidence||"LIVE"}</span> : <span style={{fontSize:9,color:"#444"}}>● EST</span>}
+                eBay resell {(d.resellSource==="ebay_sold"||d.resellSource==="ebay_browse") ? <span style={{fontSize:9,color:d.resellConfidence==="HIGH"?"#00FF88":"#FFD60A"}}>● {d.resellConfidence||"LIVE"}</span> : <span style={{fontSize:9,color:"#444"}}>● EST</span>}
               </span>
                 <span style={{ fontFamily:MONO, fontSize:12, color:"#00FF88", fontWeight:500 }}>£{d.resell?.toFixed(2)}</span>
 
@@ -529,7 +535,7 @@ function Card({ d, rank }) {
               style={{ width:42, height:36, background:"transparent", border:"1px solid #1E1E2A", borderRadius:5, color:"#555", fontSize:14, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center" }}>📤</button>
           </div>
           <div style={{ marginTop:8, fontFamily:MONO, fontSize:8, color:"#888", lineHeight:1.6 }}>
-            {d.resellSource==="ebay_sold"
+            {(d.resellSource==="ebay_sold"||d.resellSource==="ebay_browse")
               ? `* eBay price from ${d.resellSampleSize||"?"} recent UK sold listings · 13% fee · £4 postage · Not financial advice`
               : "* 13% eBay final value fee · £4 postage estimate · Resell price estimated · Not financial advice"
             }
@@ -964,6 +970,7 @@ function App() {
 
   // ── SCAN STATE ─────────────────────────────────────────────────────────────
   const [scanProgress, setScanProgress] = useState({ active:false, retailer:"", found:0, total:0 });
+  const [newIds, setNewIds] = useState(new Set()); // tracks cards that just dropped in
 
   // ── GITHUB WORKFLOW TRIGGER ──────────────────────────────────────────────
   // SCAN button triggers the real server-side scraper via GitHub API
@@ -1065,7 +1072,13 @@ function App() {
           if (Array.isArray(data) && data.length > 0) {
             const newTimestamp = data[0].lastSeen || "";
             if (newTimestamp !== previousTimestamp) {
-              // Fresh data arrived!
+              // Fresh data arrived — animate new cards dropping in
+              setNewIds(prev => {
+                const oldIds = new Set([...deals].map(d => d.id));
+                const arrived = new Set(data.filter(d => !oldIds.has(d.id)).map(d => d.id));
+                setTimeout(() => setNewIds(new Set()), 8000);
+                return arrived;
+              });
               setDeals(data);
               setLive(true);
               setUpdated(new Date());
@@ -1290,6 +1303,7 @@ function App() {
       @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
       @keyframes knightrider{0%{left:-30%;width:30%}50%{left:85%;width:30%}100%{left:-30%;width:30%}}
       @keyframes fadeup{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+      @keyframes dropIn{from{opacity:0;transform:translateY(-12px) scale(0.97)}to{opacity:1;transform:none}}
       @keyframes spotlight-pulse{0%,100%{box-shadow:0 0 14px rgba(0,255,136,0.06)}50%{box-shadow:0 0 20px rgba(0,255,136,0.10)}}
       ::-webkit-scrollbar{width:2px}::-webkit-scrollbar-thumb{background:#CC0000}
       a{text-decoration:none;color:inherit}
@@ -1349,7 +1363,7 @@ function App() {
               </div>
             </div>
             <div style={{ fontFamily:MONO, fontSize:9, color:"#555" }}>
-              checking 25 UK retailers
+              {scanProgress.found > 0 ? `${scanProgress.found} deals found` : "checking 25 UK retailers"}
             </div>
           </div>
           <div style={{ fontFamily:MONO, fontSize:11, color:"#FFFFFF", marginBottom:6, letterSpacing:"0.04em" }}>
@@ -1403,18 +1417,33 @@ function App() {
             </div>
           )}
 
-          {/* Type filter — single scrollable line */}
-          <div style={{ display:"flex", gap:5, marginBottom:8, overflowX:"auto", paddingBottom:2, WebkitOverflowScrolling:"touch", scrollbarWidth:"none" }}>
-            {[{id:"all",l:"ALL"},{id:"boxes",l:"📦 BOXES"},{id:"half",l:"½ BOX"},{id:"etbs",l:"🎁 ETB"},{id:"packs",l:"🃏 PACK"},{id:"bundles",l:"📫 BUNDLE"},{id:"tins",l:"🥫 TINS+"}].map(f=>(
+          {/* Type filter — 4+3 grid, all visible, no swiping */}
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:5, marginBottom:8 }}>
+            {[
+              {id:"all",    l:"ALL",     icon:"⚡"},
+              {id:"boxes",  l:"BOXES",   icon:"📦"},
+              {id:"half",   l:"½ BOX",   icon:"◑"},
+              {id:"etbs",   l:"ETB",     icon:"🎁"},
+              {id:"packs",  l:"PACKS",   icon:"🃏"},
+              {id:"bundles",l:"BUNDLE",  icon:"📫"},
+              {id:"tins",   l:"TINS",    icon:"🥫"},
+            ].map(f=>(
               <button key={f.id} onClick={()=>setTypeF(f.id)} style={{
-                background: typeF===f.id ? "#CC0000" : "#161620",
-                border: `1px solid ${typeF===f.id ? "#CC0000" : "#333345"}`,
-                borderRadius:5, padding:"6px 11px", flexShrink:0,
-                fontFamily:MONO, fontSize:9,
-                color: typeF===f.id ? "#FFFFFF" : "#AAAAAA",
-                cursor:"pointer", letterSpacing:"0.05em",
+                background: typeF===f.id ? "rgba(204,0,0,0.2)" : "#0F0F18",
+                border: `1px solid ${typeF===f.id ? "#CC0000" : "#1E1E2C"}`,
+                borderRadius:6,
+                padding:"7px 4px",
+                fontFamily:MONO, fontSize:8,
+                color: typeF===f.id ? "#FFFFFF" : "#666",
+                cursor:"pointer", letterSpacing:"0.04em",
                 transition:"all 0.12s",
-              }}>{f.l}</button>
+                display:"flex", flexDirection:"column",
+                alignItems:"center", gap:3,
+                // Last row — span if odd
+              }}>
+                <span style={{ fontSize:13, lineHeight:1 }}>{f.icon}</span>
+                <span>{f.l}</span>
+              </button>
             ))}
           </div>
           {/* Deal filter — single scrollable line with HOLD added, AVOID fixed */}
@@ -1455,7 +1484,7 @@ function App() {
                     SHOW ALL DEALS
                   </button>
                 </div>
-              ) : filtered.map((d,i)=><Card key={d.id||i} d={d} rank={i+1}/>)}
+              ) : filtered.map((d,i)=><Card key={d.id||i} d={d} rank={i+1} isNew={newIds.has(d.id)} dropDelay={i}/>)}
             </div>
           }
         </>}
