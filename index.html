@@ -1181,7 +1181,19 @@ function App() {
     if (tab === "ebay" && !ebayLoaded && !ebayLoading) loadEbay();
   }, [tab]);
 
-  const sorted=[...deals].sort((a,b)=>(calcFlip(b.buyNow,b.resell).roi??-999)-(calcFlip(a.buyNow,a.resell).roi??-999));
+  // Grade priority: S=0, A=1, B=2, C=3, H=4, D=5, ?=6
+  function gradePriority(d) {
+    const r = calcFlip(d.buyNow, d.resell).roi;
+    const h = calcHold(d.resell, d.product);
+    const gk = getGradeKey(r, h?.score??0);
+    return {S:0,A:1,B:2,C:3,H:4,D:5}[gk] ?? 6;
+  }
+  const sorted = [...deals].sort((a,b) => {
+    const pa = gradePriority(a), pb = gradePriority(b);
+    if (pa !== pb) return pa - pb;
+    // Within same grade, sort by ROI desc
+    return (calcFlip(b.buyNow,b.resell).roi??-999) - (calcFlip(a.buyNow,a.resell).roi??-999);
+  });
   const filtered=sorted.filter(d=>{
     const t=d.product.toLowerCase();
     if(typeF==="boxes") return t.includes("booster box")&&!t.includes("half");
