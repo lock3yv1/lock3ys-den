@@ -1,39 +1,76 @@
-const CACHE = "shinyden-v1";
-const ASSETS = ["/lock3ys-den/", "/lock3ys-den/index.html", "/lock3ys-den/banner.png"];
+// ShinyDen Service Worker — auto-updates on each deploy
+// Version controlled by BUILD_HASH in index.html
 
-self.addEventListener("install", e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
+const CACHE_VERSION = 'shinyden-v3';
+const STATIC_ASSETS = [
+  '/',
+  '/index.html',
+  '/manifest.json',
+  '/banner.png',
+];
+
+// Install — cache static assets
+self.addEventListener('install', event => {
+  // Skip waiting immediately — don't wait for old tabs to close
   self.skipWaiting();
+  event.waitUntil(
+    caches.open(CACHE_VERSION).then(cache => cache.addAll(STATIC_ASSETS)).catch(() => {})
+  );
 });
 
-self.addEventListener("activate", e => {
-  e.waitUntil(clients.claim());
+// Activate — delete all old caches
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    Promise.all([
+      // Take control of all clients immediately
+      self.clients.claim(),
+      // Delete old cache versions
+      caches.keys().then(keys =>
+        Promise.all(keys
+          .filter(k => k !== CACHE_VERSION)
+          .map(k => caches.delete(k))
+        )
+      ),
+    ])
+  );
 });
 
-self.addEventListener("fetch", e => {
-  // Network first for deals.json, cache first for assets
-  if (e.request.url.includes("deals.json")) {
-    e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
-  } else {
-    e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));
+// Fetch — network first, cache fallback
+// This means users ALWAYS get fresh content when online
+self.addEventListener('fetch', event => {
+  const url = new URL(event.request.url);
+
+  // API calls and GitHub raw data — always network, never cache
+  if (
+    url.hostname.includes('raw.githubusercontent.com') ||
+    url.hostname.includes('api.github.com') ||
+    url.hostname.includes('api.ebay.com') ||
+    url.hostname.includes('svcs.ebay.com') ||
+    url.hostname.includes('pokedata.io') ||
+    url.pathname.includes('deals.json') ||
+    url.pathname.includes('ebay_deals.json')
+  ) {
+    event.respondWith(fetch(event.request).catch(() => new Response('', { status: 503 })));
+    return;
   }
+
+  // For the main app files: network first, fall back to cache
+  event.respondWith(
+    fetch(event.request)
+      .then(response => {
+        if (response.ok) {
+          const clone = response.clone();
+          caches.open(CACHE_VERSION).then(cache => cache.put(event.request, clone));
+        }
+        return response;
+      })
+      .catch(() => caches.match(event.request))
+  );
 });
 
-self.addEventListener("push", e => {
-  let data = {};
-  try { data = e.data.json(); } catch {}
-  e.waitUntil(self.registration.showNotification(data.title || "Shiny Den", {
-    body: data.body || "New deal found",
-    icon: "/lock3ys-den/icon-192.png",
-    badge: "/lock3ys-den/icon-192.png",
-    tag: data.tag || "deal",
-    data: { url: data.url || "/lock3ys-den/" },
-    requireInteraction: true,
-    vibrate: [200, 100, 200],
-  }));
-});
-
-self.addEventListener("notificationclick", e => {
-  e.notification.close();
-  e.waitUntil(clients.openWindow(e.notification.data?.url || "/lock3ys-den/"));
+// Listen for SKIP_WAITING message from the page
+self.addEventListener('message', event => {
+  if (event.data?.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });
