@@ -264,6 +264,9 @@ function Card({ d, rank }) {
             boxShadow:`0 0 14px ${gr.c}44, inset 0 0 8px ${gr.c}10`,
           }}>
             <span style={{ fontFamily:DISP, fontSize:12, fontWeight:500, color:gr.c, lineHeight:1 }}>{gk}</span>
+            {d.dealScore!=null && (
+              <div style={{ fontFamily:MONO, fontSize:7, color:gr.c, opacity:0.7, letterSpacing:"0.02em", lineHeight:1, marginTop:1 }}>{d.dealScore}</div>
+            )}
           </div>
           <div>
             <div style={{ fontFamily:DISP, fontSize:11, fontWeight:500, color:gr.c, letterSpacing:"0.08em", lineHeight:1 }}>{gr.label}</div>
@@ -306,15 +309,30 @@ function Card({ d, rank }) {
         </div>
       </div>
 
-      {/* ── PER PACK COST — keep, useful intel ── */}
-      {pp&&(
-        <div style={{ padding:"6px 14px 0", display:"flex", justifyContent:"flex-end" }}>
-          <div style={{ fontFamily:MONO, fontSize:9, color:"#555", textAlign:"right", lineHeight:1.4 }}>
-            <span style={{ color:"#666" }}>per pack · </span>
-            <span style={{ color:"#AAA", fontSize:10 }}>£{pp}</span>
+      {/* ── QUICK BUY ROW ── */}
+      <div style={{ display:"flex", alignItems:"center", gap:8, padding:"6px 14px 0" }}>
+        <a href={d.url} target="_blank" rel="noopener noreferrer"
+          onClick={e=>e.stopPropagation()}
+          style={{
+            flex:1, display:"block", textAlign:"center",
+            background:"#CC0000",
+            border:"none",
+            borderRadius:5,
+            padding:"8px 0",
+            fontFamily:MONO, fontSize:10, fontWeight:700,
+            letterSpacing:"0.1em", color:"#FFFFFF",
+            textDecoration:"none",
+            boxShadow:"0 2px 10px rgba(204,0,0,0.35)",
+          }}>
+          BUY NOW →
+        </a>
+        {pp&&(
+          <div style={{ fontFamily:MONO, fontSize:9, color:"#555", textAlign:"right", lineHeight:1.4, flexShrink:0 }}>
+            <div style={{ color:"#666", fontSize:8 }}>per pack</div>
+            <div style={{ color:"#AAA", fontSize:10 }}>£{pp}</div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* ── STAT PILLS ── */}
       <div style={{ display:"flex", gap:5, flexWrap:"wrap", padding:"12px 14px 14px" }}>
@@ -334,13 +352,26 @@ function Card({ d, rank }) {
 
         {/* #2 — eBay resell: green = buying below market (profit possible), red = above */}
         {d.resell&&(
-          <div style={{
-            fontFamily:MONO, fontSize:11, fontWeight:700,
-            padding:"5px 10px", borderRadius:4,
-            background: vsM<0 ? "rgba(0,255,136,0.1)" : "rgba(255,59,59,0.1)",
-            color:       vsM<0 ? "#00FF88" : "#FF3B3B",
-            border:`1px solid ${vsM<0?"rgba(0,255,136,0.3)":"rgba(255,59,59,0.3)"}`,
-          }}>eBay £{d.resell.toFixed(2)}</div>
+          <div style={{ display:"flex", alignItems:"center", gap:4 }}>
+            <div style={{
+              fontFamily:MONO, fontSize:11, fontWeight:700,
+              padding:"5px 10px", borderRadius:4,
+              background: vsM<0 ? "rgba(0,255,136,0.1)" : "rgba(255,59,59,0.1)",
+              color:       vsM<0 ? "#00FF88" : "#FF3B3B",
+              border:`1px solid ${vsM<0?"rgba(0,255,136,0.3)":"rgba(255,59,59,0.3)"}`,
+            }}>eBay £{d.resell.toFixed(2)}</div>
+            {d.resellSource==="ebay_sold" ? (
+              <div style={{
+                fontFamily:MONO, fontSize:7, letterSpacing:"0.06em",
+                padding:"2px 5px", borderRadius:3,
+                color: d.resellConfidence==="HIGH" ? "#00FF88" : d.resellConfidence==="MEDIUM" ? "#FFD60A" : "#888",
+                background: d.resellConfidence==="HIGH" ? "rgba(0,255,136,0.1)" : d.resellConfidence==="MEDIUM" ? "rgba(255,214,10,0.1)" : "rgba(136,136,136,0.08)",
+                border: `1px solid ${d.resellConfidence==="HIGH" ? "rgba(0,255,136,0.25)" : d.resellConfidence==="MEDIUM" ? "rgba(255,214,10,0.25)" : "rgba(136,136,136,0.15)"}`,
+              }}>LIVE</div>
+            ) : (
+              <div style={{ fontFamily:MONO, fontSize:7, color:"#333", letterSpacing:"0.06em" }}>EST</div>
+            )}
+          </div>
         )}
 
         {/* #3 — RRP: warm gold so it's clearly different from the eBay price */}
@@ -374,8 +405,18 @@ function Card({ d, rank }) {
         )}
       </div>
 
-      {/* ── EXPAND TOGGLE ── */}
-      <div style={{ display:"flex", justifyContent:"flex-end", padding:"0 14px 12px" }} onClick={e=>e.stopPropagation()}>
+      {/* ── BUY + TOGGLE ROW ── */}
+      <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"0 14px 12px" }} onClick={e=>e.stopPropagation()}>
+        <a href={d.url} target="_blank" rel="noopener noreferrer"
+          style={{
+            background:"#CC0000",
+            borderRadius:4, padding:"5px 14px",
+            color:"#fff", fontFamily:MONO, fontSize:10,
+            letterSpacing:"0.08em",
+            display:"inline-flex", alignItems:"center", gap:5,
+            textDecoration:"none",
+            boxShadow:"0 1px 8px rgba(204,0,0,0.3)",
+          }}>BUY NOW →</a>
         <div style={{ fontFamily:MONO, fontSize:9, color:"#444", cursor:"pointer", letterSpacing:"0.06em" }}>
           {open ? "▲ less" : "▼ details"}
         </div>
@@ -398,7 +439,9 @@ function Card({ d, rank }) {
             <div style={{ background:"rgba(0,0,0,0.4)", border:"1px solid rgba(255,255,255,0.07)", borderRadius:7, padding:"14px 14px", marginBottom:10 }}>
               <div style={{ fontFamily:MONO, fontSize:9, color:"#888", letterSpacing:"0.15em", marginBottom:12 }}>FLIP CALCULATOR</div>
               <div style={{ display:"grid", gridTemplateColumns:"1fr auto", gap:"8px 20px" }}>
-                <span style={{ fontFamily:MONO, fontSize:12, color:"#C8C8C8" }}>eBay resell price</span>
+                <span style={{ fontFamily:MONO, fontSize:12, color:"#C8C8C8" }}>
+                eBay resell {d.resellSource==="ebay_sold" ? <span style={{fontSize:9,color:d.resellConfidence==="HIGH"?"#00FF88":"#FFD60A"}}>● {d.resellConfidence||"LIVE"}</span> : <span style={{fontSize:9,color:"#444"}}>● EST</span>}
+              </span>
                 <span style={{ fontFamily:MONO, fontSize:12, color:"#00FF88", fontWeight:500 }}>£{d.resell?.toFixed(2)}</span>
 
                 <span style={{ fontFamily:MONO, fontSize:12, color:"#C8C8C8" }}>eBay fees (13%)</span>
@@ -483,13 +526,26 @@ function Card({ d, rank }) {
             <div style={{ fontFamily:MONO, fontSize:10, color:gr.c, opacity:0.7 }}>{vd.v2}</div>
           </div>
 
-          {/* SHARE */}
-          <div style={{ display:"flex", justifyContent:"flex-end" }}>
+          {/* BUY + SHARE */}
+          <div style={{ display:"flex", gap:8 }}>
+            <a href={d.url} target="_blank" rel="noopener noreferrer" onClick={e=>e.stopPropagation()}
+              style={{
+                flex:1, background:"#CC0000", borderRadius:5, padding:"10px",
+                color:"#fff", fontFamily:MONO, fontSize:11, letterSpacing:"0.1em",
+                display:"flex", alignItems:"center", justifyContent:"center",
+                textDecoration:"none",
+                boxShadow:"0 2px 12px rgba(204,0,0,0.35)",
+              }}>
+              BUY NOW →
+            </a>
             <button onClick={e=>{e.stopPropagation();window.open(`https://wa.me/?text=${encodeURIComponent(`${gr.label}: ${d.product}\n£${d.buyNow.toFixed(2)} @ ${d.retailer}\n${vd.v1} — ${vd.v2}\n${d.url}`)}`,"_blank");}}
-              style={{ background:"transparent", border:"1px solid #1E1E2A", borderRadius:5, color:"#555", fontSize:13, cursor:"pointer", padding:"6px 10px", fontFamily:MONO, fontSize:9, letterSpacing:"0.06em" }}>📤 share</button>
+              style={{ width:44, background:"transparent", border:"1px solid #2a2a3a", borderRadius:5, color:"#777", fontSize:14, cursor:"pointer" }}>📤</button>
           </div>
           <div style={{ marginTop:8, fontFamily:MONO, fontSize:8, color:"#888", lineHeight:1.6 }}>
-            * 13% eBay final value fee · £4 postage estimate · Hold projections are estimates, not financial advice
+            {d.resellSource==="ebay_sold"
+              ? `* eBay price from ${d.resellSampleSize||"?"} recent UK sold listings · 13% fee · £4 postage · Not financial advice`
+              : "* 13% eBay final value fee · £4 postage estimate · Resell price estimated · Not financial advice"
+            }
           </div>
         </div>
       )}
