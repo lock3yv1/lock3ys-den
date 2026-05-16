@@ -163,7 +163,7 @@ const G = {
   S: { key:"🔥", label:"HOT DEAL",   c:"#00FF88", bg:"rgba(0,255,136,0.08)",   border:"rgba(0,255,136,0.3)"   },
   A: { key:"✅", label:"BUY",        c:"#39D98A", bg:"rgba(57,217,138,0.07)",  border:"rgba(57,217,138,0.25)" },
   B: { key:"💰", label:"FLIP",       c:"#FFD60A", bg:"rgba(255,214,10,0.07)",  border:"rgba(255,214,10,0.25)" },
-  C: { key:"⚠️", label:"WEAK",       c:"#FF8C00", bg:"rgba(255,140,0,0.07)",   border:"rgba(255,140,0,0.25)"  },
+  C: { key:"⚠️", label:"MARGINAL",    c:"#FF8C00", bg:"rgba(255,140,0,0.07)",   border:"rgba(255,140,0,0.25)"  },
   H: { key:"📦", label:"HOLD",       c:"#B388FF", bg:"rgba(179,136,255,0.07)", border:"rgba(179,136,255,0.25)"},
   D: { key:"❌", label:"AVOID",      c:"#FF3B3B", bg:"rgba(255,59,59,0.07)",   border:"rgba(255,59,59,0.25)"  },
   "?":{ key:"📋", label:"IN STOCK",  c:"#8899AA", bg:"rgba(136,153,170,0.05)", border:"rgba(136,153,170,0.15)"},
@@ -293,7 +293,7 @@ function Card({ d, rank, isNew=false, dropDelay=0 }) {
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", padding:"10px 14px 0", gap:10 }}>
         {/* Thumbnail — always visible */}
         {d.image && (
-          <div style={{ flexShrink:0, width:56, height:56, background:"#0D0D14", borderRadius:6, display:"flex", alignItems:"center", justifyContent:"center", overflow:"hidden" }}>
+          <div style={{ flexShrink:0, width:56, height:56, borderRadius:6, display:"flex", alignItems:"center", justifyContent:"center" }}>
             <img src={d.image} alt="" style={{ width:"100%", height:"100%", objectFit:"contain", display:"block" }} loading="lazy"
               onError={e=>{e.target.parentElement.style.display="none"}}/>
           </div>
@@ -340,10 +340,12 @@ function Card({ d, rank, isNew=false, dropDelay=0 }) {
         {/* eBay price row — the most important number */}
         {d.resell&&vsM!==null&&(
           <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"8px 10px", borderBottom:"1px solid rgba(255,255,255,0.04)" }}>
-            <div style={{ display:"flex", alignItems:"center", gap:6 }}>
-              <span style={{ fontFamily:MONO, fontSize:9, color:"#555" }}>eBay sells for</span>
-              {(d.resellSource==="ebay_sold"||d.resellSource==="ebay_browse") && (
-                <span style={{ fontFamily:MONO, fontSize:7, color:"#00FF88", background:"rgba(0,255,136,0.1)", border:"1px solid rgba(0,255,136,0.25)", borderRadius:3, padding:"1px 5px", letterSpacing:"0.08em" }}>LIVE</span>
+            <div style={{ display:"flex", alignItems:"center", gap:7 }}>
+              <span style={{ fontFamily:MONO, fontSize:9, color:"#666" }}>eBay sells for</span>
+              {(d.resellSource==="ebay_sold"||d.resellSource==="ebay_browse") ? (
+                <span style={{ fontFamily:MONO, fontSize:8, fontWeight:700, color:"#00FF88", background:"rgba(0,255,136,0.12)", border:"1px solid rgba(0,255,136,0.4)", borderRadius:4, padding:"2px 7px", letterSpacing:"0.1em", boxShadow:"0 0 8px rgba(0,255,136,0.2)", animation:"livePulse 2s ease-in-out infinite" }}>● LIVE</span>
+              ) : (
+                <span style={{ fontFamily:MONO, fontSize:8, color:"#3A3A50", letterSpacing:"0.08em" }}>EST</span>
               )}
             </div>
             <div style={{ display:"flex", alignItems:"center", gap:6 }}>
@@ -366,7 +368,7 @@ function Card({ d, rank, isNew=false, dropDelay=0 }) {
         {/* Flip profit — plain English */}
         {net!==null&&(
           <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"8px 10px", borderBottom:"1px solid rgba(255,255,255,0.04)" }}>
-            <span style={{ fontFamily:MONO, fontSize:9, color:"#555" }}>Flip profit after fees</span>
+            <span style={{ fontFamily:MONO, fontSize:9, color:"#777" }}>Flip profit after fees</span>
             <span style={{ fontFamily:MONO, fontSize:12, fontWeight:700, color:net>=0?"#00FF88":"#FF3B3B" }}>
               {net>=0?"+":"-"}£{Math.abs(net).toFixed(2)} ({roi>=0?"+":""}{roi}%)
             </span>
@@ -401,7 +403,7 @@ function Card({ d, rank, isNew=false, dropDelay=0 }) {
 
           {/* Product image — larger in expanded view */}
           {d.image&&(
-            <div style={{ marginBottom:14, maxHeight:160, display:"flex", alignItems:"center", justifyContent:"center" }}>
+            <div style={{ marginBottom:14, maxHeight:140, display:"flex", alignItems:"center", justifyContent:"center", padding:"4px 8px" }}>
               <img src={d.image} alt={d.product} style={{ width:"100%", maxHeight:160, objectFit:"contain", display:"block" }} loading="lazy"
                 onError={e=>{e.target.parentElement.style.display="none"}}/>
             </div>
@@ -489,7 +491,7 @@ function Card({ d, rank, isNew=false, dropDelay=0 }) {
             <div style={{ fontFamily:MONO, fontSize:9, color:gr.c, opacity:0.5, letterSpacing:"0.12em", marginBottom:5 }}>
               {gk==="S"||gk==="A" ? "HOT DEAL — BUY & FLIP ON EBAY NOW" :
                gk==="B" ? "FLIP — BUY & RESELL ON EBAY" :
-               gk==="C" ? "WEAK — SMALL PROFIT ONLY" :
+               gk==="C" ? (net>=0?"MARGINAL FLIP — SMALL PROFIT":"WEAK — BARELY WORTH IT") :
                gk==="H" ? "HOLD — BUY & STORE SEALED" :
                gk==="D" ? "AVOID — LOSS AFTER FEES" :
                "IN STOCK — NO EBAY DATA YET"}
@@ -780,10 +782,20 @@ function HeatTab() {
       />
 
       {/* Type filter */}
-      <div style={{ display:"flex", gap:5, marginBottom:14, overflowX:"auto", paddingBottom:2, WebkitOverflowScrolling:"touch", scrollbarWidth:"none" }}>
+      <div style={{ display:"flex", flexWrap:"wrap", gap:5, marginBottom:14 }}>
         {["all","Booster Box","Elite Trainer Box","Booster Bundle","Booster Pack","Tin"].map(t=>(
           <button key={t} onClick={()=>setHeatType(t)}
-            style={{ background:heatType===t?"#CC0000":"#161620", border:`1px solid ${heatType===t?"#CC0000":"#333345"}`, borderRadius:4, padding:"5px 10px", flexShrink:0, fontFamily:MONO, fontSize:9, color:heatType===t?"#fff":"#AAAAAA", cursor:"pointer", whiteSpace:"nowrap" }}>
+            style={{
+              flex:"1 1 calc(33% - 5px)", minWidth:80, textAlign:"center",
+              background:heatType===t?"rgba(204,0,0,0.18)":"#0F0F18",
+              border:`1px solid ${heatType===t?"#CC0000":"#1A1A28"}`,
+              borderRadius:6, padding:"8px 6px",
+              fontFamily:MONO, fontSize:9,
+              fontWeight:heatType===t?"700":"400",
+              color:heatType===t?"#FFFFFF":"#666",
+              cursor:"pointer", letterSpacing:"0.05em",
+              transition:"all 0.12s",
+            }}>
             {t==="all"?"ALL TYPES":t.toUpperCase()}
           </button>
         ))}
@@ -1257,6 +1269,7 @@ function App() {
       @keyframes knightrider{0%{left:-30%;width:30%}50%{left:85%;width:30%}100%{left:-30%;width:30%}}
       @keyframes fadeup{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
       @keyframes dropIn{from{opacity:0;transform:translateY(-12px) scale(0.97)}to{opacity:1;transform:none}}
+      @keyframes livePulse{0%,100%{box-shadow:0 0 6px rgba(0,255,136,0.15)}50%{box-shadow:0 0 14px rgba(0,255,136,0.45)}}
       @keyframes spotlight-pulse{0%,100%{box-shadow:0 0 14px rgba(0,255,136,0.06)}50%{box-shadow:0 0 20px rgba(0,255,136,0.10)}}
       ::-webkit-scrollbar{width:2px}::-webkit-scrollbar-thumb{background:#CC0000}
       a{text-decoration:none;color:inherit}
@@ -1304,7 +1317,7 @@ function App() {
               <span style={{ fontFamily:MONO, fontSize:10, color:"#FFD60A" }}>{buyN} FLIP</span>
             </div>
             <span style={{ color:"#222" }}>·</span>
-            <span style={{ fontFamily:MONO, fontSize:10, color:"#444" }}>{deals.length} total</span>
+            <span style={{ fontFamily:MONO, fontSize:10, color:"#555" }}>{deals.length} total</span>
           </div>
           <button onClick={()=>liveScan()} disabled={scanProgress.active}
             style={{ background:"#CC0000", border:"none", borderRadius:5, padding:"6px 14px", color:"#fff", fontFamily:MONO, fontSize:10, letterSpacing:"0.06em", cursor:scanProgress.active?"not-allowed":"pointer", boxShadow:"0 2px 16px rgba(204,0,0,0.45)", opacity:scanProgress.active?0.7:1, flexShrink:0, textAlign:"center", whiteSpace:"nowrap" }}>
@@ -1373,7 +1386,7 @@ function App() {
           {tab==="deals"&&(
             <div style={{ textAlign:"center", padding:"0 4px 14px", marginBottom:2 }}>
               <div style={{ fontFamily:MONO, fontSize:9.5, color:"rgba(255,255,255,0.32)", letterSpacing:"0.04em", lineHeight:1.6 }}>
-                Track underpriced cards, sealed products &amp; market trends before everyone else.
+                Spot undervalued Pokémon products before everyone else.
               </div>
             </div>
           )}
@@ -1412,23 +1425,23 @@ function App() {
               {id:"buy",  l:"🔥 HOT+BUY", ac:"#00FF88", bg:"#002A18"},
               {id:"flip", l:"💰 FLIP",    ac:"#FFD60A", bg:"#2A2200"},
               {id:"hold", l:"📦 HOLD",    ac:"#B388FF", bg:"#1A1030"},
-              {id:"avoid",l:"❌ AVOID",   ac:"#FF3B3B", bg:"#2A0808"},
+              {id:"avoid",l:"❌ AVOID/WEAK",   ac:"#FF3B3B", bg:"#2A0808"},
             ].map(f=>(
               <button key={f.id} onClick={()=>setFilter(f.id)} style={{
                 flex:"1 1 calc(33% - 5px)",
                 minWidth:60,
                 background: filter===f.id ? f.bg : "#0F0F18",
                 border: `1px solid ${filter===f.id ? f.ac : "#1A1A28"}`,
-                borderRadius:6, padding:"8px 4px",
-                fontFamily:MONO, fontSize:9,
+                borderRadius:6, padding:"7px 4px",
+                fontFamily:MONO, fontSize:8,
                 fontWeight: filter===f.id ? "700" : "400",
-                color: filter===f.id ? f.ac : "#555",
+                color: filter===f.id ? f.ac : "#666",
                 cursor:"pointer", transition:"all 0.12s",
-                letterSpacing:"0.05em", textAlign:"center",
+                letterSpacing:"0.04em", textAlign:"center",
               }}>{f.l}</button>
             ))}
           </div>
-          <div style={{ fontFamily:MONO, fontSize:9, color:"#555", marginBottom:10, letterSpacing:"0.06em", textAlign:"center" }}>{filtered.length} deals · sorted by ROI · tap to expand</div>
+          <div style={{ fontFamily:MONO, fontSize:9, color:"#666", marginBottom:10, letterSpacing:"0.06em", textAlign:"center" }}>{filtered.length} deals · sorted by ROI · tap to expand</div>
           {loading
             ?<div style={{ textAlign:"center",padding:"48px 0",fontFamily:MONO,color:"#B0B0B0",fontSize:11,letterSpacing:"0.1em" }}>SCANNING RETAILERS...</div>
             :filtered.length===0
@@ -1539,7 +1552,7 @@ function App() {
                         </div>
                         {item.isFlip&&(
                           <div style={{ display:"flex", justifyContent:"space-between", padding:"7px 10px", borderBottom:"1px solid rgba(255,255,255,0.04)" }}>
-                            <span style={{ fontFamily:MONO, fontSize:9, color:"#555" }}>Flip profit after fees + post</span>
+                            <span style={{ fontFamily:MONO, fontSize:9, color:"#777" }}>Flip profit after fees + post</span>
                             <span style={{ fontFamily:MONO, fontSize:13, fontWeight:700, color:"#00FF88" }}>+£{item.net?.toFixed(2)} (+{item.roi}%)</span>
                           </div>
                         )}
