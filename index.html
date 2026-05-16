@@ -29,6 +29,7 @@
 const { useState, useEffect } = React;
 
 const DEALS_URL = "https://raw.githubusercontent.com/lock3yv1/lock3ys-den/main/deals.json";
+const EBAY_DEALS_URL = "https://raw.githubusercontent.com/lock3yv1/lock3ys-den/main/ebay_deals.json";
 const EF = 0.129, POST = 4, POST_AVG = 4; // eBay: 12.9% FVF + 30p; avg postage £4 (typically £3-5)
 
 // ─── HOLD DATA ────────────────────────────────────────────────────────────────
@@ -521,7 +522,7 @@ function Card({ d, rank, isNew=false, dropDelay=0 }) {
           <div style={{ marginTop:8, fontFamily:MONO, fontSize:8, color:"#888", lineHeight:1.6 }}>
             {(d.resellSource==="ebay_sold"||d.resellSource==="ebay_browse")
               ? `* eBay avg from ${d.resellSampleSize||"?"} live UK listings · 12.9% fee + 30p · ~£4 postage · Not financial advice`
-              : "* eBay price estimated · 12.9% fee + 30p · ~£4 avg postage · Not financial advice"
+              : "* Price estimated · 12.9%+30p eBay fee · avg £4 postage · Not financial advice"
             }
           </div>
         </div>
@@ -871,56 +872,42 @@ function HeatTab() {
                   {/* Chart */}
                   <InteractiveChart data={s.history} color={tC} months={MONTHS}/>
 
-                  {/* ── HOLD VALUE TIMELINE ── */}
-                  <div style={{ marginTop:14, marginBottom:4 }}>
-                    <div style={{ fontFamily:MONO, fontSize:8, color:"#555", letterSpacing:"0.1em", marginBottom:10 }}>IF HELD SEALED — ESTIMATED VALUE</div>
+                  {/* ── HOLD VALUE PROJECTIONS — clean rows ── */}
+                  <div style={{ marginTop:12 }}>
+                    <div style={{ fontFamily:MONO, fontSize:8, color:"#555", letterSpacing:"0.1em", marginBottom:8 }}>IF HELD SEALED</div>
 
-                    {/* Timeline row */}
-                    <div style={{ position:"relative", display:"flex", alignItems:"flex-end", gap:0, height:64, marginBottom:4 }}>
-                      {/* Baseline bar */}
-                      {[
-                        {label:"NOW",   price:currentPrice, pct:0,              yr:""},
-                        {label:"1 YR",  price:y1p,          pct:Math.round(s.y1),  yr:"1"},
-                        {label:"2 YRS", price:y2p,          pct:Math.round(s.y2),  yr:"2"},
-                        {label:"4 YRS", price:y4p,          pct:Math.round(y4rate),yr:"4"},
-                      ].map(({label,price,pct,yr},i,arr)=>{
-                        const isNow = yr==="";
-                        const maxPrice = Math.max(...arr.map(x=>x.price));
-                        const barH = Math.max(16, Math.round((price/maxPrice)*56));
-                        const col = isNow?"#444":pct>=15?"#00FF88":pct>=5?"#39D98A":pct>=0?"#FFD60A":"#FF3B3B";
-                        return (
-                          <div key={label} style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", gap:3 }}>
-                            {!isNow&&(
-                              <div style={{ fontFamily:MONO, fontSize:8, color:col, fontWeight:700 }}>
-                                {pct>=0?"+":""}{pct}%
-                              </div>
-                            )}
-                            {isNow&&<div style={{ fontSize:8 }}>&nbsp;</div>}
-                            <div style={{ width:"70%", height:barH, background:isNow?"rgba(255,255,255,0.06)":`${col}22`, border:`1px solid ${col}${isNow?"33":"66"}`, borderRadius:"3px 3px 0 0", transition:"height 0.3s" }}/>
-                            <div style={{ fontFamily:MONO, fontSize:9, fontWeight:700, color:isNow?"#888":col }}>£{price.toLocaleString()}</div>
-                            <div style={{ fontFamily:MONO, fontSize:7, color:"#444", letterSpacing:"0.04em" }}>{label}</div>
+                    {/* Clean projection rows */}
+                    {[
+                      {label:"1 YEAR",   price:y1p, pct:Math.round(s.y1)},
+                      {label:"2 YEARS",  price:y2p, pct:Math.round(s.y2)},
+                      {label:"3 YEARS",  price:y3p, pct:Math.round(y3rate)},
+                      {label:"4 YEARS",  price:y4p, pct:Math.round(y4rate)},
+                    ].map(({label,price,pct})=>{
+                      const col = pct>=20?"#00FF88":pct>=10?"#39D98A":pct>=0?"#FFD60A":"#FF3B3B";
+                      const barW = Math.max(4, Math.min(100, Math.abs(pct)*3));
+                      return (
+                        <div key={label} style={{ display:"flex", alignItems:"center", gap:10, padding:"8px 0", borderBottom:"1px solid rgba(255,255,255,0.04)" }}>
+                          <div style={{ fontFamily:MONO, fontSize:9, color:"#555", width:54, flexShrink:0 }}>{label}</div>
+                          {/* Progress bar */}
+                          <div style={{ flex:1, height:2, background:"rgba(255,255,255,0.06)", borderRadius:2, overflow:"hidden" }}>
+                            <div style={{ width:`${barW}%`, height:"100%", background:col, borderRadius:2 }}/>
                           </div>
-                        );
-                      })}
-                    </div>
-
-                    {/* Confidence note — uses the real HOLD note from data */}
-                    <div style={{ marginTop:10, background:"rgba(255,255,255,0.02)", borderRadius:6, border:"1px solid rgba(255,255,255,0.05)", padding:"10px 12px" }}>
-                      <div style={{ display:"flex", alignItems:"flex-start", gap:8 }}>
-                        <span style={{ fontSize:14, flexShrink:0 }}>💡</span>
-                        <div>
-                          <div style={{ fontFamily:MONO, fontSize:9, color:"#CCC", lineHeight:1.6 }}>
-                            {s.note || (s.t==="rising"?"Prices rising consistently. Strong sealed hold candidate.":s.t==="declining"?"Prices declining. Avoid unless holding 3-4+ years sealed.":"Stable appreciation. Low risk, modest reward.")}
-                          </div>
-                          {potentialHold&&longTermGain&&(
-                            <div style={{ fontFamily:MONO, fontSize:8, color:"#B388FF", marginTop:6 }}>📦 Declining now but 4-year projection shows recovery. Long-term hold only.</div>
-                          )}
+                          <div style={{ fontFamily:MONO, fontSize:13, fontWeight:700, color:"#FFF", width:48, textAlign:"right", flexShrink:0 }}>£{price.toLocaleString()}</div>
+                          <div style={{ fontFamily:MONO, fontSize:9, color:col, width:36, textAlign:"right", flexShrink:0 }}>{pct>=0?"+":""}{pct}%</div>
                         </div>
+                      );
+                    })}
+
+                    {/* Note */}
+                    <div style={{ display:"flex", alignItems:"flex-start", gap:8, marginTop:10, padding:"10px 0 2px" }}>
+                      <span style={{ fontSize:12, flexShrink:0, marginTop:1 }}>💡</span>
+                      <div style={{ fontFamily:MONO, fontSize:9, color:"#AAA", lineHeight:1.7 }}>
+                        {s.note || (s.t==="rising"?"Prices rising consistently. Strong sealed hold.":s.t==="declining"?"Declining. Avoid unless holding 3+ years.":"Stable appreciation. Low risk, modest reward.")}
+                        {potentialHold&&longTermGain&&<span style={{ color:"#B388FF" }}> Long-term recovery projected.</span>}
                       </div>
                     </div>
-
-                    <div style={{ fontFamily:MONO, fontSize:7, color:"#2A2A3A", textAlign:"center", marginTop:8 }}>
-                      Estimates based on historical trend · Not financial advice
+                    <div style={{ fontFamily:MONO, fontSize:7, color:"#2A2A3A", marginTop:8 }}>
+                      Projections based on set trend data · Not financial advice
                     </div>
                   </div>
                 </div>
@@ -1178,49 +1165,17 @@ function App() {
   };
 
   async function loadEbay() {
-    // eBay tab now shows deals from deals.json that have live eBay price data
-    // These are retailer prices vs real eBay market prices — the real intelligence
+    // eBay tab reads from ebay_deals.json — completely separate from deals.json
+    // These are ACTUAL eBay listings found by the scraper, not retailer deals
     if (ebayLoading) return;
     setEbayLoading(true);
-
     try {
-      const r = await fetch(`${DEALS_URL}?t=${Date.now()}`);
+      const r = await fetch(`${EBAY_DEALS_URL}?t=${Date.now()}`);
       if (r.ok) {
-        const data = await r.json();
-        if (Array.isArray(data) && data.length > 0) {
-          // eBay tab = LIVE SNIPER FEED — only genuine undervalued opportunities
-          // Rules: must have live eBay price AND be meaningfully under market
-          // Flip: ROI >= 10% after all fees
-          // Hold: buy >= 15% under eBay market + hold score >= 7
-          const ebayVerified = data
-            .filter(d => {
-              if (!d.resell || !d.buyNow) return false;
-              // Must have live eBay data (not static table estimates)
-              const isLive = d.resellSource==="ebay_browse"||d.resellSource==="ebay_sold";
-              if (!isLive) return false;
-              // Must be buying below eBay market price
-              if (d.buyNow >= d.resell) return false;
-              return true;
-            })
-            .map(d => {
-              const fvf    = +(d.resell * 0.129 + 0.30).toFixed(2);
-              const net    = +(d.resell - d.buyNow - fvf - 4).toFixed(2);
-              const roi    = d.buyNow > 0 ? Math.round(net / d.buyNow * 100) : null;
-              const vsM    = Math.round((d.resell - d.buyNow) / d.resell * 100); // % under market
-              const holdData = getHoldForDeal(d.product);
-              const holdScore = holdData?.score || 0;
-              const isFlip = roi >= 10;
-              const isHold = vsM >= 15 && holdScore >= 7;
-              return { ...d, net, roi, vsM, fees:fvf, holdScore, holdData, isFlip, isHold };
-            })
-            .filter(d => d.isFlip || d.isHold) // only genuine opportunities
-            .sort((a, b) => {
-              // Hot flips first, then by profit
-              if (a.isFlip !== b.isFlip) return a.isFlip ? -1 : 1;
-              return (b.roi||0) - (a.roi||0);
-            })
-            .slice(0, 20); // max 20 results — quality over quantity
-          setEbayListings(ebayVerified);
+        const raw = await r.json();
+        const deals = raw.deals || (Array.isArray(raw) ? raw : []);
+        if (deals.length > 0) {
+          setEbayListings(deals.sort((a,b) => b.roi - a.roi));
         }
       }
     } catch (e) {
@@ -1530,11 +1485,13 @@ function App() {
                   {ebayListings.length} VERIFIED OPPORTUNITIES · LIVE EBAY DATA
                 </div>
                 {ebayListings.map((item, i)=>{
-                  const grKey = item.roi>=25?"S":item.roi>=15?"A":item.roi>=10?"B":"H";
+                  const grKey = item.roi>=25?"S":item.roi>=15?"A":"B";
                   const gr2 = G[grKey];
-                  const opportunity = item.isFlip
-                    ? `${item.vsM}% under eBay market · Flip for +£${item.net?.toFixed(2)} profit`
-                    : `${item.vsM}% under market · Hold score ${item.holdScore}/10 · Long-term upside`;
+                  const pct = item.pctBelow || 0;
+                  const profit = item.netProfit ?? item.net ?? 0;
+                  const roi = item.roi || 0;
+                  const mktPrice = item.midMarket || item.marketFloor;
+                  const buyPrice = item.price || item.buyNow;
                   return (
                     <div key={item.id||i} style={{
                       background:"linear-gradient(160deg,#0E0E18,#0A0A12)",
@@ -1544,64 +1501,53 @@ function App() {
                       animation:`fadeup 0.2s ease ${i*40}ms both`,
                       overflow:"hidden",
                     }}>
-                      {/* WHY banner — instantly explains the opportunity */}
-                      <div style={{ background:`${gr2.c}12`, borderBottom:`1px solid ${gr2.c}22`, padding:"7px 14px", display:"flex", alignItems:"center", gap:8 }}>
+                      {/* WHY banner */}
+                      <div style={{ background:`${gr2.c}10`, borderBottom:`1px solid ${gr2.c}22`, padding:"7px 14px", display:"flex", alignItems:"center", gap:8 }}>
                         <span style={{ fontSize:13 }}>{gr2.key}</span>
-                        <span style={{ fontFamily:MONO, fontSize:9, color:gr2.c, letterSpacing:"0.06em", fontWeight:700 }}>{opportunity}</span>
+                        <span style={{ fontFamily:MONO, fontSize:9, color:gr2.c, fontWeight:700, letterSpacing:"0.05em" }}>
+                          {pct}% below market · Flip for +£{profit.toFixed(2)} profit
+                        </span>
                       </div>
-
-                      {/* Product row */}
+                      {/* Product */}
                       <div style={{ display:"flex", alignItems:"center", gap:10, padding:"12px 14px 8px" }}>
                         {item.image&&(
-                          <div style={{ flexShrink:0, width:48, height:48, background:"#0D0D14", borderRadius:5, display:"flex", alignItems:"center", justifyContent:"center", overflow:"hidden" }}>
+                          <div style={{ flexShrink:0, width:52, height:52, borderRadius:6, display:"flex", alignItems:"center", justifyContent:"center" }}>
                             <img src={item.image} alt="" style={{ width:"100%", height:"100%", objectFit:"contain" }} loading="lazy"
                               onError={e=>{e.target.parentElement.style.display="none"}}/>
                           </div>
                         )}
                         <div style={{ flex:1, minWidth:0 }}>
-                          <div style={{ fontFamily:DISP, fontSize:13, fontWeight:600, color:"#FFFFFF", lineHeight:1.2 }}>{item.product}</div>
-                          <div style={{ fontFamily:MONO, fontSize:8, color:"#666", marginTop:2 }}>{item.retailer}</div>
+                          <div style={{ fontFamily:DISP, fontSize:13, fontWeight:600, color:"#FFFFFF", lineHeight:1.2 }}>{item.title}</div>
+                          <div style={{ fontFamily:MONO, fontSize:8, color:"#555", marginTop:3 }}>{item.type} · eBay UK listing</div>
                         </div>
                         <div style={{ textAlign:"right", flexShrink:0 }}>
-                          <div style={{ fontFamily:MONO, fontSize:20, fontWeight:700, color:"#FFFFFF", lineHeight:1 }}>£{item.buyNow?.toFixed(2)}</div>
-                          <div style={{ fontFamily:MONO, fontSize:8, color:"#666", marginTop:3 }}>buy price</div>
+                          <div style={{ fontFamily:MONO, fontSize:20, fontWeight:700, color:"#FFFFFF", lineHeight:1 }}>£{buyPrice?.toFixed(2)}</div>
+                          <div style={{ fontFamily:MONO, fontSize:8, color:"#555", marginTop:3 }}>listed price</div>
                         </div>
                       </div>
-
-                      {/* Numbers — clear 3-line breakdown */}
+                      {/* Intel */}
                       <div style={{ margin:"0 14px 10px", background:"rgba(255,255,255,0.025)", borderRadius:6, overflow:"hidden", border:"1px solid rgba(255,255,255,0.05)" }}>
                         <div style={{ display:"flex", justifyContent:"space-between", padding:"7px 10px", borderBottom:"1px solid rgba(255,255,255,0.04)" }}>
-                          <span style={{ fontFamily:MONO, fontSize:9, color:"#777" }}>eBay market avg</span>
+                          <span style={{ fontFamily:MONO, fontSize:9, color:"#666" }}>Market avg (UK)</span>
                           <div style={{ display:"flex", alignItems:"center", gap:6 }}>
-                            <span style={{ fontFamily:MONO, fontSize:13, fontWeight:700, color:"#FFF" }}>£{item.resell?.toFixed(2)}</span>
-                            <span style={{ fontFamily:MONO, fontSize:8, color:"#00FF88", background:"rgba(0,255,136,0.1)", border:"1px solid rgba(0,255,136,0.2)", borderRadius:3, padding:"2px 6px" }}>
-                              {item.vsM}% cheaper here
-                            </span>
+                            <span style={{ fontFamily:MONO, fontSize:13, fontWeight:700, color:"#FFF" }}>£{mktPrice?.toFixed(0)}</span>
+                            <span style={{ fontFamily:MONO, fontSize:9, fontWeight:700, color:"#00FF88", background:"rgba(0,255,136,0.12)", border:"1px solid rgba(0,255,136,0.3)", borderRadius:4, padding:"3px 8px" }}>{pct}% BELOW</span>
                           </div>
                         </div>
-                        {item.isFlip&&(
-                          <div style={{ display:"flex", justifyContent:"space-between", padding:"7px 10px", borderBottom:"1px solid rgba(255,255,255,0.04)" }}>
-                            <span style={{ fontFamily:MONO, fontSize:9, color:"#777" }}>Flip profit after fees + post</span>
-                            <span style={{ fontFamily:MONO, fontSize:13, fontWeight:700, color:"#00FF88" }}>+£{item.net?.toFixed(2)} (+{item.roi}%)</span>
-                          </div>
-                        )}
-                        {item.isHold&&item.holdData&&(
-                          <div style={{ display:"flex", justifyContent:"space-between", padding:"7px 10px", borderBottom:"1px solid rgba(255,255,255,0.04)" }}>
-                            <span style={{ fontFamily:MONO, fontSize:9, color:"#777" }}>Hold score</span>
-                            <span style={{ fontFamily:MONO, fontSize:9, color:"#B388FF" }}>{item.holdScore}/10 · {item.holdData.note?.split(".")[0]}</span>
-                          </div>
-                        )}
-                        <div style={{ display:"flex", justifyContent:"space-between", padding:"5px 10px" }}>
-                          <span style={{ fontFamily:MONO, fontSize:7, color:"#666" }}>
-                            Live eBay · {item.resellSampleSize||"?"} UK listings · 12.9%+30p fee · ~£4 avg post
+                        <div style={{ display:"flex", justifyContent:"space-between", padding:"7px 10px", borderBottom:"1px solid rgba(255,255,255,0.04)" }}>
+                          <span style={{ fontFamily:MONO, fontSize:9, color:"#666" }}>Flip profit after fees + postage</span>
+                          <span style={{ fontFamily:MONO, fontSize:13, fontWeight:700, color:profit>0?"#00FF88":"#FF3B3B" }}>
+                            {profit>0?"+":""}£{profit.toFixed(2)} (+{roi}%)
                           </span>
                         </div>
+                        <div style={{ padding:"5px 10px" }}>
+                          <span style={{ fontFamily:MONO, fontSize:7, color:"#2A2A3A" }}>Live eBay UK · 12.9%+30p fee · ~£4 avg post · Not financial advice</span>
+                        </div>
                       </div>
-
                       <div style={{ padding:"0 14px 12px", display:"flex", justifyContent:"flex-end" }}>
                         <a href={item.url} target="_blank" rel="noopener noreferrer"
-                          style={{ background:"#CC0000", borderRadius:5, padding:"7px 16px", color:"#fff", fontFamily:MONO, fontSize:10, letterSpacing:"0.08em", textDecoration:"none", boxShadow:"0 2px 12px rgba(204,0,0,0.3)" }}>
-                          BUY NOW →
+                          style={{ background:"#CC0000", borderRadius:5, padding:"7px 18px", color:"#fff", fontFamily:MONO, fontSize:10, letterSpacing:"0.08em", textDecoration:"none", boxShadow:"0 2px 12px rgba(204,0,0,0.3)" }}>
+                          VIEW ON EBAY →
                         </a>
                       </div>
                     </div>
