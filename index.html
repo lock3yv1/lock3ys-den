@@ -306,6 +306,21 @@ function Card({ d, rank }) {
         </div>
       </div>
 
+      {/* ── QUICK BUY ROW ── */}
+      <div style={{ display:"flex", alignItems:"center", gap:8, padding:"6px 14px 0" }}>
+        <a href={d.url} target="_blank" rel="noopener noreferrer"
+          onClick={e=>e.stopPropagation()}
+          style={{ flex:1, display:"block", textAlign:"center", background:gr.c, color: gk==="D"||gk==="?"?"#FFFFFF":"#07070D", fontFamily:MONO, fontSize:10, fontWeight:700, letterSpacing:"0.1em", padding:"8px 0", borderRadius:5, textDecoration:"none" }}>
+          BUY NOW →
+        </a>
+        {pp&&(
+          <div style={{ fontFamily:MONO, fontSize:9, color:"#555", textAlign:"right", lineHeight:1.4, flexShrink:0 }}>
+            <div style={{ color:"#888" }}>per pack</div>
+            <div style={{ color:"#FFFFFF", fontSize:11 }}>£{pp}</div>
+          </div>
+        )}
+      </div>
+
       {/* ── STAT PILLS ── */}
       <div style={{ display:"flex", gap:5, flexWrap:"wrap", padding:"10px 14px 14px" }}>
 
@@ -1229,7 +1244,12 @@ function App() {
 
   const buyN=sorted.filter(d=>(calcFlip(d.buyNow,d.resell).roi??-999)>=8).length;
   const excN=sorted.filter(d=>(calcFlip(d.buyNow,d.resell).roi??-999)>=15).length;
-  const now=updated?updated.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"}):"--:--";
+  const now = updated ? (() => {
+    const mins = Math.floor((Date.now() - updated.getTime()) / 60000);
+    if (mins < 1) return "just now";
+    if (mins < 60) return `${mins}m ago`;
+    return `${Math.floor(mins/60)}h ago`;
+  })() : "loading...";
   const best = sorted.find(d => (calcFlip(d.buyNow, d.resell).roi ?? -999) >= 8) || null;
 
   return (<>
@@ -1240,6 +1260,7 @@ function App() {
       @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
       @keyframes sweep{0%{left:-60%}100%{left:120%}}
       @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+      @keyframes knightrider{0%{left:-30%;width:30%}50%{left:85%;width:30%}100%{left:-30%;width:30%}}
       @keyframes fadeup{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
       @keyframes spotlight-pulse{0%,100%{box-shadow:0 0 20px rgba(0,255,136,0.08),0 0 40px rgba(0,255,136,0.04)}50%{box-shadow:0 0 28px rgba(0,255,136,0.14),0 0 56px rgba(0,255,136,0.07)}}
       ::-webkit-scrollbar{width:2px}::-webkit-scrollbar-thumb{background:#CC0000}
@@ -1267,7 +1288,9 @@ function App() {
           <div style={{ display:"flex", alignItems:"center", gap:10 }}>
             <div style={{ display:"flex", alignItems:"center", gap:7 }}>
               <div style={{ width:6, height:6, borderRadius:"50%", background:live?"#00FF88":"#FF8C00", boxShadow:live?"0 0 10px #00FF88":"0 0 10px #FF8C00", animation:"blink 2s infinite" }}/>
-              <span style={{ fontSize:9, fontFamily:MONO, color:live?"#00FF88":"#FF8C00" }}>{live?"LIVE":"SCANNING"} · {now}</span>
+              <span style={{ fontSize:9, fontFamily:MONO, color:live?"#00FF88":"#FF8C00" }}>
+                {live ? `LIVE · ${now}` : loading ? "LOADING..." : `LAST SCAN · ${now}`}
+              </span>
             </div>
 
           </div>
@@ -1305,7 +1328,7 @@ function App() {
             → {scanProgress.retailer}
           </div>
           <div style={{ height:2, background:"rgba(255,255,255,0.05)", borderRadius:2, overflow:"hidden", position:"relative" }}>
-            <div style={{ position:"absolute", top:0, left:0, right:0, bottom:0, background:"linear-gradient(90deg,transparent,#CC0000,#FF4444,#CC0000,transparent)", backgroundSize:"300% 100%", animation:"shimmer 1.2s linear infinite" }}/>
+            <div style={{ position:"absolute", top:0, height:"100%", background:"linear-gradient(90deg,transparent,#CC0000,#FF6644,#CC0000,transparent)", animation:"knightrider 2.5s ease-in-out infinite", borderRadius:2 }}/>
           </div>
           <div style={{ fontFamily:MONO, fontSize:8, color:"#333", marginTop:5 }}>
             Fresh data loads automatically when scan completes (~2 min)
@@ -1314,6 +1337,24 @@ function App() {
       )}
 
       <div style={{ padding:"14px 16px" }}>
+
+        {/* TRENDING — editorial feel, always visible on deals tab */}
+        {tab==="deals"&&(
+          <div style={{ marginBottom:14, overflowX:"auto", display:"flex", gap:6, paddingBottom:2, WebkitOverflowScrolling:"touch", scrollbarWidth:"none" }}>
+            {[
+              { l:"🔥 Evolving Skies",     c:"#39D98A" },
+              { l:"📈 Prismatic Evo",       c:"#39D98A" },
+              { l:"⚡ Surging Sparks",      c:"#FFD60A" },
+              { l:"👁 Hidden Fates",         c:"#B388FF" },
+              { l:"🆕 Chaos Rising",        c:"#38B6FF" },
+              { l:"💎 Champions Path",      c:"#FF8C00" },
+            ].map((t,i)=>(
+              <div key={i} style={{ flexShrink:0, fontFamily:MONO, fontSize:9, color:t.c, background:`${t.c}12`, border:`1px solid ${t.c}30`, borderRadius:20, padding:"4px 10px", whiteSpace:"nowrap", letterSpacing:"0.04em" }}>
+                {t.l}
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* BEST DEAL SPOTLIGHT */}
         {best&&tab==="deals"&&(()=>{
@@ -1382,7 +1423,21 @@ function App() {
             ?<div style={{ textAlign:"center",padding:"48px 0",fontFamily:MONO,color:"#B0B0B0",fontSize:11,letterSpacing:"0.1em" }}>SCANNING RETAILERS...</div>
             :filtered.length===0
             ?<div style={{ textAlign:"center",padding:"48px 0",fontFamily:MONO,color:"#B0B0B0",fontSize:11,letterSpacing:"0.1em" }}>NO DEALS MATCH</div>
-            :<div style={{animation:"fadeup 0.3s ease"}}>{filtered.map((d,i)=><Card key={d.id||i} d={d} rank={i+1}/>)}</div>
+            :<div style={{animation:"fadeup 0.3s ease"}}>
+              {filtered.length === 0 ? (
+                <div style={{ textAlign:"center", padding:"48px 24px" }}>
+                  <div style={{ fontSize:32, marginBottom:12 }}>🔍</div>
+                  <div style={{ fontFamily:DISP, fontSize:16, fontWeight:500, color:"#FFFFFF", marginBottom:8 }}>No deals match this filter</div>
+                  <div style={{ fontFamily:MONO, fontSize:10, color:"#444", lineHeight:1.8 }}>
+                    Try switching to ALL or press SCAN for fresh results
+                  </div>
+                  <button onClick={()=>{setFilter("all");setTypeF("all");}}
+                    style={{ marginTop:16, background:"#CC0000", border:"none", borderRadius:5, padding:"10px 20px", color:"#fff", fontFamily:MONO, fontSize:10, letterSpacing:"0.08em", cursor:"pointer" }}>
+                    SHOW ALL DEALS
+                  </button>
+                </div>
+              ) : filtered.map((d,i)=><Card key={d.id||i} d={d} rank={i+1}/>)}
+            </div>
           }
         </>}
 
