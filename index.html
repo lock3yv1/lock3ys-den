@@ -998,10 +998,23 @@ function App() {
     const MAX_POLLS = 16;        // 4 minutes max
     let gotFresh = false;
 
+    // Retailers to cycle through visually — gives user sense of real scanning
+    const RETAILER_NAMES = [
+      "Total Cards","Titan Cards","Eterna Cards","Chaos Cards","Double Sleeved",
+      "Toys N Geek","The Card Vault","My TCG","Gathering Games","Leisure Games",
+      "Emerald Collectables","Zatu Games","Big Orbit Cards","Minted TCG","Evo Cards",
+      "Goblin Gaming","Magic Madhouse","Ace Comics","Dice & Cards","Mana Gaming",
+      "Card Merchant","PACKRAT","Buy Any Cards","TCG Shop UK","Smyths",
+    ];
+
     for (let i = 0; i < MAX_POLLS; i++) {
-      await new Promise(r => setTimeout(r, POLL_INTERVAL));
-      const mins = Math.round(((i+1) * POLL_INTERVAL) / 60000 * 10) / 10;
-      setScanProgress({ active:true, retailer:`Scraper running... (${mins} min)`, found:0, total:0 });
+      // Cycle through retailer names every 3 seconds within each 15s poll
+      const retailerIdx = (i * 5) % RETAILER_NAMES.length;
+      for (let j = 0; j < 5; j++) {
+        const name = RETAILER_NAMES[(retailerIdx + j) % RETAILER_NAMES.length];
+        setScanProgress({ active:true, retailer:name, found:0, total:RETAILER_NAMES.length });
+        await new Promise(r => setTimeout(r, 3000));
+      }
       try {
         const r = await fetch(`${DEALS_URL}?t=${Date.now()}`);
         if (r.ok) {
@@ -1186,7 +1199,7 @@ function App() {
     const r = calcFlip(d.buyNow, d.resell).roi;
     const h = calcHold(d.resell, d.product);
     const gk = getGradeKey(r, h?.score??0);
-    return {S:0,A:1,B:2,C:3,H:4,D:5}[gk] ?? 6;
+    return {S:0,A:1,B:2,C:3,H:4,D:5,"?":6}[gk] ?? 6;
   }
   const sorted = [...deals].sort((a,b) => {
     const pa = gradePriority(a), pb = gradePriority(b);
@@ -1275,25 +1288,30 @@ function App() {
       </div>
 
       {/* Scan progress */}
-      <div style={{ height:scanProgress.active?44:2, background:"#07070D", overflow:"hidden", transition:"height 0.3s ease" }}>
-        {scanProgress.active&&(
-          <div style={{ padding:"6px 16px 4px" }}>
-            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:5 }}>
-              <div style={{ fontFamily:MONO, fontSize:9, color:"#CC0000", letterSpacing:"0.08em", display:"flex", alignItems:"center", gap:6 }}>
-                <span style={{ display:"inline-block", width:6, height:6, borderRadius:"50%", background:"#CC0000", animation:"blink 0.8s infinite" }}/>
-                {scanProgress.retailer.toUpperCase()}
-              </div>
-              <div style={{ fontFamily:MONO, fontSize:9, color:"#555" }}>
-                {scanProgress.found > 0 ? `${scanProgress.found} deals found` : "searching..."}
+      {scanProgress.active&&(
+        <div style={{ background:"#0A0008", borderBottom:"1px solid rgba(204,0,0,0.3)", padding:"10px 16px" }}>
+          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:6 }}>
+            <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+              <div style={{ width:8, height:8, borderRadius:"50%", background:"#CC0000", boxShadow:"0 0 8px #CC0000", animation:"blink 0.6s infinite" }}/>
+              <div style={{ fontFamily:MONO, fontSize:10, color:"#CC0000", letterSpacing:"0.1em", fontWeight:700 }}>
+                SCANNING
               </div>
             </div>
-            <div style={{ height:3, background:"rgba(255,255,255,0.05)", borderRadius:2, overflow:"hidden" }}>
-              <div style={{ height:"100%", background:"linear-gradient(90deg,#CC0000,#FF4444,#CC0000)", backgroundSize:"200% 100%", animation:"shimmer 1.5s linear infinite", borderRadius:2 }}/>
+            <div style={{ fontFamily:MONO, fontSize:9, color:"#555" }}>
+              checking 25 UK retailers
             </div>
           </div>
-        )}
-        {!scanProgress.active&&<div style={{ height:2, background:"rgba(255,255,255,0.03)" }}/>}
-      </div>
+          <div style={{ fontFamily:MONO, fontSize:11, color:"#FFFFFF", marginBottom:6, letterSpacing:"0.04em" }}>
+            → {scanProgress.retailer}
+          </div>
+          <div style={{ height:2, background:"rgba(255,255,255,0.05)", borderRadius:2, overflow:"hidden", position:"relative" }}>
+            <div style={{ position:"absolute", top:0, left:0, right:0, bottom:0, background:"linear-gradient(90deg,transparent,#CC0000,#FF4444,#CC0000,transparent)", backgroundSize:"300% 100%", animation:"shimmer 1.2s linear infinite" }}/>
+          </div>
+          <div style={{ fontFamily:MONO, fontSize:8, color:"#333", marginTop:5 }}>
+            Fresh data loads automatically when scan completes (~2 min)
+          </div>
+        </div>
+      )}
 
       <div style={{ padding:"14px 16px" }}>
 
@@ -1450,9 +1468,17 @@ function App() {
             })}
 
             {!ebayLoaded&&!ebayLoading&&(
-              <div style={{ textAlign:"center", padding:"48px 0" }}>
-                <div style={{ fontFamily:MONO, fontSize:11, color:"#555", marginBottom:16 }}>Tap to scan eBay UK for deals</div>
-                <button onClick={loadEbay} style={{ background:"#CC0000", border:"none", borderRadius:6, padding:"12px 24px", color:"#fff", fontFamily:MONO, fontSize:11, letterSpacing:"0.1em", cursor:"pointer" }}>SCAN EBAY →</button>
+              <div style={{ textAlign:"center", padding:"48px 24px" }}>
+                <div style={{ fontSize:32, marginBottom:16 }}>🛒</div>
+                <div style={{ fontFamily:DISP, fontSize:16, fontWeight:600, color:"#FFFFFF", marginBottom:8 }}>eBay Integration</div>
+                <div style={{ fontFamily:MONO, fontSize:10, color:"#555", lineHeight:1.8, marginBottom:20 }}>
+                  Live eBay UK deal scanning coming soon.<br/>
+                  eBay developer approval pending — will enable<br/>
+                  real-time sold price data across all products.
+                </div>
+                <div style={{ background:"rgba(204,0,0,0.08)", border:"1px solid rgba(204,0,0,0.25)", borderRadius:8, padding:"12px 16px", display:"inline-block" }}>
+                  <div style={{ fontFamily:MONO, fontSize:9, color:"#CC0000", letterSpacing:"0.1em" }}>⏳ AWAITING EBAY API APPROVAL</div>
+                </div>
               </div>
             )}
           </div>
