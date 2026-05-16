@@ -16,9 +16,32 @@
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <style>*{box-sizing:border-box;margin:0;padding:0}body{background:#07070D;color:#fff;overflow-x:hidden}</style>
   <script>
+    // BUILD_HASH changes every deploy — forces SW cache invalidation
+    window.BUILD_HASH = '1778962180';
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js').catch(() => {});
+      window.addEventListener('load', async () => {
+        try {
+          const reg = await navigator.serviceWorker.register('sw.js');
+          // Check for updates every time the page loads
+          reg.update();
+          // When a new SW is waiting, activate it immediately
+          reg.addEventListener('updatefound', () => {
+            const newSW = reg.installing;
+            newSW.addEventListener('statechange', () => {
+              if (newSW.state === 'installed' && navigator.serviceWorker.controller) {
+                // New version available — reload to get it
+                console.log('[ShinyDen] New version available, reloading...');
+                newSW.postMessage({ type: 'SKIP_WAITING' });
+              }
+            });
+          });
+          // When SW activates, reload the page to get fresh content
+          navigator.serviceWorker.addEventListener('controllerchange', () => {
+            window.location.reload();
+          });
+        } catch (e) {
+          // SW registration failed — fine, app still works
+        }
       });
     }
   </script>
