@@ -262,21 +262,23 @@ function Card({ d, rank, isNew=false, dropDelay=0 }) {
         {/* Grade badge */}
         <div style={{ display:"flex", alignItems:"center", gap:10 }}>
           <div style={{
-            width:34, height:34, borderRadius:6,
-            background:`linear-gradient(135deg,${gr.bg},transparent)`,
-            border:`1px solid ${gr.c}CC`,
-            display:"flex", alignItems:"center", justifyContent:"center",
+            width:38, height:38, borderRadius:7,
+            background:gr.bg,
+            border:`1px solid ${gr.c}88`,
+            display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center",
             flexShrink:0,
-            boxShadow:`0 0 14px ${gr.c}44, inset 0 0 8px ${gr.c}10`,
+            boxShadow:`0 0 12px ${gr.c}33`,
           }}>
-            <span style={{ fontSize:16, lineHeight:1 }}>{gr.key}</span>
-            {d.dealScore!=null && (
-              <div style={{ fontFamily:MONO, fontSize:7, color:gr.c, opacity:0.7, letterSpacing:"0.02em", lineHeight:1, marginTop:2 }}>{d.dealScore}</div>
-            )}
+            {d.dealScore!=null
+              ? <span style={{ fontFamily:DISP, fontSize:16, fontWeight:700, color:gr.c, lineHeight:1 }}>{d.dealScore}</span>
+              : <span style={{ fontSize:16, lineHeight:1 }}>{gr.key}</span>
+            }
           </div>
           <div>
-            <div style={{ fontFamily:DISP, fontSize:11, fontWeight:500, color:gr.c, letterSpacing:"0.08em", lineHeight:1 }}>{gr.label}</div>
-            {rank<=5 && <div style={{ fontFamily:MONO, fontSize:8, color:"#777", marginTop:2, letterSpacing:"0.08em" }}>#{rank} right now</div>}
+            <div style={{ fontFamily:DISP, fontSize:12, fontWeight:600, color:gr.c, letterSpacing:"0.06em", lineHeight:1 }}>
+              {gr.key} {gr.label}
+            </div>
+            {rank<=3 && <div style={{ fontFamily:MONO, fontSize:8, color:"#555", marginTop:3, letterSpacing:"0.08em" }}>#{rank} best right now</div>}
           </div>
         </div>
         {/* Type + time */}
@@ -315,104 +317,82 @@ function Card({ d, rank, isNew=false, dropDelay=0 }) {
         </div>
       </div>
 
-      {/* ── PER PACK + SMALL BUY ROW ── */}
-      <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"6px 14px 0" }}>
-        {pp ? (
-          <div style={{ fontFamily:MONO, fontSize:9, color:"#555", lineHeight:1.4 }}>
-            <span style={{ color:"#555" }}>per pack · </span>
-            <span style={{ color:"#999", fontSize:10 }}>£{pp}</span>
-          </div>
-        ) : <div/>}
+      {/* ── BUY ROW ── */}
+      <div style={{ display:"flex", alignItems:"center", justifyContent:"flex-end", padding:"6px 14px 0" }}>
         <a href={d.url} target="_blank" rel="noopener noreferrer"
           onClick={e=>e.stopPropagation()}
           style={{
             background:"#CC0000",
-            borderRadius:4, padding:"5px 12px",
+            borderRadius:4, padding:"5px 14px",
             fontFamily:MONO, fontSize:9, fontWeight:700,
-            letterSpacing:"0.08em", color:"#FFFFFF",
+            letterSpacing:"0.1em", color:"#FFFFFF",
             textDecoration:"none",
-            boxShadow:"0 1px 8px rgba(204,0,0,0.3)",
+            boxShadow:"0 2px 10px rgba(204,0,0,0.35)",
             flexShrink:0,
           }}>
-          BUY →
+          BUY NOW →
         </a>
       </div>
 
-      {/* ── STAT PILLS ── */}
-      <div style={{ display:"flex", gap:5, flexWrap:"wrap", padding:"12px 14px 14px" }}>
+      {/* ── INTEL STRIP — clean 2-col data rows ── */}
+      <div style={{ padding:"8px 14px 4px", display:"flex", flexDirection:"column", gap:5 }}>
 
-        {/* #1 — eBay comparison: most critical, biggest, most vibrant */}
+        {/* Row 1: eBay market price + vs comparison */}
         {d.resell&&vsM!==null&&(
-          <div style={{
-            fontFamily:DISP, fontSize:12, fontWeight:500, letterSpacing:"0.08em",
-            padding:"5px 11px", borderRadius:4,
-            background: vsM<=-15?"rgba(0,255,136,0.15)":vsM<=-5?"rgba(0,255,136,0.1)":vsM<=0?"rgba(57,217,138,0.08)":"rgba(255,59,59,0.12)",
-            color:       vsM<=-15?"#00FF88":vsM<=-5?"#39D98A":vsM<=0?"#39D98A":"#FF3B3B",
-            border:`1px solid ${vsM<=0?"rgba(0,255,136,0.5)":"rgba(255,59,59,0.5)"}`,
-          }}>
-            {vsM<=-15?`🔥 ${Math.abs(vsM)}% BELOW EBAY`:vsM<0?`↓ ${Math.abs(vsM)}% BELOW EBAY`:`↑ ${vsM}% ABOVE EBAY`}
+          <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between" }}>
+            <div style={{ display:"flex", alignItems:"center", gap:6 }}>
+              <span style={{ fontFamily:MONO, fontSize:9, color:"#444", letterSpacing:"0.06em" }}>eBay avg</span>
+              {(d.resellSource==="ebay_sold"||d.resellSource==="ebay_browse") && (
+                <span style={{ fontFamily:MONO, fontSize:7, color:"#00FF88", background:"rgba(0,255,136,0.08)", border:"1px solid rgba(0,255,136,0.2)", borderRadius:3, padding:"1px 5px", letterSpacing:"0.08em" }}>LIVE</span>
+              )}
+            </div>
+            <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+              <span style={{ fontFamily:MONO, fontSize:13, fontWeight:700, color: vsM<0?"#00FF88":"#FF3B3B" }}>£{d.resell.toFixed(2)}</span>
+              <span style={{
+                fontFamily:MONO, fontSize:9, letterSpacing:"0.04em",
+                color: vsM<=-10?"#00FF88":vsM<0?"#39D98A":vsM<=10?"#FF8C00":"#FF3B3B",
+                background: vsM<0?"rgba(0,255,136,0.08)":"rgba(255,59,59,0.08)",
+                border:`1px solid ${vsM<0?"rgba(0,255,136,0.2)":"rgba(255,59,59,0.2)"}`,
+                borderRadius:4, padding:"2px 7px",
+              }}>{vsM<=0?`↓${Math.abs(vsM)}% below`:`↑${vsM}% above`}</span>
+            </div>
           </div>
         )}
 
-        {/* #2 — eBay resell: green = buying below market (profit possible), red = above */}
-        {d.resell&&(
-          <div style={{ display:"flex", alignItems:"center", gap:4 }}>
-            <div style={{
-              fontFamily:MONO, fontSize:11, fontWeight:700,
-              padding:"5px 10px", borderRadius:4,
-              background: vsM<0 ? "rgba(0,255,136,0.1)" : "rgba(255,59,59,0.1)",
-              color:       vsM<0 ? "#00FF88" : "#FF3B3B",
-              border:`1px solid ${vsM<0?"rgba(0,255,136,0.3)":"rgba(255,59,59,0.3)"}`,
-            }}>eBay £{d.resell.toFixed(2)}</div>
-            {(d.resellSource==="ebay_sold"||d.resellSource==="ebay_browse") ? (
-              <div style={{
-                fontFamily:MONO, fontSize:7, letterSpacing:"0.06em",
-                padding:"2px 5px", borderRadius:3,
-                color: d.resellConfidence==="HIGH" ? "#00FF88" : d.resellConfidence==="MEDIUM" ? "#FFD60A" : "#888",
-                background: d.resellConfidence==="HIGH" ? "rgba(0,255,136,0.1)" : d.resellConfidence==="MEDIUM" ? "rgba(255,214,10,0.1)" : "rgba(136,136,136,0.08)",
-                border: `1px solid ${d.resellConfidence==="HIGH" ? "rgba(0,255,136,0.25)" : d.resellConfidence==="MEDIUM" ? "rgba(255,214,10,0.25)" : "rgba(136,136,136,0.15)"}`,
-              }}>LIVE</div>
-            ) : (
-              <div style={{ fontFamily:MONO, fontSize:7, color:"#333", letterSpacing:"0.06em" }}>EST</div>
+        {/* Row 2: RRP + per pack */}
+        {(d.rrp||pp)&&(
+          <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between" }}>
+            {d.rrp&&vsR!==null ? (
+              <span style={{ fontFamily:MONO, fontSize:9, color:"#444" }}>
+                RRP <span style={{ color:"#888" }}>£{d.rrp.toFixed(2)}</span>
+                {vsR<0&&<span style={{ color:"#FFD60A", marginLeft:4 }}>{Math.abs(vsR)}% off</span>}
+              </span>
+            ) : <span/>}
+            {pp&&(
+              <span style={{ fontFamily:MONO, fontSize:9, color:"#444" }}>
+                per pack <span style={{ color:"#888" }}>£{pp}</span>
+              </span>
             )}
           </div>
         )}
 
-        {/* #3 — RRP: warm gold so it's clearly different from the eBay price */}
-        {d.rrp&&vsR!==null&&(
-          <div style={{
-            fontFamily:MONO, fontSize:11,
-            padding:"5px 10px", borderRadius:4,
-            background:"rgba(255,196,0,0.08)", color:"#FFC400",
-            border:"1px solid rgba(255,196,0,0.25)",
-          }}>RRP £{d.rrp.toFixed(2)}{vsR<0?` · ${Math.abs(vsR)}% OFF`:"" }</div>
-        )}
-
-        {/* #4 — Per pack: cyan, clearly different */}
-        {pp&&(
-          <div style={{
-            fontFamily:MONO, fontSize:11,
-            padding:"5px 10px", borderRadius:4,
-            background:"rgba(0,200,200,0.08)", color:"#00CCC0",
-            border:"1px solid rgba(0,200,200,0.25)",
-          }}>£{pp}/PACK</div>
-        )}
-
-        {/* #5 — Hold trend */}
+        {/* Row 3: Hold trend */}
         {h&&(
-          <div style={{
-            fontFamily:MONO, fontSize:11,
-            padding:"5px 10px", borderRadius:4,
-            background:`${tc}12`, color:tc,
-            border:`1px solid ${tc}40`,
-          }}>{h.trend==="rising"?"↗":h.trend==="declining"?"↘":"→"} {h.yr1pct>=0?"+":""}{h.yr1pct}% EST YR1</div>
+          <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between" }}>
+            <span style={{ fontFamily:MONO, fontSize:9, color:"#444", letterSpacing:"0.04em" }}>
+              {h.trend==="rising"?"↗ Rising":"declining"===h.trend?"↘ Declining":"→ Stable"}
+            </span>
+            <span style={{ fontFamily:MONO, fontSize:9, color:tc }}>
+              est. {h.yr1pct>=0?"+":""}{h.yr1pct}% yr1
+            </span>
+          </div>
         )}
       </div>
 
       {/* ── EXPAND TOGGLE ── */}
-      <div style={{ display:"flex", justifyContent:"flex-end", padding:"0 14px 10px" }} onClick={e=>e.stopPropagation()}>
-        <div style={{ fontFamily:MONO, fontSize:9, color:"#444", cursor:"pointer", letterSpacing:"0.06em" }}>
-          {open ? "▲ less" : "▼ details"}
+      <div style={{ display:"flex", justifyContent:"center", padding:"6px 14px 10px", borderTop:"1px solid rgba(255,255,255,0.04)", marginTop:6 }} onClick={e=>e.stopPropagation()}>
+        <div style={{ fontFamily:MONO, fontSize:8, color:"#333", cursor:"pointer", letterSpacing:"0.1em" }}>
+          {open ? "▲  LESS" : "▼  FULL BREAKDOWN"}
         </div>
       </div>
 
@@ -1446,7 +1426,7 @@ function App() {
             ))}
           </div>
           {/* Deal filter — single scrollable line with HOLD added, AVOID fixed */}
-          <div style={{ display:"flex", gap:5, marginBottom:14, overflowX:"auto", paddingBottom:2, WebkitOverflowScrolling:"touch", scrollbarWidth:"none" }}>
+          <div style={{ display:"flex", flexWrap:"wrap", gap:5, marginBottom:14 }}>
             {[
               {id:"all",  l:"ALL",        ac:"#FFFFFF", bg:"#1E1E2A"},
               {id:"buy",  l:"🔥 HOT+BUY", ac:"#00FF88", bg:"#002A18"},
@@ -1455,17 +1435,20 @@ function App() {
               {id:"avoid",l:"❌ AVOID",   ac:"#FF3B3B", bg:"#2A0808"},
             ].map(f=>(
               <button key={f.id} onClick={()=>setFilter(f.id)} style={{
-                background: filter===f.id ? f.bg : "#161620",
-                border: `1px solid ${filter===f.id ? f.ac : "#333345"}`,
-                borderRadius:5, padding:"6px 13px", flexShrink:0,
+                flex:"1 1 calc(33% - 5px)",
+                minWidth:60,
+                background: filter===f.id ? f.bg : "#0F0F18",
+                border: `1px solid ${filter===f.id ? f.ac : "#1A1A28"}`,
+                borderRadius:6, padding:"8px 4px",
                 fontFamily:MONO, fontSize:9,
-                color: filter===f.id ? f.ac : "#BBBBBB",
+                fontWeight: filter===f.id ? "700" : "400",
+                color: filter===f.id ? f.ac : "#555",
                 cursor:"pointer", transition:"all 0.12s",
-                letterSpacing:"0.06em",
+                letterSpacing:"0.05em", textAlign:"center",
               }}>{f.l}</button>
             ))}
           </div>
-          <div style={{ fontFamily:MONO, fontSize:9, color:"#666", marginBottom:10, letterSpacing:"0.06em" }}>{filtered.length} RESULTS · BY ROI · TAP FOR FULL BREAKDOWN</div>
+          <div style={{ fontFamily:MONO, fontSize:9, color:"#555", marginBottom:10, letterSpacing:"0.06em", textAlign:"center" }}>{filtered.length} deals · sorted by ROI · tap to expand</div>
           {loading
             ?<div style={{ textAlign:"center",padding:"48px 0",fontFamily:MONO,color:"#B0B0B0",fontSize:11,letterSpacing:"0.1em" }}>SCANNING RETAILERS...</div>
             :filtered.length===0
