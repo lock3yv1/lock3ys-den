@@ -507,53 +507,147 @@ function HeatTab() {
 
   const MONTHS = ["Jun","Jul","Aug","Sep","Oct","Nov","Dec","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec","Jan","Feb","Mar","Apr","May"];
 
+  // Helper to generate stable price history from a current price and trend
+  function genHistory(current, months=24, trend="stable") {
+    const h = [];
+    const rate = trend==="rising" ? 0.015 : trend==="declining" ? -0.012 : 0.004;
+    let p = current / Math.pow(1+rate, months-1);
+    for (let i=0; i<months; i++) { h.push(Math.round(p)); p *= (1+rate); }
+    return h;
+  }
+
   const sets = [
-    // ── BOOSTER BOXES ─────────────────────────────────────────────────────
-    { n:"Evolving Skies",       type:"Booster Box",         y1:20, y2:44, s:10, t:"rising",   history:[148,152,158,163,169,175,180,186,191,196,200,205,208,210,211,212,213,214,215,215,216,215,215,215] },
-    { n:"Hidden Fates",         type:"Booster Box",         y1:15, y2:32, s:9,  t:"rising",   history:[290,298,306,315,324,333,341,348,355,361,367,372,376,378,380,381,382,383,384,385,385,385,385,385] },
-    { n:"Prismatic Evolutions", type:"Booster Box",         y1:25, y2:56, s:9,  t:"rising",   history:[null,null,null,null,null,null,null,95,115,138,155,170,178,182,184,186,187,188,189,190,190,190,190,190] },
-    { n:"151",                  type:"Booster Box",         y1:15, y2:32, s:8,  t:"rising",   history:[125,128,132,136,140,144,148,152,156,160,163,166,169,171,173,174,175,176,177,178,178,178,178,178] },
-    { n:"Surging Sparks",       type:"Booster Box",         y1:12, y2:28, s:6,  t:"rising",   history:[null,null,null,null,null,null,150,163,172,182,190,197,202,206,209,211,212,213,214,215,215,215,215,215] },
-    { n:"Phantasmal Flames",    type:"Booster Box",         y1:20, y2:44, s:7,  t:"rising",   history:[null,null,null,null,null,null,null,null,null,null,null,null,280,295,310,320,330,338,345,350,355,358,360,360] },
-    { n:"Chaos Rising",         type:"Booster Box",         y1:15, y2:32, s:7,  t:"rising",   history:[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,110,118,125,132,139,145] },
-    { n:"Perfect Order",        type:"Booster Box",         y1:12, y2:25, s:7,  t:"rising",   history:[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,105,110,116,121,126,129,130] },
-    { n:"Chilling Reign",       type:"Booster Box",         y1:8,  y2:17, s:6,  t:"rising",   history:[130,132,134,135,137,138,140,141,143,144,146,147,148,149,150,150,151,151,152,152,152,152,152,152] },
-    { n:"Ascended Heroes",      type:"Booster Box",         y1:10, y2:21, s:6,  t:"rising",   history:[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,108,115,120,123,125] },
-    { n:"Brilliant Stars",      type:"Booster Box",         y1:5,  y2:10, s:5,  t:"stable",   history:[128,129,130,131,132,133,134,135,136,137,138,139,140,140,141,141,142,142,142,142,142,142,142,142] },
-    { n:"Paldean Fates",        type:"Booster Box",         y1:8,  y2:17, s:6,  t:"stable",   history:[null,null,null,null,null,null,null,110,115,120,124,127,128,129,130,130,131,131,132,132,132,132,132,132] },
-    { n:"Paradox Rift",         type:"Booster Box",         y1:-2, y2:-4, s:4,  t:"declining",history:[128,126,125,123,122,120,119,118,117,116,115,114,113,112,112,111,110,110,110,109,109,109,108,108] },
-    { n:"Obsidian Flames",      type:"Booster Box",         y1:-2, y2:-4, s:4,  t:"declining",history:[140,138,136,134,133,131,130,129,128,127,126,125,124,123,122,121,120,120,119,119,118,118,118,118] },
-    { n:"Paldea Evolved",       type:"Booster Box",         y1:-5, y2:-10,s:3,  t:"declining",history:[125,122,119,116,114,112,110,108,107,106,105,103,102,101,100,99,98,97,96,95,94,93,92,92] },
-    { n:"Base Set (WOTC)",      type:"Booster Box",         y1:25, y2:60, s:10, t:"rising",   history:[1600,1680,1750,1820,1900,1980,2050,2100,2180,2240,2310,2380,2430,2450,2470,2480,2490,2495,2498,2500,2502,2505,2503,2500] },
-    // ── ELITE TRAINER BOXES ───────────────────────────────────────────────
-    { n:"Evolving Skies",       type:"Elite Trainer Box",   y1:18, y2:40, s:10, t:"rising",   history:[110,115,120,125,130,135,138,141,144,146,148,149,150,150,150,150,150,150,150,150,150,150,150,150] },
-    { n:"Hidden Fates",         type:"Elite Trainer Box",   y1:12, y2:25, s:9,  t:"rising",   history:[88,90,93,96,99,102,105,107,108,109,110,110,111,111,111,112,112,112,112,112,112,112,112,112] },
-    { n:"Shining Fates",        type:"Elite Trainer Box",   y1:10, y2:21, s:8,  t:"stable",   history:[98,100,103,106,109,112,115,118,120,122,224,226,228,230,232,233,234,235,236,237,238,239,239,240] },
-    { n:"Champions Path",       type:"Elite Trainer Box",   y1:15, y2:32, s:8,  t:"rising",   history:[148,151,154,158,161,164,167,170,173,176,179,182,184,186,187,188,189,190,190,191,192,192,192,192] },
-    { n:"Prismatic Evolutions", type:"Elite Trainer Box",   y1:10, y2:22, s:8,  t:"rising",   history:[null,null,null,null,null,null,null,65,70,74,77,79,80,80,80,80,80,80,80,80,80,80,80,80] },
-    { n:"Surging Sparks",       type:"Elite Trainer Box",   y1:5,  y2:12, s:5,  t:"stable",   history:[null,null,null,null,null,null,48,50,52,54,55,56,57,57,57,57,58,58,58,58,58,58,58,58] },
-    { n:"Ascended Heroes",      type:"Elite Trainer Box",   y1:10, y2:22, s:6,  t:"rising",   history:[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,140,148,154,158,160] },
-    { n:"Phantasmal Flames",    type:"Elite Trainer Box",   y1:18, y2:38, s:7,  t:"rising",   history:[null,null,null,null,null,null,null,null,null,null,null,null,90,95,102,108,112,115,117,119,120,120,120,120] },
-    // ── BOOSTER BUNDLES ───────────────────────────────────────────────────
-    { n:"Prismatic Evolutions", type:"Booster Bundle",      y1:8,  y2:18, s:7,  t:"rising",   history:[null,null,null,null,null,null,null,null,null,48,52,55,57,58,59,59,60,60,60,60,60,60,60,60] },
-    { n:"151",                  type:"Booster Bundle",      y1:10, y2:22, s:7,  t:"rising",   history:[38,39,40,41,42,43,44,45,46,47,48,49,49,50,50,50,50,50,50,50,50,50,50,50] },
-    { n:"Surging Sparks",       type:"Booster Bundle",      y1:5,  y2:10, s:5,  t:"stable",   history:[null,null,null,null,null,null,22,24,25,27,28,29,30,30,30,30,30,30,30,30,30,30,30,30] },
-    { n:"Evolving Skies",       type:"Booster Bundle",      y1:15, y2:30, s:8,  t:"rising",   history:[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null] },
-    // ── BOOSTER PACKS ─────────────────────────────────────────────────────
-    { n:"Evolving Skies",       type:"Booster Pack",        y1:15, y2:32, s:9,  t:"rising",   history:[18,19,20,21,22,23,23,24,24,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25] },
-    { n:"Hidden Fates",         type:"Booster Pack",        y1:10, y2:20, s:8,  t:"rising",   history:[11,11,12,12,12,13,13,13,13,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14] },
-    { n:"Prismatic Evolutions", type:"Booster Pack",        y1:8,  y2:18, s:7,  t:"rising",   history:[null,null,null,null,null,null,null,null,14,14,14,14,13,13,13,13,13,13,13,13,13,13,13,13] },
-    { n:"Shining Fates",        type:"Booster Pack",        y1:8,  y2:15, s:7,  t:"stable",   history:[13,13,14,14,14,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15] },
-    { n:"151",                  type:"Booster Pack",        y1:5,  y2:10, s:6,  t:"rising",   history:[6,6,7,7,7,7,7,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8] },
-    { n:"Surging Sparks",       type:"Booster Pack",        y1:3,  y2:8,  s:5,  t:"stable",   history:[null,null,null,null,null,null,6,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7] },
-    { n:"Champions Path",       type:"Booster Pack",        y1:12, y2:25, s:7,  t:"rising",   history:[18,19,20,21,22,22,23,23,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24] },
-    // ── TINS ──────────────────────────────────────────────────────────────
-    { n:"Hidden Fates",         type:"Tin",                 y1:10, y2:22, s:8,  t:"rising",   history:[34,35,36,37,38,39,40,41,42,42,43,43,44,44,44,44,44,44,44,44,44,44,44,44] },
-    { n:"Evolving Skies",       type:"Tin",                 y1:8,  y2:18, s:7,  t:"rising",   history:[28,29,30,31,32,33,34,35,36,37,38,39,39,40,40,40,40,40,40,40,40,40,40,40] },
-    { n:"Shining Fates",        type:"Tin",                 y1:6,  y2:14, s:6,  t:"stable",   history:[22,22,23,24,25,26,26,27,27,28,28,28,28,29,29,29,29,29,29,29,29,29,29,29] },
-    { n:"Surging Sparks",       type:"Tin",                 y1:2,  y2:5,  s:4,  t:"stable",   history:[null,null,null,null,null,null,18,19,20,20,21,21,22,22,22,22,22,22,22,22,22,22,22,22] },
-    { n:"Mega Charizard X ex",  type:"Tin",                 y1:8,  y2:18, s:6,  t:"rising",   history:[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,28,29,30,31,32,32,32] },
-    { n:"Mega Charizard Y ex",  type:"Tin",                 y1:8,  y2:18, s:6,  t:"rising",   history:[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,28,29,30,31,32,32,32] },
+    // ── SCARLET & VIOLET ERA (2023–2026) ────────────────────────────────────
+    { n:"Destined Rivals",      type:"Booster Box",      y1:5,  y2:12, s:5, t:"stable",   history:genHistory(105,24,"stable") },
+    { n:"Destined Rivals",      type:"Elite Trainer Box", y1:4,  y2:8,  s:4, t:"stable",   history:genHistory(52,24,"stable") },
+    { n:"Destined Rivals",      type:"Booster Bundle",   y1:3,  y2:6,  s:4, t:"stable",   history:genHistory(28,24,"stable") },
+    { n:"Destined Rivals",      type:"Booster Pack",     y1:2,  y2:5,  s:3, t:"stable",   history:genHistory(6,24,"stable") },
+    { n:"Ascended Heroes",      type:"Booster Box",      y1:10, y2:21, s:6, t:"rising",   history:genHistory(125,24,"rising") },
+    { n:"Ascended Heroes",      type:"Elite Trainer Box", y1:10, y2:22, s:6, t:"rising",   history:genHistory(160,24,"rising") },
+    { n:"Ascended Heroes",      type:"Booster Bundle",   y1:8,  y2:18, s:5, t:"rising",   history:genHistory(35,24,"rising") },
+    { n:"Phantasmal Flames",    type:"Booster Box",      y1:20, y2:44, s:7, t:"rising",   history:[null,null,null,null,null,null,null,null,null,null,null,null,280,295,310,320,330,338,345,350,355,358,360,360] },
+    { n:"Phantasmal Flames",    type:"Elite Trainer Box", y1:18, y2:38, s:7, t:"rising",   history:[null,null,null,null,null,null,null,null,null,null,null,null,90,95,102,108,112,115,117,119,120,120,120,120] },
+    { n:"Chaos Rising",         type:"Booster Box",      y1:15, y2:32, s:7, t:"rising",   history:[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,110,118,125,132,139,145] },
+    { n:"Chaos Rising",         type:"Elite Trainer Box", y1:12, y2:25, s:6, t:"rising",   history:[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,58,62,65,67,68,68] },
+    { n:"Perfect Order",        type:"Booster Box",      y1:12, y2:25, s:7, t:"rising",   history:[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,105,110,116,121,126,129,130] },
+    { n:"Perfect Order",        type:"Elite Trainer Box", y1:10, y2:20, s:6, t:"rising",   history:[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,55,58,61,63,64,64,64] },
+    { n:"Prismatic Evolutions", type:"Booster Box",      y1:25, y2:56, s:9, t:"rising",   history:[null,null,null,null,null,null,null,95,115,138,155,170,178,182,184,186,187,188,189,190,190,190,190,190] },
+    { n:"Prismatic Evolutions", type:"Elite Trainer Box", y1:10, y2:22, s:8, t:"rising",   history:[null,null,null,null,null,null,null,65,70,74,77,79,80,80,80,80,80,80,80,80,80,80,80,80] },
+    { n:"Prismatic Evolutions", type:"Booster Bundle",   y1:8,  y2:18, s:7, t:"rising",   history:[null,null,null,null,null,null,null,null,null,48,52,55,57,58,59,59,60,60,60,60,60,60,60,60] },
+    { n:"Prismatic Evolutions", type:"Booster Pack",     y1:8,  y2:18, s:7, t:"rising",   history:[null,null,null,null,null,null,null,null,14,14,14,14,13,13,13,13,13,13,13,13,13,13,13,13] },
+    { n:"Surging Sparks",       type:"Booster Box",      y1:12, y2:28, s:6, t:"rising",   history:[null,null,null,null,null,null,150,163,172,182,190,197,202,206,209,211,212,213,214,215,215,215,215,215] },
+    { n:"Surging Sparks",       type:"Elite Trainer Box", y1:5,  y2:12, s:5, t:"stable",   history:[null,null,null,null,null,null,48,50,52,54,55,56,57,57,57,57,58,58,58,58,58,58,58,58] },
+    { n:"Surging Sparks",       type:"Booster Bundle",   y1:5,  y2:10, s:5, t:"stable",   history:[null,null,null,null,null,null,22,24,25,27,28,29,30,30,30,30,30,30,30,30,30,30,30,30] },
+    { n:"Surging Sparks",       type:"Booster Pack",     y1:3,  y2:8,  s:5, t:"stable",   history:[null,null,null,null,null,null,6,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7] },
+    { n:"Stellar Crown",        type:"Booster Box",      y1:3,  y2:7,  s:4, t:"stable",   history:genHistory(148,24,"stable") },
+    { n:"Stellar Crown",        type:"Elite Trainer Box", y1:3,  y2:6,  s:4, t:"stable",   history:genHistory(58,24,"stable") },
+    { n:"Twilight Masquerade",  type:"Booster Box",      y1:3,  y2:7,  s:4, t:"stable",   history:genHistory(118,24,"stable") },
+    { n:"Twilight Masquerade",  type:"Elite Trainer Box", y1:3,  y2:6,  s:4, t:"stable",   history:genHistory(48,24,"stable") },
+    { n:"Temporal Forces",      type:"Booster Box",      y1:2,  y2:5,  s:4, t:"stable",   history:genHistory(102,24,"stable") },
+    { n:"Temporal Forces",      type:"Elite Trainer Box", y1:2,  y2:5,  s:4, t:"stable",   history:genHistory(46,24,"stable") },
+    { n:"Paldean Fates",        type:"Booster Box",      y1:8,  y2:17, s:6, t:"stable",   history:genHistory(132,24,"stable") },
+    { n:"Paldean Fates",        type:"Elite Trainer Box", y1:6,  y2:12, s:5, t:"stable",   history:genHistory(60,24,"stable") },
+    { n:"Paradox Rift",         type:"Booster Box",      y1:-2, y2:-4, s:4, t:"declining",history:[128,126,125,123,122,120,119,118,117,116,115,114,113,112,112,111,110,110,110,109,109,109,108,108] },
+    { n:"Paradox Rift",         type:"Elite Trainer Box", y1:-2, y2:-4, s:4, t:"declining",history:genHistory(46,24,"declining") },
+    { n:"Obsidian Flames",      type:"Booster Box",      y1:-2, y2:-4, s:4, t:"declining",history:[140,138,136,134,133,131,130,129,128,127,126,125,124,123,122,121,120,120,119,119,118,118,118,118] },
+    { n:"Obsidian Flames",      type:"Elite Trainer Box", y1:-2, y2:-4, s:4, t:"declining",history:genHistory(50,24,"declining") },
+    { n:"Paldea Evolved",       type:"Booster Box",      y1:-5, y2:-10,s:3, t:"declining",history:[125,122,119,116,114,112,110,108,107,106,105,103,102,101,100,99,98,97,96,95,94,93,92,92] },
+    { n:"Paldea Evolved",       type:"Elite Trainer Box", y1:-4, y2:-8, s:3, t:"declining",history:genHistory(42,24,"declining") },
+    { n:"151",                  type:"Booster Box",      y1:15, y2:32, s:8, t:"rising",   history:[125,128,132,136,140,144,148,152,156,160,163,166,169,171,173,174,175,176,177,178,178,178,178,178] },
+    { n:"151",                  type:"Booster Bundle",   y1:10, y2:22, s:7, t:"rising",   history:[38,39,40,41,42,43,44,45,46,47,48,49,49,50,50,50,50,50,50,50,50,50,50,50] },
+    { n:"151",                  type:"Booster Pack",     y1:5,  y2:10, s:6, t:"rising",   history:[6,6,7,7,7,7,7,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8] },
+    { n:"Scarlet & Violet Base", type:"Booster Box",     y1:2,  y2:4,  s:3, t:"stable",   history:genHistory(95,24,"stable") },
+    // ── SWORD & SHIELD ERA (2020–2023) ──────────────────────────────────────
+    { n:"Evolving Skies",       type:"Booster Box",      y1:20, y2:44, s:10,t:"rising",   history:[148,152,158,163,169,175,180,186,191,196,200,205,208,210,211,212,213,214,215,215,216,215,215,215] },
+    { n:"Evolving Skies",       type:"Elite Trainer Box", y1:18, y2:40, s:10,t:"rising",   history:[110,115,120,125,130,135,138,141,144,146,148,149,150,150,150,150,150,150,150,150,150,150,150,150] },
+    { n:"Evolving Skies",       type:"Booster Pack",     y1:15, y2:32, s:9, t:"rising",   history:[18,19,20,21,22,23,23,24,24,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25] },
+    { n:"Evolving Skies",       type:"Tin",              y1:8,  y2:18, s:7, t:"rising",   history:[28,29,30,31,32,33,34,35,36,37,38,39,39,40,40,40,40,40,40,40,40,40,40,40] },
+    { n:"Chilling Reign",       type:"Booster Box",      y1:8,  y2:17, s:6, t:"rising",   history:[130,132,134,135,137,138,140,141,143,144,146,147,148,149,150,150,151,151,152,152,152,152,152,152] },
+    { n:"Chilling Reign",       type:"Elite Trainer Box", y1:6,  y2:12, s:5, t:"rising",   history:genHistory(60,24,"rising") },
+    { n:"Battle Styles",        type:"Booster Box",      y1:5,  y2:10, s:5, t:"stable",   history:genHistory(172,24,"stable") },
+    { n:"Battle Styles",        type:"Elite Trainer Box", y1:4,  y2:8,  s:4, t:"stable",   history:genHistory(62,24,"stable") },
+    { n:"Shining Fates",        type:"Elite Trainer Box", y1:10, y2:21, s:8, t:"stable",   history:[98,100,103,106,109,112,115,118,120,122,224,226,228,230,232,233,234,235,236,237,238,239,239,240] },
+    { n:"Shining Fates",        type:"Booster Pack",     y1:8,  y2:15, s:7, t:"stable",   history:[13,13,14,14,14,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15] },
+    { n:"Shining Fates",        type:"Tin",              y1:6,  y2:14, s:6, t:"stable",   history:[22,22,23,24,25,26,26,27,27,28,28,28,28,29,29,29,29,29,29,29,29,29,29,29] },
+    { n:"Brilliant Stars",      type:"Booster Box",      y1:5,  y2:10, s:5, t:"stable",   history:[128,129,130,131,132,133,134,135,136,137,138,139,140,140,141,141,142,142,142,142,142,142,142,142] },
+    { n:"Brilliant Stars",      type:"Elite Trainer Box", y1:4,  y2:8,  s:4, t:"stable",   history:genHistory(56,24,"stable") },
+    { n:"Fusion Strike",        type:"Booster Box",      y1:3,  y2:7,  s:4, t:"stable",   history:genHistory(138,24,"stable") },
+    { n:"Lost Origin",          type:"Booster Box",      y1:2,  y2:4,  s:4, t:"stable",   history:genHistory(122,24,"stable") },
+    { n:"Silver Tempest",       type:"Booster Box",      y1:3,  y2:7,  s:5, t:"stable",   history:genHistory(112,24,"stable") },
+    { n:"Crown Zenith",         type:"Booster Box",      y1:2,  y2:5,  s:4, t:"stable",   history:genHistory(128,24,"stable") },
+    { n:"Astral Radiance",      type:"Booster Box",      y1:2,  y2:4,  s:3, t:"stable",   history:genHistory(120,24,"stable") },
+    { n:"Darkness Ablaze",      type:"Booster Box",      y1:3,  y2:6,  s:5, t:"stable",   history:genHistory(132,24,"stable") },
+    { n:"Vivid Voltage",        type:"Booster Box",      y1:3,  y2:6,  s:4, t:"stable",   history:genHistory(142,24,"stable") },
+    { n:"Rebel Clash",          type:"Booster Box",      y1:2,  y2:4,  s:3, t:"stable",   history:genHistory(110,24,"stable") },
+    // ── SUN & MOON ERA (2017–2020) ────────────────────────────────────────────
+    { n:"Hidden Fates",         type:"Booster Box",      y1:15, y2:32, s:9, t:"rising",   history:[290,298,306,315,324,333,341,348,355,361,367,372,376,378,380,381,382,383,384,385,385,385,385,385] },
+    { n:"Hidden Fates",         type:"Elite Trainer Box", y1:12, y2:25, s:9, t:"rising",   history:[88,90,93,96,99,102,105,107,108,109,110,110,111,111,111,112,112,112,112,112,112,112,112,112] },
+    { n:"Hidden Fates",         type:"Booster Pack",     y1:10, y2:20, s:8, t:"rising",   history:[11,11,12,12,12,13,13,13,13,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14] },
+    { n:"Hidden Fates",         type:"Tin",              y1:10, y2:22, s:8, t:"rising",   history:[34,35,36,37,38,39,40,41,42,42,43,43,44,44,44,44,44,44,44,44,44,44,44,44] },
+    { n:"Cosmic Eclipse",       type:"Booster Box",      y1:5,  y2:10, s:7, t:"stable",   history:genHistory(335,24,"stable") },
+    { n:"Unified Minds",        type:"Booster Box",      y1:4,  y2:8,  s:6, t:"stable",   history:genHistory(280,24,"stable") },
+    { n:"Unbroken Bonds",       type:"Booster Box",      y1:4,  y2:8,  s:6, t:"stable",   history:genHistory(260,24,"stable") },
+    { n:"Team Up",              type:"Booster Box",      y1:4,  y2:8,  s:5, t:"stable",   history:genHistory(220,24,"stable") },
+    { n:"Lost Thunder",         type:"Booster Box",      y1:3,  y2:6,  s:5, t:"stable",   history:genHistory(195,24,"stable") },
+    { n:"Celestial Storm",      type:"Booster Box",      y1:3,  y2:6,  s:4, t:"stable",   history:genHistory(180,24,"stable") },
+    { n:"Forbidden Light",      type:"Booster Box",      y1:3,  y2:6,  s:4, t:"stable",   history:genHistory(168,24,"stable") },
+    { n:"Ultra Prism",          type:"Booster Box",      y1:3,  y2:6,  s:4, t:"stable",   history:genHistory(162,24,"stable") },
+    { n:"Burning Shadows",      type:"Booster Box",      y1:4,  y2:8,  s:5, t:"stable",   history:genHistory(175,24,"stable") },
+    { n:"Guardians Rising",     type:"Booster Box",      y1:4,  y2:8,  s:5, t:"stable",   history:genHistory(165,24,"stable") },
+    { n:"Sun & Moon Base",      type:"Booster Box",      y1:4,  y2:8,  s:5, t:"stable",   history:genHistory(155,24,"stable") },
+    { n:"Shining Legends",      type:"Booster Pack",     y1:6,  y2:12, s:6, t:"rising",   history:genHistory(22,24,"rising") },
+    { n:"Champions Path",       type:"Elite Trainer Box", y1:15, y2:32, s:8, t:"rising",   history:[148,151,154,158,161,164,167,170,173,176,179,182,184,186,187,188,189,190,190,191,192,192,192,192] },
+    { n:"Champions Path",       type:"Booster Pack",     y1:12, y2:25, s:7, t:"rising",   history:[18,19,20,21,22,22,23,23,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24] },
+    // ── XY ERA (2013–2016) ───────────────────────────────────────────────────
+    { n:"Evolutions",           type:"Booster Box",      y1:8,  y2:18, s:7, t:"rising",   history:genHistory(195,24,"rising") },
+    { n:"Steam Siege",          type:"Booster Box",      y1:3,  y2:6,  s:4, t:"stable",   history:genHistory(145,24,"stable") },
+    { n:"Fates Collide",        type:"Booster Box",      y1:4,  y2:8,  s:5, t:"stable",   history:genHistory(155,24,"stable") },
+    { n:"BREAKpoint",           type:"Booster Box",      y1:4,  y2:8,  s:5, t:"stable",   history:genHistory(162,24,"stable") },
+    { n:"BREAKthrough",         type:"Booster Box",      y1:4,  y2:8,  s:5, t:"stable",   history:genHistory(168,24,"stable") },
+    { n:"Ancient Origins",      type:"Booster Box",      y1:5,  y2:10, s:5, t:"stable",   history:genHistory(175,24,"stable") },
+    { n:"Roaring Skies",        type:"Booster Box",      y1:5,  y2:10, s:6, t:"stable",   history:genHistory(185,24,"stable") },
+    { n:"Primal Clash",         type:"Booster Box",      y1:5,  y2:10, s:5, t:"stable",   history:genHistory(178,24,"stable") },
+    { n:"Phantom Forces",       type:"Booster Box",      y1:5,  y2:10, s:5, t:"stable",   history:genHistory(172,24,"stable") },
+    { n:"Flashfire",            type:"Booster Box",      y1:5,  y2:10, s:5, t:"stable",   history:genHistory(168,24,"stable") },
+    { n:"XY Base",              type:"Booster Box",      y1:5,  y2:10, s:5, t:"stable",   history:genHistory(162,24,"stable") },
+    // ── BLACK & WHITE ERA (2011–2013) ────────────────────────────────────────
+    { n:"Legendary Treasures",  type:"Booster Box",      y1:6,  y2:12, s:6, t:"stable",   history:genHistory(220,24,"stable") },
+    { n:"Plasma Blast",         type:"Booster Box",      y1:5,  y2:10, s:5, t:"stable",   history:genHistory(195,24,"stable") },
+    { n:"Plasma Freeze",        type:"Booster Box",      y1:5,  y2:10, s:5, t:"stable",   history:genHistory(188,24,"stable") },
+    { n:"Plasma Storm",         type:"Booster Box",      y1:5,  y2:10, s:5, t:"stable",   history:genHistory(182,24,"stable") },
+    { n:"Boundaries Crossed",   type:"Booster Box",      y1:5,  y2:10, s:5, t:"stable",   history:genHistory(178,24,"stable") },
+    { n:"Dragons Exalted",      type:"Booster Box",      y1:6,  y2:12, s:6, t:"stable",   history:genHistory(195,24,"stable") },
+    { n:"Dark Explorers",       type:"Booster Box",      y1:6,  y2:12, s:6, t:"stable",   history:genHistory(188,24,"stable") },
+    { n:"Next Destinies",       type:"Booster Box",      y1:5,  y2:10, s:5, t:"stable",   history:genHistory(175,24,"stable") },
+    { n:"Noble Victories",      type:"Booster Box",      y1:5,  y2:10, s:5, t:"stable",   history:genHistory(168,24,"stable") },
+    { n:"Emerging Powers",      type:"Booster Box",      y1:5,  y2:10, s:5, t:"stable",   history:genHistory(162,24,"stable") },
+    { n:"Black & White Base",   type:"Booster Box",      y1:6,  y2:12, s:5, t:"stable",   history:genHistory(175,24,"stable") },
+    // ── WOTC ERA (1999–2003) ─────────────────────────────────────────────────
+    { n:"Base Set",             type:"Booster Box",      y1:25, y2:60, s:10,t:"rising",   history:[1600,1680,1750,1820,1900,1980,2050,2100,2180,2240,2310,2380,2430,2450,2470,2480,2490,2495,2498,2500,2502,2505,2503,2500] },
+    { n:"Base Set",             type:"Booster Pack",     y1:20, y2:45, s:10,t:"rising",   history:genHistory(120,24,"rising") },
+    { n:"Jungle",               type:"Booster Box",      y1:15, y2:35, s:9, t:"rising",   history:genHistory(1800,24,"rising") },
+    { n:"Fossil",               type:"Booster Box",      y1:14, y2:30, s:9, t:"rising",   history:genHistory(1600,24,"rising") },
+    { n:"Team Rocket",          type:"Booster Box",      y1:12, y2:26, s:8, t:"rising",   history:genHistory(1400,24,"rising") },
+    { n:"Gym Heroes",           type:"Booster Box",      y1:10, y2:22, s:8, t:"rising",   history:genHistory(1200,24,"rising") },
+    { n:"Gym Challenge",        type:"Booster Box",      y1:10, y2:22, s:8, t:"rising",   history:genHistory(1100,24,"rising") },
+    { n:"Neo Genesis",          type:"Booster Box",      y1:18, y2:40, s:9, t:"rising",   history:genHistory(1200,24,"rising") },
+    { n:"Neo Discovery",        type:"Booster Box",      y1:15, y2:33, s:8, t:"rising",   history:genHistory(950,24,"rising") },
+    { n:"Neo Revelation",       type:"Booster Box",      y1:15, y2:33, s:8, t:"rising",   history:genHistory(900,24,"rising") },
+    { n:"Neo Destiny",          type:"Booster Box",      y1:18, y2:40, s:9, t:"rising",   history:genHistory(1100,24,"rising") },
+    { n:"Legendary Collection", type:"Booster Box",      y1:12, y2:25, s:8, t:"rising",   history:genHistory(1800,24,"rising") },
+    { n:"Expedition",           type:"Booster Box",      y1:10, y2:20, s:7, t:"rising",   history:genHistory(850,24,"rising") },
+    { n:"Aquapolis",            type:"Booster Box",      y1:10, y2:20, s:7, t:"rising",   history:genHistory(800,24,"rising") },
+    { n:"Skyridge",             type:"Booster Box",      y1:15, y2:32, s:9, t:"rising",   history:genHistory(1400,24,"rising") },
+    // ── TINS ──────────────────────────────────────────────────────────────────
+    { n:"Hidden Fates",         type:"Tin",              y1:10, y2:22, s:8, t:"rising",   history:[34,35,36,37,38,39,40,41,42,42,43,43,44,44,44,44,44,44,44,44,44,44,44,44] },
+    { n:"Evolving Skies",       type:"Tin",              y1:8,  y2:18, s:7, t:"rising",   history:[28,29,30,31,32,33,34,35,36,37,38,39,39,40,40,40,40,40,40,40,40,40,40,40] },
+    { n:"Shining Fates",        type:"Tin",              y1:6,  y2:14, s:6, t:"stable",   history:[22,22,23,24,25,26,26,27,27,28,28,28,28,29,29,29,29,29,29,29,29,29,29,29] },
+    { n:"Surging Sparks",       type:"Tin",              y1:2,  y2:5,  s:4, t:"stable",   history:genHistory(22,24,"stable") },
+    { n:"Ascended Heroes",      type:"Tin",              y1:5,  y2:12, s:5, t:"rising",   history:genHistory(26,24,"rising") },
+    { n:"Destined Rivals",      type:"Tin",              y1:3,  y2:7,  s:4, t:"stable",   history:genHistory(24,24,"stable") },
+    { n:"Mega Charizard X ex",  type:"Tin",              y1:8,  y2:18, s:6, t:"rising",   history:genHistory(32,24,"rising") },
+    { n:"Mega Charizard Y ex",  type:"Tin",              y1:8,  y2:18, s:6, t:"rising",   history:genHistory(32,24,"rising") },
+    { n:"Pikachu ex",           type:"Tin",              y1:5,  y2:10, s:5, t:"stable",   history:genHistory(28,24,"stable") },
   ];
 
   function InteractiveChart({ data, color, months }) {
@@ -828,45 +922,56 @@ function App() {
   // ── SCAN STATE ─────────────────────────────────────────────────────────────
   const [scanProgress, setScanProgress] = useState({ active:false, retailer:"", found:0, total:0 });
 
-  // ── MARKET PRICES (for browser-side scoring) ──────────────────────────────
-  function getBrowserMarket(title) { return getMarket(title); }
-  function getBrowserRRP(title) { return getRRP(title); }
-
   // ── LIVE BROWSER SCANNER ─────────────────────────────────────────────────
+  // Uses allorigins CORS proxy to hit Shopify JSON APIs directly from browser
+  const PROXY = "https://api.allorigins.win/raw?url=";
+
   const RETAILERS_BROWSER = [
-    { name:"Total Cards",    base:"https://totalcards.net" },
-    { name:"Titan Cards",    base:"https://titancards.co.uk" },
-    { name:"Eterna Cards",   base:"https://eternacards.co.uk" },
-    { name:"Double Sleeved", base:"https://doublesleeved.co.uk" },
-    { name:"Toys N Geek",    base:"https://www.toysngeek.co.uk" },
-    { name:"The Card Vault", base:"https://thecardvault.co.uk" },
-    { name:"My TCG",         base:"https://mytcg.co.uk" },
-    { name:"Gathering Games",base:"https://gatheringgames.co.uk" },
-    { name:"Zatu Games",     base:"https://www.board-game.co.uk" },
-    { name:"Chaos Cards",    base:"https://www.chaoscards.co.uk" },
+    // Specialist Pokemon/TCG retailers
+    { name:"Total Cards",      base:"https://totalcards.net",           cols:["/collections/pokemon-sealed","/collections/pokemon-booster-boxes","/collections/pokemon"] },
+    { name:"Titan Cards",      base:"https://titancards.co.uk",         cols:["/collections/pokemon-sealed","/collections/pokemon-tcg","/collections/all"] },
+    { name:"Eterna Cards",     base:"https://eternacards.co.uk",        cols:["/collections/pokemon-sealed","/collections/pokemon-booster-boxes","/collections/pokemon"] },
+    { name:"Double Sleeved",   base:"https://doublesleeved.co.uk",      cols:["/collections/all"] },
+    { name:"Chaos Cards",      base:"https://www.chaoscards.co.uk",     cols:["/collections/pokemon-sealed","/collections/pokemon-tcg","/collections/pokemon"] },
+    { name:"Emerald Collect",  base:"https://emeraldcollectables.co.uk",cols:["/collections/pokemon-sealed","/collections/pokemon","/collections/all"] },
+    { name:"Leisure Games",    base:"https://www.leisuregames.com",      cols:["/collections/pokemon-sealed","/collections/pokemon-tcg","/collections/pokemon"] },
+    { name:"Card Merchant",    base:"https://thecardmerchant.co.uk",    cols:["/collections/pokemon","/collections/pokemon-sealed","/collections/all"] },
+    { name:"My TCG",           base:"https://mytcg.co.uk",              cols:["/collections/all"] },
+    { name:"The Card Vault",   base:"https://thecardvault.co.uk",       cols:["/collections/pokemon-sealed-products","/collections/pokemon","/collections/all"] },
+    { name:"Gathering Games",  base:"https://gatheringgames.co.uk",     cols:["/collections/pokemon-sealed","/collections/pokemon","/collections/all"] },
+    { name:"Toys N Geek",      base:"https://www.toysngeek.co.uk",      cols:["/collections/pokemon-tcg","/collections/pokemon","/collections/all"] },
+    { name:"Zatu Games",       base:"https://www.board-game.co.uk",     cols:["/collections/pokemon-tcg","/collections/pokemon","/collections/all"] },
+    { name:"Goblin Gaming",    base:"https://goblinslair.co.uk",        cols:["/collections/pokemon","/collections/pokemon-sealed","/collections/all"] },
+    { name:"Magic Madhouse",   base:"https://magicmadhouse.co.uk",      cols:["/collections/pokemon-sealed","/collections/pokemon","/collections/all"] },
+    { name:"Ace Comics",       base:"https://www.acecomics.co.uk",      cols:["/collections/pokemon","/collections/all"] },
+    { name:"Dice & Cards",     base:"https://diceandcards.co.uk",       cols:["/collections/pokemon","/collections/pokemon-sealed","/collections/all"] },
+    { name:"Mana Gaming",      base:"https://managingedge.co.uk",       cols:["/collections/pokemon-sealed","/collections/pokemon","/collections/all"] },
   ];
 
-  const BLOCK_BROWSER = ["korean","japanese","yugioh","yu-gi-oh","lorcana","digimon","funko","plush","graded","psa","proxy","fake","lot of","panini","topps","cardfight","weiss","lorcana","magic the gathering"];
+  const BLOCK_BROWSER = ["korean","japanese","yugioh","yu-gi-oh","lorcana","digimon","funko","plush","graded","psa","proxy","fake","lot of","panini","topps","cardfight","weiss","magic the gathering"," mtg ","one piece","dragon ball","flesh and blood","star wars"];
 
   function isValidBrowser(title, price) {
     const t = title.toLowerCase();
     if (BLOCK_BROWSER.some(b => t.includes(b))) return false;
     if (!t.includes("pokemon") && !t.includes("pokémon")) return false;
-    const hasType = ["booster box","elite trainer","etb","booster bundle","booster pack","tin","collection","blister","battle deck"].some(p => t.includes(p));
+    const hasType = ["booster box","elite trainer","etb","booster bundle","booster pack","tin","collection box","blister","battle deck","premium collection","ultra premium","build and battle","starter deck"].some(p => t.includes(p));
     if (!hasType) return false;
     if (price < 3 || price > 5000) return false;
     return true;
   }
 
   async function scanRetailer(retailer) {
-    const cols = ["/collections/pokemon-sealed","/collections/pokemon-tcg","/collections/pokemon","/collections/all"];
-    for (const col of cols) {
+    for (const col of retailer.cols) {
       try {
-        const r = await fetch(`${retailer.base}${col}/products.json?limit=250`, {
-          signal: AbortSignal.timeout(6000)
+        const targetUrl = `${retailer.base}${col}/products.json?limit=250`;
+        const r = await fetch(`${PROXY}${encodeURIComponent(targetUrl)}`, {
+          signal: AbortSignal.timeout(8000)
         });
         if (!r.ok) continue;
-        const data = await r.json();
+        const text = await r.text();
+        if (!text || text.includes("error") && text.length < 100) continue;
+        let data;
+        try { data = JSON.parse(text); } catch { continue; }
         const products = data.products || [];
         if (!products.length) continue;
         const found = [];
@@ -875,10 +980,10 @@ function App() {
           if (!v) continue;
           const price = parseFloat(v.price);
           if (!isValidBrowser(p.title, price)) continue;
-          const market = getBrowserMarket(p.title);
-          const rrp = getBrowserRRP(p.title);
+          const market = getMarket(p.title);
+          const rrp = getRRP(p.title);
           const flipNet = market ? +(market - price - market*0.13 - 4).toFixed(2) : null;
-          const flipRoi = (flipNet && price > 0) ? Math.round(flipNet/price*100) : null;
+          const flipRoi = (flipNet !== null && price > 0) ? Math.round(flipNet/price*100) : null;
           found.push({
             id: `${retailer.name}::${p.handle}`,
             product: p.title,
@@ -893,7 +998,7 @@ function App() {
             flipRoi,
           });
         }
-        return found; // first working collection
+        if (found.length > 0) return found;
       } catch {}
     }
     return [];
@@ -904,25 +1009,29 @@ function App() {
     setScanProgress({ active:true, retailer:"Starting...", found:0, total:RETAILERS_BROWSER.length });
     setPulse(true);
     const allDeals = [];
-
     for (let i = 0; i < RETAILERS_BROWSER.length; i++) {
       const retailer = RETAILERS_BROWSER[i];
       setScanProgress({ active:true, retailer:retailer.name, found:allDeals.length, total:RETAILERS_BROWSER.length });
       const found = await scanRetailer(retailer);
       allDeals.push(...found);
     }
-
-    // Sort by ROI desc
-    allDeals.sort((a,b) => (b.flipRoi??-999) - (a.flipRoi??-999));
-
-    if (allDeals.length > 0) {
-      setDeals(allDeals);
+    // Deduplicate by product+price
+    const seen = new Set();
+    const unique = allDeals.filter(d => {
+      const key = `${d.product.toLowerCase().trim()}::${d.buyNow}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+    unique.sort((a,b) => (b.flipRoi??-999) - (a.flipRoi??-999));
+    if (unique.length > 0) {
+      setDeals(unique);
       setLive(true);
       setUpdated(new Date());
       setLoading(false);
-      checkAlerts(allDeals);
+      checkAlerts(unique);
     }
-    setScanProgress({ active:false, retailer:"", found:allDeals.length, total:RETAILERS_BROWSER.length });
+    setScanProgress({ active:false, retailer:"", found:unique.length, total:RETAILERS_BROWSER.length });
     setPulse(false);
   }
 
