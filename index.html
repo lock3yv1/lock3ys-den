@@ -29,7 +29,7 @@
 const { useState, useEffect } = React;
 
 const DEALS_URL = "https://raw.githubusercontent.com/lock3yv1/lock3ys-den/main/deals.json";
-const EF = 0.129, POST_MIN = 3, POST_AVG = 4; // eBay: 12.9% FVF + 30p; postage typically £3-5
+const EF = 0.129, POST = 4, POST_AVG = 4; // eBay: 12.9% FVF + 30p; avg postage £4 (typically £3-5)
 
 // ─── HOLD DATA ────────────────────────────────────────────────────────────────
 const HOLD = {
@@ -547,10 +547,10 @@ function HeatTab() {
 
   const sets = [
     // ── SCARLET & VIOLET ERA (2023–2026) ────────────────────────────────────
-    { n:"Destined Rivals",      type:"Booster Box",      y1:5,  y2:12, s:5, t:"stable",   history:genHistory(105,24,"stable") },
-    { n:"Destined Rivals",      type:"Elite Trainer Box", y1:4,  y2:8,  s:4, t:"stable",   history:genHistory(52,24,"stable") },
-    { n:"Destined Rivals",      type:"Booster Bundle",   y1:3,  y2:6,  s:4, t:"stable",   history:genHistory(28,24,"stable") },
-    { n:"Destined Rivals",      type:"Booster Pack",     y1:2,  y2:5,  s:3, t:"stable",   history:genHistory(6,24,"stable") },
+    { n:"Destined Rivals",      type:"Booster Box",      y1:6,  y2:14, s:5, t:"stable",   history:genHistory(125,24,"stable") },
+    { n:"Destined Rivals",      type:"Elite Trainer Box", y1:4,  y2:9,  s:4, t:"stable",   history:genHistory(58,24,"stable") },
+    { n:"Destined Rivals",      type:"Booster Bundle",   y1:3,  y2:6,  s:4, t:"stable",   history:genHistory(32,24,"stable") },
+    { n:"Destined Rivals",      type:"Booster Pack",     y1:2,  y2:5,  s:3, t:"stable",   history:genHistory(7,24,"stable") },
     { n:"Ascended Heroes",      type:"Booster Box",      y1:10, y2:21, s:6, t:"rising",   history:genHistory(125,24,"rising") },
     { n:"Ascended Heroes",      type:"Elite Trainer Box", y1:10, y2:22, s:6, t:"rising",   history:genHistory(160,24,"rising") },
     { n:"Ascended Heroes",      type:"Booster Bundle",   y1:8,  y2:18, s:5, t:"rising",   history:genHistory(35,24,"rising") },
@@ -1137,17 +1137,24 @@ function App() {
       if (r.ok) {
         const data = await r.json();
         if (Array.isArray(data) && data.length > 0) {
-          // Filter to deals with live eBay data and meaningful profit potential
+          // Show all deals that have a resell price (live eBay or static table)
+          // Prioritise live eBay data — show static table as fallback
           const ebayVerified = data
-            .filter(d => d.resell && d.buyNow && (d.resellSource==="ebay_browse"||d.resellSource==="ebay_sold"))
+            .filter(d => d.resell && d.buyNow)
             .map(d => {
-              const fees = +(d.resell * 0.13).toFixed(2);
-              const net  = +(d.resell - d.buyNow - fees - 4).toFixed(2);
+              const fvf  = +(d.resell * 0.129 + 0.30).toFixed(2);
+              const net  = +(d.resell - d.buyNow - fvf - 4).toFixed(2);
               const roi  = d.buyNow > 0 ? Math.round(net / d.buyNow * 100) : null;
               const vsM  = Math.round((d.buyNow - d.resell) / d.resell * 100);
-              return { ...d, net, roi, vsM, fees };
+              const isLive = d.resellSource==="ebay_browse"||d.resellSource==="ebay_sold";
+              return { ...d, net, roi, vsM, fees:fvf, isLive };
             })
-            .sort((a, b) => (b.roi||0) - (a.roi||0));
+            .filter(d => d.roi !== null && d.roi >= 5) // only worthwhile flips
+            .sort((a, b) => {
+              // Live eBay data first, then by ROI
+              if (a.isLive !== b.isLive) return a.isLive ? -1 : 1;
+              return (b.roi||0) - (a.roi||0);
+            });
           setEbayListings(ebayVerified);
         }
       }
@@ -1503,8 +1510,10 @@ function App() {
                       </div>
 
                       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginTop:10 }}>
-                        <span style={{ fontFamily:MONO, fontSize:8, color:"#333" }}>
-                          {item.resellConfidence==="HIGH"?"● Live eBay price":"● Est. price"} · {item.resellSampleSize||"?"} listings
+                        <span style={{ fontFamily:MONO, fontSize:8, color:item.isLive?"#39D98A":"#333" }}>
+                          {item.isLive
+                            ? `● Live eBay · ${item.resellSampleSize||"?"} listings`
+                            : "● Estimated price"}
                         </span>
                         <a href={item.url} target="_blank" rel="noopener noreferrer"
                           style={{ background:"#CC0000", borderRadius:4, padding:"5px 12px", color:"#fff", fontFamily:MONO, fontSize:9, letterSpacing:"0.08em", textDecoration:"none" }}>
