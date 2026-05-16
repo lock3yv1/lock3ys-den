@@ -160,13 +160,13 @@ function calcHold(sell, title) {
 
 // Colour system: green=money, red=danger, white=neutral, all on near-black
 const G = {
-  S: { key:"S", label:"FIRE DEAL",   c:"#00FF88", bg:"rgba(0,255,136,0.08)", border:"rgba(0,255,136,0.3)" },
-  A: { key:"A", label:"STRONG BUY", c:"#39D98A", bg:"rgba(57,217,138,0.07)", border:"rgba(57,217,138,0.25)" },
-  B: { key:"B", label:"GOOD DEAL",  c:"#FFD60A", bg:"rgba(255,214,10,0.07)", border:"rgba(255,214,10,0.25)" },
-  C: { key:"C", label:"MARGINAL",   c:"#FF8C00", bg:"rgba(255,140,0,0.07)",  border:"rgba(255,140,0,0.25)" },
-  H: { key:"H", label:"BUY & HOLD", c:"#B388FF", bg:"rgba(179,136,255,0.07)",border:"rgba(179,136,255,0.25)" },
-  D: { key:"D", label:"AVOID",      c:"#FF3B3B", bg:"rgba(255,59,59,0.07)",  border:"rgba(255,59,59,0.25)" },
-  "?":{ key:"?",label:"IN STOCK",   c:"#8899AA", bg:"rgba(136,153,170,0.05)",border:"rgba(136,153,170,0.15)" },
+  S: { key:"🔥", label:"HOT DEAL",   c:"#00FF88", bg:"rgba(0,255,136,0.08)",   border:"rgba(0,255,136,0.3)"   },
+  A: { key:"✅", label:"BUY",        c:"#39D98A", bg:"rgba(57,217,138,0.07)",  border:"rgba(57,217,138,0.25)" },
+  B: { key:"💰", label:"FLIP",       c:"#FFD60A", bg:"rgba(255,214,10,0.07)",  border:"rgba(255,214,10,0.25)" },
+  C: { key:"⚠️", label:"WEAK",       c:"#FF8C00", bg:"rgba(255,140,0,0.07)",   border:"rgba(255,140,0,0.25)"  },
+  H: { key:"📦", label:"HOLD",       c:"#B388FF", bg:"rgba(179,136,255,0.07)", border:"rgba(179,136,255,0.25)"},
+  D: { key:"❌", label:"AVOID",      c:"#FF3B3B", bg:"rgba(255,59,59,0.07)",   border:"rgba(255,59,59,0.25)"  },
+  "?":{ key:"📋", label:"IN STOCK",  c:"#8899AA", bg:"rgba(136,153,170,0.05)", border:"rgba(136,153,170,0.15)"},
 };
 
 function getGradeKey(roi, hs=0) {
@@ -182,9 +182,9 @@ function getGradeKey(roi, hs=0) {
 
 function getVerdict(roi, net, hs=0, h=null) {
   if (roi===null) return { v1:"IN STOCK", v2:"No eBay market data yet — check manually" };
-  if (roi>=25)   return { v1:`${roi}% ROI — FIRE DEAL`, v2:`+£${net?.toFixed(2)} profit after eBay 13% + £4 post` };
-  if (roi>=15)   return { v1:`${roi}% ROI — STRONG BUY`, v2:`+£${net?.toFixed(2)} after all fees. Pull the trigger.` };
-  if (roi>=8)    return { v1:`${roi}% ROI — GOOD DEAL`, v2:`+£${net?.toFixed(2)} profit. Solid flip opportunity.` };
+  if (roi>=25)   return { v1:`${roi}% ROI — HOT DEAL`, v2:`+£${net?.toFixed(2)} profit after eBay 13% + £4 post` };
+  if (roi>=15)   return { v1:`${roi}% ROI — BUY`, v2:`+£${net?.toFixed(2)} after all fees. Strong flip.` };
+  if (roi>=8)    return { v1:`${roi}% ROI — FLIP`, v2:`+£${net?.toFixed(2)} profit. Solid flip opportunity.` };
   if (roi>=2)    return { v1:`MARGINAL FLIP`, v2:`+£${net?.toFixed(2)} — slim profit only. Only buy if you want it.` };
   // Negative ROI — hold score decides
   if (hs>=8)     return { v1:`BUY & HOLD`, v2:`Not worth flipping (−£${Math.abs(net)?.toFixed(2)}) but strong ${hs}/10 hold score. Store sealed.` };
@@ -269,9 +269,9 @@ function Card({ d, rank, isNew=false, dropDelay=0 }) {
             flexShrink:0,
             boxShadow:`0 0 14px ${gr.c}44, inset 0 0 8px ${gr.c}10`,
           }}>
-            <span style={{ fontFamily:DISP, fontSize:12, fontWeight:500, color:gr.c, lineHeight:1 }}>{gk}</span>
+            <span style={{ fontSize:16, lineHeight:1 }}>{gr.key}</span>
             {d.dealScore!=null && (
-              <div style={{ fontFamily:MONO, fontSize:7, color:gr.c, opacity:0.7, letterSpacing:"0.02em", lineHeight:1, marginTop:1 }}>{d.dealScore}</div>
+              <div style={{ fontFamily:MONO, fontSize:7, color:gr.c, opacity:0.7, letterSpacing:"0.02em", lineHeight:1, marginTop:2 }}>{d.dealScore}</div>
             )}
           </div>
           <div>
@@ -508,14 +508,15 @@ function Card({ d, rank, isNew=false, dropDelay=0 }) {
           {/* VERDICT — context-appropriate label per grade */}
           <div style={{ background:gr.bg, border:`1px solid ${gr.border}`, borderRadius:7, padding:"13px 14px", marginBottom:12, boxShadow:`inset 0 1px 0 ${gr.c}20` }}>
             <div style={{ fontFamily:MONO, fontSize:9, color:gr.c, opacity:0.5, letterSpacing:"0.12em", marginBottom:5 }}>
-              {gk==="S"||gk==="A"||gk==="B" ? "FLIP NOW — BUY & RESELL ON EBAY" :
-               gk==="C" ? "MARGINAL — SMALL PROFIT ONLY" :
-               gk==="H" ? "HOLD PLAY — BUY & STORE SEALED" :
+              {gk==="S"||gk==="A" ? "HOT DEAL — BUY & FLIP ON EBAY NOW" :
+               gk==="B" ? "FLIP — BUY & RESELL ON EBAY" :
+               gk==="C" ? "WEAK — SMALL PROFIT ONLY" :
+               gk==="H" ? "HOLD — BUY & STORE SEALED" :
                gk==="D" ? "AVOID — LOSS AFTER FEES" :
-               "IN STOCK — NO MARKET DATA YET"}
+               "IN STOCK — NO EBAY DATA YET"}
             </div>
             <div style={{ fontFamily:DISP, fontSize:13, fontWeight:600, color:gr.c, letterSpacing:"0.06em", marginBottom:3 }}>
-              {gk==="S"?"🔥":gk==="A"?"✅":gk==="B"?"💰":gk==="H"?"📦":gk==="D"?"❌":"📋"} {vd.v1}
+              {gr.key} {vd.v1}
             </div>
             <div style={{ fontFamily:MONO, fontSize:10, color:gr.c, opacity:0.7 }}>{vd.v2}</div>
           </div>
@@ -1341,8 +1342,8 @@ function App() {
         {/* Stat strip + scan button */}
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"9px 16px 10px" }}>
           <div style={{ display:"flex", gap:16 }}>
-            <div style={{ fontFamily:MONO, fontSize:10, color:"#00FF88", letterSpacing:"0.06em" }}>● {excN} EXCELLENT</div>
-            <div style={{ fontFamily:MONO, fontSize:10, color:"#FFD60A", letterSpacing:"0.06em" }}>● {buyN} BUY NOW</div>
+            <div style={{ fontFamily:MONO, fontSize:10, color:"#00FF88", letterSpacing:"0.06em" }}>🔥 {excN} HOT</div>
+            <div style={{ fontFamily:MONO, fontSize:10, color:"#FFD60A", letterSpacing:"0.06em" }}>💰 {buyN} FLIP</div>
             <div style={{ fontFamily:MONO, fontSize:10, color:"#555", letterSpacing:"0.06em" }}>● {deals.length} TOTAL</div>
           </div>
           <button onClick={()=>liveScan()} disabled={scanProgress.active}
@@ -1417,40 +1418,38 @@ function App() {
             </div>
           )}
 
-          {/* Type filter — 4+3 grid, all visible, no swiping */}
-          <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:5, marginBottom:8 }}>
+          {/* Type filter — uniform pill row, all same size, centred text */}
+          <div style={{ display:"flex", flexWrap:"wrap", gap:5, marginBottom:8 }}>
             {[
-              {id:"all",    l:"ALL",     icon:"⚡"},
-              {id:"boxes",  l:"BOXES",   icon:"📦"},
-              {id:"half",   l:"½ BOX",   icon:"◑"},
-              {id:"etbs",   l:"ETB",     icon:"🎁"},
-              {id:"packs",  l:"PACKS",   icon:"🃏"},
-              {id:"bundles",l:"BUNDLE",  icon:"📫"},
-              {id:"tins",   l:"TINS",    icon:"🥫"},
+              {id:"all",    l:"ALL"},
+              {id:"boxes",  l:"BOXES"},
+              {id:"half",   l:"½ BOX"},
+              {id:"etbs",   l:"ETB"},
+              {id:"packs",  l:"PACKS"},
+              {id:"bundles",l:"BUNDLE"},
+              {id:"tins",   l:"TINS"},
             ].map(f=>(
               <button key={f.id} onClick={()=>setTypeF(f.id)} style={{
-                background: typeF===f.id ? "rgba(204,0,0,0.2)" : "#0F0F18",
-                border: `1px solid ${typeF===f.id ? "#CC0000" : "#1E1E2C"}`,
+                flex:"1 1 calc(25% - 5px)",
+                minWidth:60,
+                background: typeF===f.id ? "rgba(204,0,0,0.18)" : "#0F0F18",
+                border: `1px solid ${typeF===f.id ? "#CC0000" : "#1A1A28"}`,
                 borderRadius:6,
-                padding:"7px 4px",
-                fontFamily:MONO, fontSize:8,
-                color: typeF===f.id ? "#FFFFFF" : "#666",
-                cursor:"pointer", letterSpacing:"0.04em",
+                padding:"8px 4px",
+                fontFamily:MONO, fontSize:9,
+                fontWeight: typeF===f.id ? "700" : "400",
+                color: typeF===f.id ? "#FFFFFF" : "#555",
+                cursor:"pointer", letterSpacing:"0.05em",
                 transition:"all 0.12s",
-                display:"flex", flexDirection:"column",
-                alignItems:"center", gap:3,
-                // Last row — span if odd
-              }}>
-                <span style={{ fontSize:13, lineHeight:1 }}>{f.icon}</span>
-                <span>{f.l}</span>
-              </button>
+                textAlign:"center",
+              }}>{f.l}</button>
             ))}
           </div>
           {/* Deal filter — single scrollable line with HOLD added, AVOID fixed */}
           <div style={{ display:"flex", gap:5, marginBottom:14, overflowX:"auto", paddingBottom:2, WebkitOverflowScrolling:"touch", scrollbarWidth:"none" }}>
             {[
               {id:"all",  l:"ALL",        ac:"#FFFFFF", bg:"#1E1E2A"},
-              {id:"buy",  l:"✅ BUY",     ac:"#00FF88", bg:"#002A18"},
+              {id:"buy",  l:"🔥 HOT+BUY", ac:"#00FF88", bg:"#002A18"},
               {id:"flip", l:"💰 FLIP",    ac:"#FFD60A", bg:"#2A2200"},
               {id:"hold", l:"📦 HOLD",    ac:"#B388FF", bg:"#1A1030"},
               {id:"avoid",l:"❌ AVOID",   ac:"#FF3B3B", bg:"#2A0808"},
