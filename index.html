@@ -29,30 +29,30 @@
 const { useState, useEffect } = React;
 
 const DEALS_URL = "https://raw.githubusercontent.com/lock3yv1/lock3ys-den/main/deals.json";
-const EF = 0.13, POST = 4;
+const EF = 0.129, POST_MIN = 3, POST_AVG = 4; // eBay: 12.9% FVF + 30p; postage typically £3-5
 
 // ─── HOLD DATA ────────────────────────────────────────────────────────────────
 const HOLD = {
   // yr1/yr2/yr3/yr4 = multiplier from current eBay market price
   // Based on verified eBay UK sold data trends May 2026
-  "evolving skies":       { score:10, trend:"rising",   yr1:1.05, yr2:1.15, yr3:1.35, yr4:1.55, note:"Umbreon VMAX Alt Art. Generational set. Gets rarer every year." },
-  "hidden fates":         { score:9,  trend:"rising",   yr1:1.05, yr2:1.12, yr3:1.25, yr4:1.40, note:"Shiny Vault. Limited print run. Appreciates every year without fail." },
-  "prismatic evolutions": { score:9,  trend:"rising",   yr1:1.04, yr2:1.12, yr3:1.28, yr4:1.45, note:"Eevee demand is permanent. Next Evolving Skies. Buy and seal away." },
-  "shining fates":        { score:8,  trend:"stable",   yr1:1.03, yr2:1.07, yr3:1.15, yr4:1.25, note:"Shiny Charizard VMAX. Strong collector floor. Slow but steady." },
-  "champions path":       { score:8,  trend:"rising",   yr1:1.04, yr2:1.10, yr3:1.22, yr4:1.35, note:"Tiny print run. Shiny Charizard V. Supply shrinks every year." },
-  "cosmic eclipse":       { score:7,  trend:"stable",   yr1:1.02, yr2:1.05, yr3:1.10, yr4:1.17, note:"Last Sun & Moon set. Nostalgia premium building slowly." },
-  "151":                  { score:8,  trend:"rising",   yr1:1.04, yr2:1.10, yr3:1.22, yr4:1.35, note:"Original 151. Evergreen nostalgia. Bundles consistently rising." },
+  "evolving skies":       { score:10, trend:"rising",   yr1:1.05, yr2:1.15, yr3:1.35, yr4:1.55, note:"Umbreon VMAX Alt Art (chase ~£400+). Boxes guaranteed rarer every year. Top 3 most sought-after SwSh sealed." },
+  "hidden fates":         { score:9,  trend:"rising",   yr1:1.05, yr2:1.12, yr3:1.25, yr4:1.40, note:"Shiny Vault set. Shiny Charizard GX (chase ~£150+). Tiny print run, never reprinted. Appreciates without fail." },
+  "prismatic evolutions": { score:9,  trend:"rising",   yr1:1.04, yr2:1.12, yr3:1.28, yr4:1.45, note:"Umbreon ex SIR (chase ~£200+). Eevee collector demand is permanent. Same trajectory as Evolving Skies — buy and seal." },
+  "shining fates":        { score:8,  trend:"stable",   yr1:1.03, yr2:1.07, yr3:1.15, yr4:1.25, note:"Shiny Charizard VMAX (chase ~£120+). Mini Shiny Vault set. Print run ended — supply only shrinks. Strong sealed floor." },
+  "champions path":       { score:8,  trend:"rising",   yr1:1.04, yr2:1.10, yr3:1.22, yr4:1.35, note:"Shiny Charizard V (chase ~£80+). Extremely small print run, supply near exhausted. One of the rarest modern ETBs." },
+  "cosmic eclipse":       { score:7,  trend:"stable",   yr1:1.02, yr2:1.05, yr3:1.10, yr4:1.17, note:"TAG TEAM GX era: Arceus, Dialga & Palkia GX (chase ~£50+). Last Sun & Moon set — nostalgia premium building." },
+  "151":                  { score:8,  trend:"rising",   yr1:1.04, yr2:1.10, yr3:1.22, yr4:1.35, note:"Charizard ex SIR (chase ~£100+), Mew ex SIR (~£60+). Original 151 nostalgia drives permanent collector demand." },
   "phantasmal flames":    { score:7,  trend:"rising",   yr1:1.05, yr2:1.12, yr3:1.28, yr4:1.44, note:"ME05. Mega Gengar ex SIR. Early buyer window still open." },
   "chaos rising":         { score:7,  trend:"rising",   yr1:1.04, yr2:1.10, yr3:1.22, yr4:1.36, note:"ME04. Brand new May 2026. Get in before market catches up." },
   "perfect order":        { score:7,  trend:"rising",   yr1:1.03, yr2:1.08, yr3:1.18, yr4:1.30, note:"ME03. Mega Zygarde ex SIR at £230+. Steady appreciation." },
   "ascended heroes":      { score:6,  trend:"rising",   yr1:1.03, yr2:1.07, yr3:1.15, yr4:1.25, note:"ME01. Mega Era 2026 flagship. Foundation set." },
   "destined rivals":      { score:5,  trend:"stable",   yr1:1.01, yr2:1.04, yr3:1.08, yr4:1.13, note:"ME02. Still settling post-launch. Hold medium term." },
-  "surging sparks":       { score:6,  trend:"rising",   yr1:1.03, yr2:1.08, yr3:1.18, yr4:1.30, note:"Pikachu ex SIR at $271. Box price rose 150%+ over 18 months." },
+  "surging sparks":       { score:6,  trend:"rising",   yr1:1.03, yr2:1.08, yr3:1.18, yr4:1.30, note:"Pikachu ex SIR (chase ~£250+). Box prices up 150%+ in 18 months. Chase card demand drives sealed appreciation." },
   "paldean fates":        { score:6,  trend:"stable",   yr1:1.02, yr2:1.05, yr3:1.11, yr4:1.18, note:"Shiny vault set. Strong collector demand. Steady floor." },
   "stellar crown":        { score:5,  trend:"stable",   yr1:1.01, yr2:1.03, yr3:1.07, yr4:1.12, note:"Terapagos ex. Moderate hold." },
   "journey together":     { score:5,  trend:"stable",   yr1:1.01, yr2:1.02, yr3:1.05, yr4:1.09, note:"Recent release. Still finding price floor." },
   "brilliant stars":      { score:5,  trend:"stable",   yr1:1.01, yr2:1.03, yr3:1.07, yr4:1.12, note:"Charizard VSTAR. Consistent collector demand." },
-  "chilling reign":       { score:6,  trend:"rising",   yr1:1.02, yr2:1.06, yr3:1.13, yr4:1.22, note:"Ice/Shadow Rider Calyrex. Criminally underrated. Buy now." },
+  "chilling reign":       { score:6,  trend:"rising",   yr1:1.02, yr2:1.06, yr3:1.13, yr4:1.22, note:"Shadow Rider Calyrex VMAX (chase ~£60+), Ice Rider Alt Art (~£80+). Chronically undervalued — buy window is closing." },
   "battle styles":        { score:5,  trend:"stable",   yr1:1.01, yr2:1.03, yr3:1.07, yr4:1.11, note:"Urshifu V. Solid competitive and collector demand." },
   "darkness ablaze":      { score:5,  trend:"stable",   yr1:1.01, yr2:1.03, yr3:1.06, yr4:1.10, note:"Charizard VMAX. Fan favourite. Stable floor." },
   "unified minds":        { score:6,  trend:"stable",   yr1:1.01, yr2:1.04, yr3:1.09, yr4:1.15, note:"Tag Team era. Steady year-on-year gains." },
@@ -135,9 +135,9 @@ const DEMO = [
 // ─── LOGIC ────────────────────────────────────────────────────────────────────
 function calcFlip(buy, sell) {
   if (!sell) return { net:null, roi:null, fees:null };
-  const fees = +(sell * EF).toFixed(2);
-  const net  = +(sell - buy - fees - POST).toFixed(2);
-  return { net, roi: buy > 0 ? Math.round(net / buy * 100) : null, fees };
+  const fvf  = +(sell * EF + 0.30).toFixed(2); // 12.9% FVF + 30p fixed
+  const net  = +(sell - buy - fvf - POST_AVG).toFixed(2);
+  return { net, roi: buy > 0 ? Math.round(net / buy * 100) : null, fees:fvf };
 }
 
 function calcHold(sell, title) {
@@ -182,13 +182,13 @@ function getGradeKey(roi, hs=0) {
 
 function getVerdict(roi, net, hs=0, h=null) {
   if (roi===null) return { v1:"IN STOCK", v2:"No eBay market data yet — check manually" };
-  if (roi>=25)   return { v1:`${roi}% ROI — HOT DEAL`, v2:`+£${net?.toFixed(2)} profit after eBay 13% + £4 post` };
+  if (roi>=25)   return { v1:`${roi}% ROI — HOT DEAL`, v2:`+£${net?.toFixed(2)} profit after eBay fees (~12.9%+30p) + ~£4 post` };
   if (roi>=15)   return { v1:`${roi}% ROI — BUY`, v2:`+£${net?.toFixed(2)} after all fees. Strong flip.` };
   if (roi>=8)    return { v1:`${roi}% ROI — FLIP`, v2:`+£${net?.toFixed(2)} profit. Solid flip opportunity.` };
   if (roi>=2)    return { v1:`MARGINAL FLIP`, v2:`+£${net?.toFixed(2)} — slim profit only. Only buy if you want it.` };
   // Negative ROI — hold score decides
-  if (hs>=8)     return { v1:`BUY & HOLD`, v2:`Not worth flipping (−£${Math.abs(net)?.toFixed(2)}) but strong ${hs}/10 hold score. Store sealed.` };
-  if (hs>=6)     return { v1:`HOLD CANDIDATE`, v2:`Weak flip (−£${Math.abs(net)?.toFixed(2)}) but hold score ${hs}/10. Consider long term.` };
+  if (hs>=8)     return { v1:`BUY & HOLD`, v2:`Not worth flipping (−£${Math.abs(net)?.toFixed(2)} after fees). But ${hs}/10 hold score. Chase cards make this set valuable long term — store sealed, don't open.` };
+  if (hs>=6)     return { v1:`HOLD CANDIDATE`, v2:`Marginal flip (−£${Math.abs(net)?.toFixed(2)}). Hold score ${hs}/10. Sealed value appreciates — consider holding if you have capital to lock up.` };
   if (roi>=-10)  return { v1:`SLIM LOSS`, v2:`−£${Math.abs(net)?.toFixed(2)} after fees. Weak hold too. Only buy to open.` };
   return           { v1:`AVOID`, v2:`−£${Math.abs(net)?.toFixed(2)} loss after eBay fees. Not worth it.` };
 }
@@ -294,7 +294,7 @@ function Card({ d, rank, isNew=false, dropDelay=0 }) {
         {/* Thumbnail — always visible */}
         {d.image && (
           <div style={{ flexShrink:0, width:52, height:52, display:"flex", alignItems:"center", justifyContent:"center" }}>
-            <img src={d.image} alt="" style={{ width:"100%", height:"100%", objectFit:"contain", display:"block" }} loading="lazy"
+            <img src={d.image} alt="" style={{ width:"100%", height:"100%", objectFit:"contain", display:"block", mixBlendMode:"multiply", filter:"brightness(1.05)" }} loading="lazy"
               onError={e=>{e.target.parentElement.style.display="none"}}/>
           </div>
         )}
@@ -417,7 +417,7 @@ function Card({ d, rank, isNew=false, dropDelay=0 }) {
               </span>
                 <span style={{ fontFamily:MONO, fontSize:12, color:"#00FF88", fontWeight:500 }}>£{d.resell?.toFixed(2)}</span>
 
-                <span style={{ fontFamily:MONO, fontSize:12, color:"#C8C8C8" }}>eBay fees (13%)</span>
+                <span style={{ fontFamily:MONO, fontSize:12, color:"#C8C8C8" }}>eBay fees (12.9% + 30p)</span>
                 <span style={{ fontFamily:MONO, fontSize:12, color:"#FF6060" }}>−£{fees?.toFixed(2)}</span>
 
                 <span style={{ fontFamily:MONO, fontSize:12, color:"#C8C8C8" }}>Postage</span>
@@ -516,8 +516,8 @@ function Card({ d, rank, isNew=false, dropDelay=0 }) {
           </div>
           <div style={{ marginTop:8, fontFamily:MONO, fontSize:8, color:"#888", lineHeight:1.6 }}>
             {(d.resellSource==="ebay_sold"||d.resellSource==="ebay_browse")
-              ? `* eBay price from ${d.resellSampleSize||"?"} recent UK sold listings · 13% fee · £4 postage · Not financial advice`
-              : "* 13% eBay final value fee · £4 postage estimate · Resell price estimated · Not financial advice"
+              ? `* eBay avg from ${d.resellSampleSize||"?"} UK live listings · 12.9%+30p fee · £4 avg postage · Not financial advice`
+              : "* 12.9% eBay final value fee + 30p · Postage typically £3-5 (using £4 avg) · Not financial advice"
             }
           </div>
         </div>
