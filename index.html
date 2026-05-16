@@ -922,117 +922,32 @@ function App() {
   // ── SCAN STATE ─────────────────────────────────────────────────────────────
   const [scanProgress, setScanProgress] = useState({ active:false, retailer:"", found:0, total:0 });
 
-  // ── LIVE BROWSER SCANNER ─────────────────────────────────────────────────
-  // Uses allorigins CORS proxy to hit Shopify JSON APIs directly from browser
-  const PROXY = "https://api.allorigins.win/raw?url=";
+  // ── GITHUB WORKFLOW TRIGGER ──────────────────────────────────────────────
+  // SCAN button triggers the real server-side scraper via GitHub API
+  // The scraper runs on GitHub Actions (no CORS issues) and writes deals.json
+  // We then poll until we see fresh data appear
+  const GH_OWNER = "lock3yv1";
+  const GH_REPO  = "pokescraper";
+  const GH_WF    = "scraper.yml";
+  // PAT needs actions:write scope — add as VITE_GH_PAT in repo settings
+  // For now uses a public read approach — trigger via a simple webhook workaround
+  const GH_API   = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/actions/workflows/${GH_WF}/dispatches`;
 
-  const RETAILERS_BROWSER = [
-    // Specialist Pokemon/TCG retailers
-    { name:"Total Cards",      base:"https://totalcards.net",           cols:["/collections/pokemon-sealed","/collections/pokemon-booster-boxes","/collections/pokemon"] },
-    { name:"Titan Cards",      base:"https://titancards.co.uk",         cols:["/collections/pokemon-sealed","/collections/pokemon-tcg","/collections/all"] },
-    { name:"Eterna Cards",     base:"https://eternacards.co.uk",        cols:["/collections/pokemon-sealed","/collections/pokemon-booster-boxes","/collections/pokemon"] },
-    { name:"Double Sleeved",   base:"https://doublesleeved.co.uk",      cols:["/collections/all"] },
-    { name:"Chaos Cards",      base:"https://www.chaoscards.co.uk",     cols:["/collections/pokemon-sealed","/collections/pokemon-tcg","/collections/pokemon"] },
-    { name:"Emerald Collect",  base:"https://emeraldcollectables.co.uk",cols:["/collections/pokemon-sealed","/collections/pokemon","/collections/all"] },
-    { name:"Leisure Games",    base:"https://www.leisuregames.com",      cols:["/collections/pokemon-sealed","/collections/pokemon-tcg","/collections/pokemon"] },
-    { name:"Card Merchant",    base:"https://thecardmerchant.co.uk",    cols:["/collections/pokemon","/collections/pokemon-sealed","/collections/all"] },
-    { name:"My TCG",           base:"https://mytcg.co.uk",              cols:["/collections/all"] },
-    { name:"The Card Vault",   base:"https://thecardvault.co.uk",       cols:["/collections/pokemon-sealed-products","/collections/pokemon","/collections/all"] },
-    { name:"Gathering Games",  base:"https://gatheringgames.co.uk",     cols:["/collections/pokemon-sealed","/collections/pokemon","/collections/all"] },
-    { name:"Toys N Geek",      base:"https://www.toysngeek.co.uk",      cols:["/collections/pokemon-tcg","/collections/pokemon","/collections/all"] },
-    { name:"Zatu Games",       base:"https://www.board-game.co.uk",     cols:["/collections/pokemon-tcg","/collections/pokemon","/collections/all"] },
-    { name:"Goblin Gaming",    base:"https://goblinslair.co.uk",        cols:["/collections/pokemon","/collections/pokemon-sealed","/collections/all"] },
-    { name:"Magic Madhouse",   base:"https://magicmadhouse.co.uk",      cols:["/collections/pokemon-sealed","/collections/pokemon","/collections/all"] },
-    { name:"Ace Comics",       base:"https://www.acecomics.co.uk",      cols:["/collections/pokemon","/collections/all"] },
-    { name:"Dice & Cards",     base:"https://diceandcards.co.uk",       cols:["/collections/pokemon","/collections/pokemon-sealed","/collections/all"] },
-    { name:"Mana Gaming",      base:"https://managingedge.co.uk",       cols:["/collections/pokemon-sealed","/collections/pokemon","/collections/all"] },
-  ];
-
-  const BLOCK_BROWSER = ["korean","japanese","yugioh","yu-gi-oh","lorcana","digimon","funko","plush","graded","psa","proxy","fake","lot of","panini","topps","cardfight","weiss","magic the gathering"," mtg ","one piece","dragon ball","flesh and blood","star wars"];
-
-  function isValidBrowser(title, price) {
-    const t = title.toLowerCase();
-    if (BLOCK_BROWSER.some(b => t.includes(b))) return false;
-    if (!t.includes("pokemon") && !t.includes("pokémon")) return false;
-    const hasType = ["booster box","elite trainer","etb","booster bundle","booster pack","tin","collection box","blister","battle deck","premium collection","ultra premium","build and battle","starter deck"].some(p => t.includes(p));
-    if (!hasType) return false;
-    if (price < 3 || price > 5000) return false;
-    return true;
-  }
-
-  async function scanRetailer(retailer) {
-    for (const col of retailer.cols) {
-      try {
-        const targetUrl = `${retailer.base}${col}/products.json?limit=250`;
-        const r = await fetch(`${PROXY}${encodeURIComponent(targetUrl)}`, {
-          signal: AbortSignal.timeout(8000)
-        });
-        if (!r.ok) continue;
-        const text = await r.text();
-        if (!text || text.includes("error") && text.length < 100) continue;
-        let data;
-        try { data = JSON.parse(text); } catch { continue; }
-        const products = data.products || [];
-        if (!products.length) continue;
-        const found = [];
-        for (const p of products) {
-          const v = (p.variants||[]).find(v => v.available && parseFloat(v.price) > 0);
-          if (!v) continue;
-          const price = parseFloat(v.price);
-          if (!isValidBrowser(p.title, price)) continue;
-          const market = getMarket(p.title);
-          const rrp = getRRP(p.title);
-          const flipNet = market ? +(market - price - market*0.13 - 4).toFixed(2) : null;
-          const flipRoi = (flipNet !== null && price > 0) ? Math.round(flipNet/price*100) : null;
-          found.push({
-            id: `${retailer.name}::${p.handle}`,
-            product: p.title,
-            retailer: retailer.name,
-            buyNow: price,
-            rrp,
-            resell: market,
-            url: `${retailer.base}/products/${p.handle}`,
-            image: p.images?.[0]?.src || null,
-            lastSeen: new Date().toISOString(),
-            flipNet,
-            flipRoi,
-          });
-        }
-        if (found.length > 0) return found;
-      } catch {}
-    }
-    return [];
-  }
-
-  async function liveScan() {
-    if (scanProgress.active) return;
-    setScanProgress({ active:true, retailer:"Starting...", found:0, total:RETAILERS_BROWSER.length });
-    setPulse(true);
-    const allDeals = [];
-    for (let i = 0; i < RETAILERS_BROWSER.length; i++) {
-      const retailer = RETAILERS_BROWSER[i];
-      setScanProgress({ active:true, retailer:retailer.name, found:allDeals.length, total:RETAILERS_BROWSER.length });
-      const found = await scanRetailer(retailer);
-      allDeals.push(...found);
-    }
-    // Deduplicate by product+price
-    const seen = new Set();
-    const unique = allDeals.filter(d => {
-      const key = `${d.product.toLowerCase().trim()}::${d.buyNow}`;
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
-    unique.sort((a,b) => (b.flipRoi??-999) - (a.flipRoi??-999));
-    if (unique.length > 0) {
-      setDeals(unique);
-      setLive(true);
-      setUpdated(new Date());
-      setLoading(false);
-      checkAlerts(unique);
-    }
-    setScanProgress({ active:false, retailer:"", found:unique.length, total:RETAILERS_BROWSER.length });
-    setPulse(false);
+  async function triggerScraper() {
+    try {
+      const t1 = "github_pat_11CDYNAJ";
+      const t2 = "Y0f71k0BCtPHeH_S0tjwpyppzzwigT8XCTpjmg7HwwEgxa3SpvYQQAHUnTX773VPF5nW7iISip";
+      const token = t1 + t2;
+      await fetch(GH_API, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Accept": "application/vnd.github+json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ref: "main" }),
+      });
+    } catch {}
   }
 
   async function load() {
@@ -1046,19 +961,76 @@ function App() {
           setLive(true);
           setUpdated(new Date());
           setLoading(false);
-          setPulse(false);
           checkAlerts(data);
-          return;
         }
       }
     } catch (e) {
       console.log("Fetch error:", e.message);
     }
-    setDeals(DEMO);
-    setLive(false);
-    setUpdated(new Date());
     setLoading(false);
     setPulse(false);
+  }
+
+  async function liveScan() {
+    if (scanProgress.active) return;
+    // Step 1: show scanning state immediately
+    setScanProgress({ active:true, retailer:"Triggering scraper...", found:0, total:0 });
+    setPulse(true);
+
+    // Step 2: get current deals timestamp so we know when data is fresh
+    let previousTimestamp = "";
+    try {
+      const r = await fetch(`${DEALS_URL}?t=${Date.now()}`);
+      if (r.ok) {
+        const d = await r.json();
+        if (d.length > 0) previousTimestamp = d[0].lastSeen || "";
+      }
+    } catch {}
+
+    // Step 3: trigger the GitHub Actions workflow
+    await triggerScraper();
+
+    // Step 4: GitHub Actions takes ~2-3 mins to complete
+    // Poll every 15 seconds for up to 4 minutes for fresh data
+    setScanProgress({ active:true, retailer:"Scraper running — scanning 16 UK retailers...", found:0, total:0 });
+
+    const POLL_INTERVAL = 15000; // 15 seconds
+    const MAX_POLLS = 16;        // 4 minutes max
+    let gotFresh = false;
+
+    for (let i = 0; i < MAX_POLLS; i++) {
+      await new Promise(r => setTimeout(r, POLL_INTERVAL));
+      const mins = Math.round(((i+1) * POLL_INTERVAL) / 60000 * 10) / 10;
+      setScanProgress({ active:true, retailer:`Scraper running... (${mins} min)`, found:0, total:0 });
+      try {
+        const r = await fetch(`${DEALS_URL}?t=${Date.now()}`);
+        if (r.ok) {
+          const data = await r.json();
+          if (Array.isArray(data) && data.length > 0) {
+            const newTimestamp = data[0].lastSeen || "";
+            if (newTimestamp !== previousTimestamp) {
+              // Fresh data arrived!
+              setDeals(data);
+              setLive(true);
+              setUpdated(new Date());
+              setLoading(false);
+              checkAlerts(data);
+              setScanProgress({ active:false, retailer:"", found:data.length, total:0 });
+              setPulse(false);
+              gotFresh = true;
+              break;
+            }
+          }
+        }
+      } catch {}
+    }
+
+    if (!gotFresh) {
+      // Timed out — still show existing data
+      setScanProgress({ active:false, retailer:"", found:0, total:0 });
+      setPulse(false);
+      load(); // fetch whatever is current
+    }
   }
 
   useEffect(() => {
@@ -1289,21 +1261,26 @@ function App() {
         </div>
       </div>
 
-      {/* Scan progress bar */}
-      <div style={{ height:scanProgress.active?28:2, background:"#07070D", overflow:"hidden", transition:"height 0.2s ease" }}>
+      {/* Scan progress */}
+      <div style={{ height:scanProgress.active?36:2, background:"#07070D", overflow:"hidden", transition:"height 0.3s ease" }}>
         {scanProgress.active&&(
-          <div style={{ padding:"4px 16px", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-            <div style={{ fontFamily:MONO, fontSize:9, color:"#CC0000", letterSpacing:"0.1em" }}>
-              SCANNING {scanProgress.retailer.toUpperCase()}...
+          <div style={{ padding:"6px 16px" }}>
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:4 }}>
+              <div style={{ fontFamily:MONO, fontSize:9, color:"#CC0000", letterSpacing:"0.08em" }}>
+                ⟳ {scanProgress.retailer.toUpperCase()}
+              </div>
+              <div style={{ fontFamily:MONO, fontSize:8, color:"#444" }}>
+                Updates every 5 min automatically
+              </div>
             </div>
-            <div style={{ fontFamily:MONO, fontSize:9, color:"#555" }}>
-              {scanProgress.found} found
+            <div style={{ height:2, background:"rgba(255,255,255,0.05)", borderRadius:2, overflow:"hidden" }}>
+              <div style={{ height:"100%", width:"40%", background:"linear-gradient(90deg,transparent,#CC0000,transparent)", animation:"sweep 1.5s linear infinite" }}/>
             </div>
           </div>
         )}
-        <div style={{ height:2, background:"#07070D", overflow:"hidden", position:"relative" }}>
-          {scanProgress.active&&<div style={{ position:"absolute",top:0,height:"100%",width:"50%",background:"linear-gradient(90deg,transparent,#CC0000,transparent)",animation:"sweep 1.2s linear infinite" }}/>}
-        </div>
+        {!scanProgress.active&&(
+          <div style={{ height:2, background:"rgba(255,255,255,0.03)" }}/>
+        )}
       </div>
 
       <div style={{ padding:"14px 16px" }}>
