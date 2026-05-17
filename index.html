@@ -59,26 +59,26 @@ const EF = 0.129, POST = 4, POST_AVG = 4; // eBay: 12.9% FVF + 30p; avg postage 
 const HOLD = {
   // yr1/yr2/yr3/yr4 = multiplier from current eBay market price
   // Based on verified eBay UK sold data trends May 2026
-  "evolving skies":       { score:10, trend:"rising",   yr1:1.05, yr2:1.15, yr3:1.35, yr4:1.55, note:"Umbreon VMAX Alt Art (chase ~£400+). Boxes guaranteed rarer every year. Top 3 most sought-after SwSh sealed." },
-  "hidden fates":         { score:9,  trend:"rising",   yr1:1.05, yr2:1.12, yr3:1.25, yr4:1.40, note:"Shiny Vault set. Shiny Charizard GX (chase ~£150+). Tiny print run, never reprinted. Appreciates without fail." },
-  "prismatic evolutions": { score:9,  trend:"rising",   yr1:1.04, yr2:1.12, yr3:1.28, yr4:1.45, note:"Umbreon ex SIR (chase ~£200+). Eevee collector demand is permanent. Same trajectory as Evolving Skies — buy and seal." },
-  "shining fates":        { score:8,  trend:"stable",   yr1:1.03, yr2:1.07, yr3:1.15, yr4:1.25, note:"Shiny Charizard VMAX (chase ~£120+). Mini Shiny Vault set. Print run ended — supply only shrinks. Strong sealed floor." },
-  "champions path":       { score:8,  trend:"rising",   yr1:1.04, yr2:1.10, yr3:1.22, yr4:1.35, note:"Shiny Charizard V (chase ~£80+). Extremely small print run, supply near exhausted. One of the rarest modern ETBs." },
-  "cosmic eclipse":       { score:7,  trend:"stable",   yr1:1.02, yr2:1.05, yr3:1.10, yr4:1.17, note:"TAG TEAM GX era: Arceus, Dialga & Palkia GX (chase ~£50+). Last Sun & Moon set — nostalgia premium building." },
-  "151":                  { score:8,  trend:"rising",   yr1:1.04, yr2:1.10, yr3:1.22, yr4:1.35, note:"Charizard ex SIR (chase ~£100+), Mew ex SIR (~£60+). Original 151 nostalgia drives permanent collector demand." },
+  "evolving skies":       { score:10, trend:"rising",   yr1:1.05, yr2:1.15, yr3:1.35, yr4:1.55, note:"Umbreon VMAX Alt Art (chase £4 avg00+). Boxes guaranteed rarer every year. Top 3 most sought-after SwSh sealed." },
+  "hidden fates":         { score:9,  trend:"rising",   yr1:1.05, yr2:1.12, yr3:1.25, yr4:1.40, note:"Shiny Vault set. Shiny Charizard GX (chase £150+). Tiny print run, never reprinted. Appreciates without fail." },
+  "prismatic evolutions": { score:9,  trend:"rising",   yr1:1.04, yr2:1.12, yr3:1.28, yr4:1.45, note:"Umbreon ex SIR (chase £200+). Eevee collector demand is permanent. Same trajectory as Evolving Skies — buy and seal." },
+  "shining fates":        { score:8,  trend:"stable",   yr1:1.03, yr2:1.07, yr3:1.15, yr4:1.25, note:"Shiny Charizard VMAX (chase £120+). Mini Shiny Vault set. Print run ended — supply only shrinks. Strong sealed floor." },
+  "champions path":       { score:8,  trend:"rising",   yr1:1.04, yr2:1.10, yr3:1.22, yr4:1.35, note:"Shiny Charizard V (chase £80+). Extremely small print run, supply near exhausted. One of the rarest modern ETBs." },
+  "cosmic eclipse":       { score:7,  trend:"stable",   yr1:1.02, yr2:1.05, yr3:1.10, yr4:1.17, note:"TAG TEAM GX era: Arceus, Dialga & Palkia GX (chase £50+). Last Sun & Moon set — nostalgia premium building." },
+  "151":                  { score:8,  trend:"rising",   yr1:1.04, yr2:1.10, yr3:1.22, yr4:1.35, note:"Charizard ex SIR (chase £100+), Mew ex SIR (£60+). Original 151 nostalgia drives permanent collector demand." },
   "phantasmal flames":    { score:7,  trend:"rising",   yr1:1.05, yr2:1.12, yr3:1.28, yr4:1.44, note:"ME05. Mega Gengar ex SIR. Early buyer window still open." },
   "chaos rising":         { score:7,  trend:"rising",   yr1:1.04, yr2:1.10, yr3:1.22, yr4:1.36, note:"ME04. Brand new May 2026. Get in before market catches up." },
   "perfect order":        { score:7,  trend:"rising",   yr1:1.03, yr2:1.08, yr3:1.18, yr4:1.30, note:"ME03. Mega Zygarde ex SIR at £230+. Steady appreciation." },
   "ascended heroes":      { score:6,  trend:"rising",   yr1:1.03, yr2:1.07, yr3:1.15, yr4:1.25, note:"ME01. Mega Era 2026 flagship. Foundation set." },
   "destined rivals":      { score:5,  trend:"stable",   yr1:1.01, yr2:1.04, yr3:1.08, yr4:1.13, note:"ME02. Still settling post-launch. Hold medium term." },
-  "surging sparks":       { score:6,  trend:"rising",   yr1:1.03, yr2:1.08, yr3:1.18, yr4:1.30, note:"Pikachu ex SIR (chase ~£250+). Box prices up 150%+ in 18 months. Chase card demand drives sealed appreciation." },
+  "surging sparks":       { score:6,  trend:"rising",   yr1:1.03, yr2:1.08, yr3:1.18, yr4:1.30, note:"Pikachu ex SIR (chase £250+). Box prices up 150%+ in 18 months. Chase card demand drives sealed appreciation." },
   "paldean fates":        { score:6,  trend:"stable",   yr1:1.02, yr2:1.05, yr3:1.11, yr4:1.18, note:"Shiny vault set. Strong collector demand. Steady floor." },
   "stellar crown":        { score:5,  trend:"stable",   yr1:1.01, yr2:1.03, yr3:1.07, yr4:1.12, note:"Terapagos ex. Moderate hold." },
   "journey together":     { score:5,  trend:"stable",   yr1:1.01, yr2:1.02, yr3:1.05, yr4:1.09, note:"Recent release. Still finding price floor." },
-  "brilliant stars":      { score:5,  trend:"stable",   yr1:1.01, yr2:1.03, yr3:1.07, yr4:1.12, note:"Charizard VSTAR. Consistent collector demand." },
-  "chilling reign":       { score:6,  trend:"rising",   yr1:1.02, yr2:1.06, yr3:1.13, yr4:1.22, note:"Shadow Rider Calyrex VMAX (chase ~£60+), Ice Rider Alt Art (~£80+). Chronically undervalued — buy window is closing." },
-  "battle styles":        { score:5,  trend:"stable",   yr1:1.01, yr2:1.03, yr3:1.07, yr4:1.11, note:"Urshifu V. Solid competitive and collector demand." },
-  "darkness ablaze":      { score:5,  trend:"stable",   yr1:1.01, yr2:1.03, yr3:1.06, yr4:1.10, note:"Charizard VMAX. Fan favourite. Stable floor." },
+  "brilliant stars":      { score:5,  trend:"stable",   yr1:1.01, yr2:1.03, yr3:1.07, yr4:1.12, note:"Charizard VSTAR (raw £4 avg0-80, PSA 10 ~£150+). Consistent collector and competitive demand." },
+  "chilling reign":       { score:6,  trend:"rising",   yr1:1.02, yr2:1.06, yr3:1.13, yr4:1.22, note:"Shadow Rider Calyrex VMAX (chase £60+), Ice Rider Alt Art (£80+). Chronically undervalued — buy window is closing." },
+  "battle styles":        { score:5,  trend:"stable",   yr1:1.01, yr2:1.03, yr3:1.07, yr4:1.11, note:"Urshifu V SWSH-Black Star (raw ~£8-20, PSA 10 ~£60+). Solid competitive and collector floor." },
+  "darkness ablaze":      { score:5,  trend:"stable",   yr1:1.01, yr2:1.03, yr3:1.06, yr4:1.10, note:"Charizard VMAX (raw ~£30-50, PSA 10 ~£100+). Fan favourite — consistent collector floor." },
   "unified minds":        { score:6,  trend:"stable",   yr1:1.01, yr2:1.04, yr3:1.09, yr4:1.15, note:"Tag Team era. Steady year-on-year gains." },
   "unbroken bonds":       { score:6,  trend:"stable",   yr1:1.01, yr2:1.04, yr3:1.09, yr4:1.15, note:"Strong tag team lineup. Collecting premium building." },
   "silver tempest":       { score:5,  trend:"stable",   yr1:1.01, yr2:1.03, yr3:1.07, yr4:1.12, note:"Lugia V alt art premium." },
@@ -544,7 +544,7 @@ function Card({ d, rank, isNew=false, dropDelay=0 }) {
           </div>
           <div style={{ marginTop:8, fontFamily:MONO, fontSize:8, color:"#888", lineHeight:1.6 }}>
             {(d.resellSource==="ebay_sold"||d.resellSource==="ebay_browse")
-              ? `* eBay avg from ${d.resellSampleSize||"?"} live UK listings · 12.9% fee + 30p · ~£4 postage · Not financial advice`
+              ? `* eBay avg from ${d.resellSampleSize||"?"} live UK listings · 12.9% fee + 30p · postage £4 avg · Not financial advice`
               : "* Price estimated · 12.9%+30p eBay fee · avg £4 postage · Not financial advice"
             }
           </div>
@@ -1259,7 +1259,7 @@ function App() {
   });
 
   const buyN=sorted.filter(d=>(calcFlip(d.buyNow,d.resell).roi??-999)>=8).length;
-  const excN=sorted.filter(d=>(calcFlip(d.buyNow,d.resell).roi??-999)>=15).length;
+  const excN=sorted.filter(d=>(calcFlip(d.buyNow,d.resell).roi??-999)>=25).length; // HOT = S grade (ROI>=25%)
   const now = updated ? (() => {
     const mins = Math.floor((Date.now() - updated.getTime()) / 60000);
     if (mins < 1) return "just now";
@@ -1563,7 +1563,7 @@ function App() {
                           </span>
                         </div>
                         <div style={{ padding:"5px 10px" }}>
-                          <span style={{ fontFamily:MONO, fontSize:7, color:"#AAA" }}>Live eBay UK · 12.9%+30p fee · ~£4 avg post · Not financial advice</span>
+                          <span style={{ fontFamily:MONO, fontSize:7, color:"#AAA" }}>Live eBay UK · 12.9%+30p fee · avg post £4 · Not financial advice</span>
                         </div>
                       </div>
                       <div style={{ padding:"0 14px 12px", display:"flex", justifyContent:"flex-end" }}>
