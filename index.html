@@ -140,57 +140,86 @@ const DEMO = [
 
 // ─── LOGIC ────────────────────────────────────────────────────────────────────
 
-// ─── STATIC MARKET PRICES (eBay UK sold averages, May 2026) ──────────────────
+// ─── STATIC MARKET PRICES (verified eBay UK sold, May 2026) ────────────────────
 const MARKET = {
-  "evolving skies booster box":    215, "evolving skies elite trainer":  150,
-  "evolving skies booster pack":   24,  "evolving skies tin":            40,
-  "hidden fates elite trainer":    310, "hidden fates booster pack":     14,
-  "prismatic evolutions elite trainer": 160, "prismatic evolutions booster bundle": 58,
-  "prismatic evolutions booster pack": 13,
-  "surging sparks booster box":    240, "surging sparks elite trainer":  130,
-  "surging sparks booster bundle": 30,  "surging sparks booster pack":   7,
-  "destined rivals booster box":   175, "destined rivals elite trainer": 160,
-  "journey together booster box":  175, "journey together elite trainer":130,
-  "journey together booster bundle":45, "journey together booster pack": 8,
-  "brilliant stars booster box":   155, "brilliant stars elite trainer": 145,
-  "chilling reign booster box":    210, "chilling reign elite trainer":  150,
-  "crown zenith elite trainer":    268, "crown zenith booster box":      128,
-  "silver tempest booster box":    148, "silver tempest elite trainer":  120,
-  "lost origin elite trainer":     210, "lost origin booster box":       122,
-  "astral radiance booster box":   138, "astral radiance elite trainer": 138,
-  "151 booster box":               178, "151 elite trainer":             115,
-  "151 booster bundle":            55,  "151 booster pack":              8,
-  "paldean fates elite trainer":   58,  "paldean fates booster box":     132,
-  "paradox rift booster box":      120, "paradox rift elite trainer":    50,
-  "obsidian flames booster box":   220, "obsidian flames elite trainer": 55,
-  "twilight masquerade booster box":110,"twilight masquerade elite trainer":120,
-  "temporal forces booster box":   100, "temporal forces elite trainer": 95,
-  "stellar crown booster box":     135, "stellar crown elite trainer":   110,
-  "shrouded fable elite trainer":  100,
-  "shining fates elite trainer":   230, "shining fates booster pack":    15,
-  "champions path elite trainer":  130, "champions path booster pack":   24,
-  "cosmic eclipse booster box":    320,
-  "battle styles booster box":     200, "battle styles elite trainer":   62,
-  "fusion strike booster box":     85,
-  "darkness ablaze booster box":   155, "vivid voltage booster box":     142,
-  "rebel clash booster box":       110,
-  "perfect order elite trainer":   65,  "perfect order booster box":     130,
-  "ascended heroes booster box":   125, "ascended heroes elite trainer": 160,
-  "chaos rising booster box":      145,
-  "phantasmal flames booster box": 360, "phantasmal flames elite trainer":120,
-  "chaos rising booster box":      145, "chaos rising elite trainer":    68,
-  "chaos rising booster pack":     8,
-  "perfect order booster pack":    7,   "ascended heroes booster pack":  8,
-  "nihil zero booster box":        70,  "nihil zero booster pack":       5,
-  "heatwave arena booster pack":   5,   "heatwave arena booster box":    45,
-  "battle partners booster pack":  5,   "battle partners booster box":   75,
-  "glory of team rocket booster pack": 7, "glory of team rocket booster box": 200,
-  "white flare booster box":       200, "white flare booster pack":      8,
-  "black bolt booster box":        210, "black bolt booster pack":       9,
-  "space juggler booster box":     100,
-  "unbroken bonds booster box":    260, "cosmic eclipse booster box":    320,
-  "united minds booster box":      280, "team up booster box":           220,
-  "lost thunder booster box":      195,
+  // Mega Evolution (2025-2026)
+  "ascended heroes booster box": 105, "ascended heroes elite trainer box": 135,
+  "ascended heroes booster pack": 10,
+  "phantasmal flames booster box": 340, "phantasmal flames elite trainer box": 105,
+  "perfect order booster box": 115, "perfect order elite trainer box": 67,
+  "perfect order booster pack": 7,
+  "chaos rising booster box": 115, "chaos rising booster pack": 6,
+  "destined rivals booster box": 155, "destined rivals elite trainer box": 148,
+  "destined rivals booster bundle": 28, "destined rivals booster pack": 8,
+  // Japanese/Korean (workflow log verified May 2026)
+  "nihil zero booster box": 55, "nihil zero korean booster box": 60,
+  "heatwave arena booster box": 110, "heatwave arena korean booster box": 64,
+  "battle partners booster box": 72, "battle partners korean booster box": 44,
+  "terastal festival booster box": 100, "terastal festival korean booster box": 80,
+  "white flare booster box": 149, "white flare korean booster box": 74,
+  "black bolt booster box": 80, "black bolt korean booster box": 63,
+  "glory of team rocket booster box": 170, "glory of team rocket korean booster box": 60,
+  "glory of team rocket booster pack": 6,
+  "space juggler booster box": 91,
+  // Scarlet & Violet
+  "surging sparks booster box": 235, "surging sparks elite trainer box": 68,
+  "surging sparks booster pack": 8,
+  "stellar crown booster box": 130, "stellar crown elite trainer box": 45,
+  "stellar crown booster pack": 11,
+  "twilight masquerade booster box": 145, "twilight masquerade elite trainer box": 48,
+  "twilight masquerade booster pack": 10,
+  "temporal forces booster box": 100, "temporal forces elite trainer box": 45,
+  "temporal forces booster pack": 5,
+  "paradox rift booster box": 130, "paradox rift elite trainer box": 45,
+  "paradox rift half booster box": 123, "paradox rift booster pack": 5,
+  "obsidian flames booster box": 210, "obsidian flames elite trainer box": 50,
+  "obsidian flames booster pack": 10,
+  "paldea evolved booster box": 135, "paldea evolved elite trainer box": 42,
+  "paldea evolved booster pack": 8,
+  "paldean fates elite trainer box": 68, "paldean fates booster box": 115,
+  "151 booster box": 195, "151 elite trainer box": 65,
+  "151 booster bundle": 48, "151 booster pack": 8,
+  "shrouded fable elite trainer box": 98, "shrouded fable booster pack": 8,
+  "journey together booster box": 160, "journey together elite trainer box": 115,
+  "journey together half booster box": 102, "journey together booster bundle": 43,
+  "journey together booster pack": 6,
+  "prismatic evolutions elite trainer box": 145,
+  "prismatic evolutions booster bundle": 58, "prismatic evolutions booster pack": 13,
+  // Sword & Shield
+  "crown zenith elite trainer box": 105, "crown zenith booster box": 300,
+  "silver tempest booster box": 145, "silver tempest elite trainer box": 100,
+  "silver tempest booster pack": 10,
+  "lost origin booster box": 180, "lost origin elite trainer box": 88,
+  "astral radiance booster box": 175, "astral radiance elite trainer box": 95,
+  "astral radiance booster pack": 8,
+  "brilliant stars booster box": 210, "brilliant stars elite trainer box": 78,
+  "brilliant stars booster pack": 10,
+  "fusion strike booster box": 200, "fusion strike elite trainer box": 88,
+  "evolving skies booster box": 215, "evolving skies elite trainer box": 148,
+  "evolving skies booster pack": 14,
+  "chilling reign booster box": 235, "chilling reign elite trainer box": 108,
+  "chilling reign booster pack": 12,
+  "battle styles booster box": 270, "battle styles elite trainer box": 125,
+  "battle styles booster pack": 10,
+  "shining fates elite trainer box": 118, "shining fates booster pack": 15,
+  "vivid voltage booster box": 185, "vivid voltage elite trainer box": 62,
+  "vivid voltage booster pack": 10,
+  "champions path elite trainer box": 265, "champions path booster pack": 24,
+  "darkness ablaze booster box": 165, "darkness ablaze elite trainer box": 62,
+  "darkness ablaze booster pack": 10,
+  "rebel clash booster box": 160, "rebel clash elite trainer box": 55,
+  "rebel clash booster pack": 10,
+  "sword & shield booster box": 155, "sword & shield booster pack": 10,
+  // Sun & Moon
+  "hidden fates elite trainer box": 175, "hidden fates booster pack": 14,
+  "cosmic eclipse booster box": 270,
+  "unbroken bonds booster box": 185, "team up booster box": 155,
+  "unified minds booster box": 170,
+  // Other
+  "celebrations elite trainer box": 85,
+  "pokemon go elite trainer box": 60, "pokemon go booster pack": 7,
+  // Chinese
+  "collect 151 journey booster box": 101, "collect 151 hope booster box": 87,
 };
 
 function getMarket(title) {
@@ -971,6 +1000,7 @@ function App() {
   const [filter,   setFilter]   = useState("all");
   const [typeF,    setTypeF]    = useState("all");
   const [langF,    setLangF]    = useState("all");
+  const [search,   setSearch]   = useState("");
   const [tab,      setTab]      = useState("deals");
   const [pulse,    setPulse]    = useState(false);
   const [ebayListings, setEbayListings] = useState([]);
@@ -1261,6 +1291,10 @@ function App() {
     if(langF==="kr")  return t.includes("korean")||t.includes("[kr]");
     if(langF==="cn")  return t.includes("chinese")||t.includes("[cn]");
     return true;
+  }).filter(d=>{
+    if(!search.trim()) return true;
+    const q = search.toLowerCase().trim();
+    return d.product.toLowerCase().includes(q) || (d.retailer||"").toLowerCase().includes(q);
   });
 
   const buyN=sorted.filter(d=>(calcFlip(d.buyNow,d.resell).roi??-999)>=8).length;
@@ -1472,7 +1506,33 @@ function App() {
               }}>{f.l}</button>
             ))}
           </div>
-          <div style={{ fontFamily:MONO, fontSize:9, color:"#888", marginBottom:10, letterSpacing:"0.06em", textAlign:"center" }}>{filtered.length} RESULTS · SORTED BY DEAL SCORE · TAP TO EXPAND</div>
+          {/* Search bar */}
+          <div style={{ position:"relative", marginBottom:10 }}>
+            <div style={{ position:"absolute", left:12, top:"50%", transform:"translateY(-50%)", color:"#444", fontSize:12, pointerEvents:"none" }}>🔍</div>
+            <input
+              type="text"
+              placeholder="Search products, sets, retailers..."
+              value={search}
+              onChange={e=>setSearch(e.target.value)}
+              style={{
+                width:"100%", boxSizing:"border-box",
+                background:"#0D0D18", border:`1px solid ${search?"#CC0000":"#222230"}`,
+                borderRadius:6, padding:"9px 36px 9px 32px",
+                fontFamily:MONO, fontSize:10, color:"#FFFFFF",
+                letterSpacing:"0.03em", outline:"none",
+                transition:"border-color 0.15s",
+              }}
+            />
+            {search&&(
+              <button onClick={()=>setSearch("")}
+                style={{ position:"absolute", right:10, top:"50%", transform:"translateY(-50%)", background:"none", border:"none", color:"#555", cursor:"pointer", fontSize:14, lineHeight:1, padding:2 }}>
+                ✕
+              </button>
+            )}
+          </div>
+          <div style={{ fontFamily:MONO, fontSize:9, color:"#888", marginBottom:10, letterSpacing:"0.06em", textAlign:"center" }}>
+            {filtered.length} RESULTS{search ? ` matching "${search}"` : " · SORTED BY DEAL SCORE"} · TAP TO EXPAND
+          </div>
           {loading
             ?<div style={{ textAlign:"center",padding:"48px 0",fontFamily:MONO,color:"#B0B0B0",fontSize:11,letterSpacing:"0.1em" }}>SCANNING RETAILERS...</div>
             :filtered.length===0
