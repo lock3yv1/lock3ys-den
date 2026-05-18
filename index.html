@@ -50,7 +50,7 @@ const HOLD = {
   "surging sparks":       { score:6,  trend:"rising",   yr1:1.03, yr2:1.08, yr3:1.18, yr4:1.30, note:"Pikachu ex SIR. Box price rose 150%+ over 18 months — consistent demand." },
   "paldean fates":        { score:6,  trend:"stable",   yr1:1.02, yr2:1.05, yr3:1.11, yr4:1.18, note:"Shiny vault set. Strong collector demand. Steady floor." },
   "stellar crown":        { score:5,  trend:"stable",   yr1:1.01, yr2:1.03, yr3:1.07, yr4:1.12, note:"Terapagos ex. Moderate hold." },
-  "journey together":     { score:5,  trend:"stable",   yr1:1.01, yr2:1.03, yr3:1.06, yr4:1.10, note:"Launched early 2025. Establishing market floor with steady collector demand." },
+  "journey together":     { score:5,  trend:"stable",   yr1:1.03, yr2:1.08, yr3:1.14, yr4:1.22, note:"Feb 2025. Key hits: Pikachu ex SAR (£60-100), Eevee ex SAR (£35-65). Half boxes ~£102 on eBay." },
   "nihil zero":           { score:6,  trend:"rising",   yr1:1.05, yr2:1.12, yr3:1.22, yr4:1.35, note:"Korean Mega Evolution era. Scarce UK supply. Rising collector interest." },
   "heatwave arena":       { score:5,  trend:"stable",   yr1:1.03, yr2:1.08, yr3:1.15, yr4:1.22, note:"Japanese SV9a. Popular set, growing UK demand." },
   "battle partners":      { score:5,  trend:"stable",   yr1:1.02, yr2:1.06, yr3:1.12, yr4:1.18, note:"SV9 era. Solid collector base." },
@@ -225,7 +225,10 @@ const MARKET = {
 function getMarket(title) {
   if (!title) return null;
   const t = title.toLowerCase();
-  for (const [k,v] of Object.entries(MARKET)) {
+  // Sort by key length descending so "half booster box" matches before "booster box"
+  // and "elite trainer box" matches before "booster box" etc.
+  const entries = Object.entries(MARKET).sort((a,b) => b[0].length - a[0].length);
+  for (const [k,v] of entries) {
     if (t.includes(k)) return v;
   }
   return null;
@@ -323,39 +326,57 @@ function ago(iso) {
 }
 
 
-// ─── HIT CARDS DATA (chase cards that drive set value) ──────────────────────
+// ─── HIT CARDS DATA (verified chase cards per set, May 2026) ───────────────
 const HIT_CARDS = {
-  "evolving skies":      ["Rayquaza VMAX Alt Art £180-250", "Umbreon VMAX Alt Art £200-280", "Glaceon VMAX Alt Art £80-120"],
-  "hidden fates":        ["Charizard GX Shiny £60-100", "Mewtwo GX Shiny £40-60"],
-  "champions path":      ["Charizard V £80-140", "Charizard VMAX Rainbow £60-90"],
-  "shining fates":       ["Charizard VMAX Shiny £30-60", "Pikachu VMAX Shiny £20-40"],
-  "chilling reign":      ["Shadow Rider Calyrex Alt Art £60-90", "Ice Rider Calyrex Alt Art £50-80"],
-  "brilliant stars":     ["Charizard VSTAR £15-25", "Arceus VSTAR Alt Art £20-35"],
-  "prismatic evolutions":["Umbreon ex SAR £80-130", "Leafeon ex SAR £60-100", "Sylveon ex SAR £50-80"],
-  "surging sparks":      ["Pikachu ex SAR £160-220", "Raichu ex SAR £40-60"],
-  "destined rivals":     ["Mewtwo ex SAR £80-140", "Mew ex SAR £50-90"],
-  "journey together":    ["Pikachu ex SAR £60-100", "Eevee ex SAR £40-70"],
-  "paradox rift":        ["Roaring Moon ex Alt Art £30-55", "Iron Valiant ex Alt Art £25-45"],
-  "obsidian flames":     ["Charizard ex SAR £35-60", "Tera Charizard ex Alt Art £30-55"],
-  "151":                 ["Mew ex SAR £35-60", "Charizard ex SAR £40-65", "Alakazam ex SAR £25-45"],
-  "paldean fates":       ["Charizard ex SAR £25-40", "Meowscarada ex SAR £15-25"],
-  "crown zenith":        ["Charizard Alt Art £60-100", "Regigigas Alt Art £40-60"],
-  "silver tempest":      ["Lugia V Alt Art £30-55", "Regidrago VSTAR £20-35"],
-  "lost origin":         ["Giratina V Alt Art £50-80", "Giratina VSTAR £30-50"],
-  "astral radiance":     ["Origin Palkia VSTAR £15-25", "Origin Dialga VSTAR £12-20"],
-  "battle styles":       ["Rapid Strike Urshifu Alt Art £40-70", "Single Strike Urshifu Alt Art £35-60"],
-  "phantom forces":      ["Gengar Alt Art £25-45"],
-  "ascended heroes":     ["Charizard ex SAR £40-70", "Mewtwo ex SAR £35-60"],
-  "phantasmal flames":   ["Charizard ex SAR £50-90", "Gengar ex SAR £30-55"],
-  "perfect order":       ["Mewtwo ex SAR £35-65", "Aerodactyl ex SAR £25-45"],
-  "chaos rising":        ["Charizard ex SAR £30-55"],
-  "glory of team rocket":["Dark Charizard ex SAR £40-75", "Dark Mewtwo ex SAR £35-60"],
-  "white flare":         ["Zekrom ex SAR £40-70"],
-  "black bolt":          ["Reshiram ex SAR £40-70"],
-  "battle partners":     ["Pikachu ex SAR £35-65"],
-  "terastal festival":   ["Charizard ex SAR £40-75", "Eevee ex SAR £30-55"],
-  "nihil zero":          ["Mewtwo ex SAR £30-50"],
-  "heatwave arena":      ["Charizard ex SAR £25-45"],
+  // Mega Evolution (2025-2026)
+  "ascended heroes":      ["Charizard ex SAR ~£60-90","Mewtwo ex SAR ~£40-70","Pikachu ex SAR ~£30-50"],
+  "phantasmal flames":    ["Charizard ex SAR ~£55-85","Gengar ex SAR ~£30-55","Rayquaza ex SAR ~£40-65"],
+  "perfect order":        ["Mewtwo ex SAR ~£35-65","Aerodactyl ex SAR ~£20-40","Mew ex SAR ~£25-45"],
+  "chaos rising":         ["Charizard ex SAR ~£30-55","Blastoise ex SAR ~£20-40"],
+  "destined rivals":      ["Mewtwo ex SAR ~£80-130","Mew ex SAR ~£50-90","Lugia ex SAR ~£40-70"],
+  "glory of team rocket": ["Dark Charizard ex SAR ~£40-70","Dark Mewtwo ex SAR ~£30-55"],
+  // Scarlet & Violet (2023-2026)
+  "journey together":     ["Pikachu ex SAR ~£60-100","Eevee ex SAR ~£35-65","Miraidon ex SAR ~£25-45"],
+  "destined rivals":      ["Mewtwo ex SAR ~£80-130","Mew ex SAR ~£50-90"],
+  "surging sparks":       ["Pikachu ex SAR ~£160-220","Raichu ex SAR ~£35-60","Pikachu ex Alt Art ~£80-120"],
+  "stellar crown":        ["Arceus ex SAR ~£30-55","Lugia ex SAR ~£25-45"],
+  "shrouded fable":       ["Pecharunt ex SAR ~£30-55","Munkidori ex SAR ~£20-40"],
+  "twilight masquerade":  ["Ogerpon ex SAR ~£30-55","Bloodmoon Ursaluna ex ~£25-45"],
+  "temporal forces":      ["Walking Wake ex Alt ~£20-35","Iron Leaves ex Alt ~£15-30"],
+  "paradox rift":         ["Roaring Moon ex Alt Art ~£30-55","Iron Valiant ex Alt Art ~£25-45"],
+  "obsidian flames":      ["Charizard ex SAR ~£35-60","Tera Charizard ex Alt Art ~£30-55"],
+  "paldea evolved":       ["Iono SAR ~£25-45","Miraidon ex Alt Art ~£20-40"],
+  "paldean fates":        ["Charizard ex Shiny ~£20-35","Meowscarada ex Shiny ~£10-20"],
+  "prismatic evolutions": ["Umbreon ex SAR ~£80-130","Leafeon ex SAR ~£60-100","Sylveon ex SAR ~£50-80"],
+  "151":                  ["Mew ex SAR ~£35-60","Charizard ex SAR ~£40-65","Alakazam ex SAR ~£25-45"],
+  // Sword & Shield (2020-2023)
+  "evolving skies":       ["Rayquaza VMAX Alt Art ~£180-250","Umbreon VMAX Alt Art ~£200-280","Glaceon VMAX Alt Art ~£80-120"],
+  "chilling reign":       ["Shadow Rider Calyrex Alt Art ~£60-90","Ice Rider Calyrex Alt Art ~£50-80"],
+  "battle styles":        ["Rapid Strike Urshifu Alt Art ~£40-70","Single Strike Urshifu Alt Art ~£35-60"],
+  "brilliant stars":      ["Arceus VSTAR Alt Art ~£20-35","Charizard VSTAR ~£15-25"],
+  "astral radiance":      ["Origin Palkia VSTAR Alt ~£15-28","Hisuian Lilligant VSTAR ~£10-20"],
+  "lost origin":          ["Giratina V Alt Art ~£50-80","Giratina VSTAR ~£30-50"],
+  "silver tempest":       ["Lugia V Alt Art ~£30-55","Regidrago VSTAR ~£20-35"],
+  "crown zenith":         ["Charizard Alt Art ~£60-100","Regigigas Alt Art ~£40-60"],
+  "shining fates":        ["Charizard VMAX Shiny ~£30-60","Pikachu VMAX Shiny ~£20-40"],
+  "fusion strike":        ["Gengar VMAX Alt Art ~£25-50","Mew VMAX Alt Art ~£30-55"],
+  "vivid voltage":        ["Amazing Pikachu ~£25-45","Zacian V ~£12-22"],
+  "darkness ablaze":      ["Charizard VMAX ~£25-45","Centiskorch VMAX Alt Art ~£20-35"],
+  "rebel clash":          ["Dragapult VMAX Alt Art ~£20-35","Toxtricity VMAX Alt Art ~£15-28"],
+  "battle styles":        ["Rapid Strike Urshifu Alt Art ~£40-70","Single Strike Urshifu Alt Art ~£35-60"],
+  // Sun & Moon
+  "hidden fates":         ["Charizard GX Shiny ~£60-100","Mewtwo GX Shiny ~£40-60","Gyarados GX Shiny ~£30-50"],
+  "cosmic eclipse":       ["Arceus & Dialga & Palkia GX ~£20-35","Pikachu & Zekrom GX ~£15-25"],
+  "champions path":       ["Charizard V ~£80-140","Charizard VMAX Rainbow ~£60-90","Hatterene V Alt ~£15-28"],
+  "unbroken bonds":       ["Reshiram & Charizard GX ~£30-55","Gardevoir & Sylveon GX ~£15-28"],
+  "team up":              ["Pikachu & Zekrom GX ~£15-28","Eevee & Snorlax GX ~£12-22"],
+  // Japanese/Korean
+  "white flare":          ["Zekrom ex SAR ~£40-70","Reshiram ex SAR ~£35-60"],
+  "black bolt":           ["Reshiram ex SAR ~£40-70","Zekrom ex SAR ~£35-60"],
+  "battle partners":      ["Pikachu ex SAR ~£35-65","Charizard ex SAR ~£40-75"],
+  "terastal festival":    ["Charizard ex SAR ~£40-75","Eevee ex SAR ~£30-55","Pikachu ex SAR ~£35-60"],
+  "nihil zero":           ["Mewtwo ex SAR ~£30-55","Gardevoir ex SAR ~£20-40"],
+  "heatwave arena":       ["Charizard ex SAR ~£25-45","Koraidon ex SAR ~£20-38"],
 };
 
 // ─── CARD ─────────────────────────────────────────────────────────────────────
@@ -422,7 +443,7 @@ function Card({ d, rank }) {
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", padding:"10px 14px 0", gap:10 }}>
         {/* Thumbnail — always visible */}
         {d.image && (
-          <div style={{ flexShrink:0, width:52, height:52, borderRadius:6, overflow:"hidden", background:"#16161E", border:"1px solid rgba(255,255,255,0.08)" }}>
+          <div style={{ flexShrink:0, width:52, height:52, borderRadius:6, overflow:"hidden", background:"#16161E" }}>
             <img src={d.image} alt="" style={{ width:"100%", height:"100%", objectFit:"cover" }} loading="lazy"
               onError={e=>{e.target.parentElement.style.display="none"}}/>
           </div>
@@ -536,7 +557,7 @@ function Card({ d, rank }) {
 
           {/* Product image — larger in expanded view */}
           {d.image&&(
-            <div style={{ marginBottom:14, borderRadius:8, overflow:"hidden", background:"#16161E", border:"1px solid rgba(255,255,255,0.08)", maxHeight:180, display:"flex", alignItems:"center", justifyContent:"center" }}>
+            <div style={{ marginBottom:14, borderRadius:8, overflow:"hidden", background:"#16161E", maxHeight:200, display:"flex", alignItems:"center", justifyContent:"center" }}>
               <img src={d.image} alt={d.product} style={{ width:"100%", maxHeight:180, objectFit:"contain" }} loading="lazy"
                 onError={e=>{e.target.parentElement.style.display="none"}}/>
             </div>
@@ -1355,6 +1376,10 @@ function App() {
     if(!search.trim()) return true;
     const q = search.toLowerCase().trim();
     return d.product.toLowerCase().includes(q) || (d.retailer||"").toLowerCase().includes(q);
+  }).filter((d,i,arr)=>{
+    // Dedup: if same product+price from different retailer, keep best deal only
+    const key = d.product.toLowerCase().trim() + "|" + d.buyNow;
+    return arr.findIndex(x => x.product.toLowerCase().trim() + "|" + x.buyNow === key) === i;
   });
 
   const buyN=sorted.filter(d=>(calcFlip(d.buyNow,d.resell).roi??-999)>=8).length;
@@ -1550,7 +1575,7 @@ function App() {
           </div>
           <div style={{ display:"flex", gap:5, marginBottom:10, justifyContent:"center" }}>
             {[
-              {id:"all",    l:"🌐 ALL LANGS"},
+              {id:"all",    l:"🌐 All"},
               {id:"en",     l:"🇬🇧 English"},
               {id:"jp",     l:"🇯🇵 Japanese"},
               {id:"kr",     l:"🇰🇷 Korean"},
@@ -1670,7 +1695,7 @@ function App() {
                 <div key={i} style={{ background:"#0A0A10", border:`1px solid ${gradeColor}33`, borderLeft:`3px solid ${gradeColor}`, borderRadius:8, padding:"14px", marginBottom:12 }}>
                   <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:10, marginBottom:10 }}>
                     {img&&(
-                      <div style={{ flexShrink:0, width:52, height:52, borderRadius:6, overflow:"hidden", background:"#16161E", border:"1px solid rgba(255,255,255,0.08)" }}>
+                      <div style={{ flexShrink:0, width:52, height:52, borderRadius:6, overflow:"hidden", background:"#16161E" }}>
                         <img src={img} alt="" style={{ width:"100%", height:"100%", objectFit:"cover" }} loading="lazy" onError={e=>e.target.parentElement.style.display="none"}/>
                       </div>
                     )}
@@ -1692,7 +1717,7 @@ function App() {
                       </div>
                       <div style={{ flex:1, paddingLeft:10, borderRight:"1px solid rgba(255,255,255,0.06)", paddingRight:10 }}>
                         <div style={{ fontFamily:MONO, fontSize:8, color:"#555", marginBottom:2 }}>flip profit</div>
-                        <div style={{ fontFamily:MONO, fontSize:13, color:"#00FF88" }}>+${flipNet.toFixed(2)}</div>
+                        <div style={{ fontFamily:MONO, fontSize:13, color:"#00FF88" }}>+£{flipNet.toFixed(2)}</div>
                       </div>
                       <div style={{ flex:1, paddingLeft:10 }}>
                         <div style={{ fontFamily:MONO, fontSize:8, color:"#555", marginBottom:2 }}>ROI</div>
@@ -1932,13 +1957,13 @@ function App() {
               {sorted.filter(d=>(calcFlip(d.buyNow,d.resell).net??-999)>0).slice(0,5).map((d,i)=>{
                 const{net:n,roi:r}=calcFlip(d.buyNow,d.resell);
                 return (
-                  <div key={d.id||i} style={{ display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 0",borderBottom:"1px solid rgba(255,255,255,0.06)" }}>
+                  <div key={d.id||i} style={{ display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 0" }}>
                     <div style={{ flex:1,minWidth:0,marginRight:12 }}>
                       <div style={{ fontFamily:DISP,fontSize:12,fontWeight:500,color:"#FFFFFF",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",letterSpacing:"0.02em" }}>{d.product}</div>
                       <div style={{ fontFamily:MONO,fontSize:9,color:"#C0C0C0",marginTop:2 }}>{d.retailer} · ${d.buyNow.toFixed(2)}</div>
                     </div>
                     <div style={{ textAlign:"right",flexShrink:0 }}>
-                      <div style={{ fontFamily:DISP,fontSize:12,fontWeight:500,color:"#00FF88" }}>+${n.toFixed(2)}</div>
+                      <div style={{ fontFamily:DISP,fontSize:12,fontWeight:500,color:"#00FF88" }}>+£{n.toFixed(2)}</div>
                       <div style={{ fontFamily:MONO,fontSize:9,color:"#C0C0C0" }}>{r}% ROI</div>
                     </div>
                   </div>
@@ -1952,7 +1977,7 @@ function App() {
               {sorted.filter(d=>{const h=calcHold(d.resell||d.buyNow,d.product);return h&&h.score>=7;}).slice(0,5).map((d,i)=>{
                 const h=calcHold(d.resell||d.buyNow,d.product);
                 return (
-                  <div key={d.id||i} style={{ display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 0",borderBottom:"1px solid rgba(255,255,255,0.06)" }}>
+                  <div key={d.id||i} style={{ display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 0" }}>
                     <div style={{ flex:1,minWidth:0,marginRight:12 }}>
                       <div style={{ fontFamily:DISP,fontSize:12,fontWeight:500,color:"#FFFFFF",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",letterSpacing:"0.02em" }}>{d.product}</div>
                       <div style={{ fontFamily:MONO,fontSize:9,color:"#C0C0C0",marginTop:2 }}>{d.retailer} · SCORE {h?.score}/10</div>
@@ -2001,7 +2026,7 @@ function App() {
 
     {/* ══ BOTTOM NAV ══ */}
     <div style={{ position:"fixed",bottom:0,left:0,right:0,background:"rgba(7,7,13,0.98)",borderTop:"1px solid rgba(255,255,255,0.07)",display:"flex",padding:"10px 0 24px",zIndex:100,backdropFilter:"blur(20px)" }}>
-      {[{id:"deals",icon:"⚡",l:"HQ"},{id:"ebay",icon:"🛒",l:"eBay"},{id:"heat",icon:"🔥",l:"HEAT"},{id:"alerts",icon:"🎯",l:"SNIPES"},{id:"market",icon:"🏛",l:"VAULT"}].map(n=>(
+      {[{id:"deals",icon:"⚡",l:"Home"},{id:"ebay",icon:"🛒",l:"eBay"},{id:"heat",icon:"🔥",l:"HEAT"},{id:"alerts",icon:"🎯",l:"SNIPES"},{id:"market",icon:"🏛",l:"VAULT"}].map(n=>(
         <button key={n.id} onClick={()=>setTab(n.id)} style={{ flex:1,background:"transparent",border:"none",color:tab===n.id?"#CC0000":"#888",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:3,fontFamily:DISP,fontSize:11,fontWeight:500,letterSpacing:"0.1em",transition:"color 0.15s" }}>
           <span style={{ fontSize:19 }}>{n.icon}</span>{n.l}
         </button>
