@@ -288,7 +288,7 @@ function getVerdict(roi, net, hs=0, h=null) {
     if (hs>=5) return { v1:"HOLD CANDIDATE", v2:`No flip data yet but ${hs}/10 hold score. Could appreciate over 1-2 years.` };
     return { v1:"IN STOCK", v2:"No eBay market data yet. Scan for fresh prices." };
   }
-  if (roi>=25)   return { v1:`${roi}% ROI — FIRE DEAL`, v2:`Buy now at £${d.buyNow.toFixed(2)}, sell on eBay for +£${net?.toFixed(2)} profit after £${POST} postage.` };
+  if (roi>=25)   return { v1:`${roi}% ROI — FIRE DEAL`, v2:`Buy and sell on eBay for +£${net?.toFixed(2)} profit after £${POST} postage (${roi}% ROI).` };
   if (roi>=15)   return { v1:`${roi}% ROI — STRONG BUY`, v2:`+£${net?.toFixed(2)} profit after £${POST} postage. Strong flip opportunity.` };
   if (roi>=8)    return { v1:`${roi}% ROI — GOOD DEAL`, v2:`+£${net?.toFixed(2)} profit after £${POST} postage. Solid opportunity.` };
   if (roi>=2)    return { v1:`MARGINAL FLIP`, v2:`+£${net?.toFixed(2)} margin after £${POST} postage — slim but profitable.` };
