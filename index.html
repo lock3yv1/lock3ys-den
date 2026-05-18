@@ -322,6 +322,42 @@ function ago(iso) {
   return m<1?"now":m<60?`${m}m`:`${Math.floor(m/60)}h`;
 }
 
+
+// ─── HIT CARDS DATA (chase cards that drive set value) ──────────────────────
+const HIT_CARDS = {
+  "evolving skies":      ["Rayquaza VMAX Alt Art £180-250", "Umbreon VMAX Alt Art £200-280", "Glaceon VMAX Alt Art £80-120"],
+  "hidden fates":        ["Charizard GX Shiny £60-100", "Mewtwo GX Shiny £40-60"],
+  "champions path":      ["Charizard V £80-140", "Charizard VMAX Rainbow £60-90"],
+  "shining fates":       ["Charizard VMAX Shiny £30-60", "Pikachu VMAX Shiny £20-40"],
+  "chilling reign":      ["Shadow Rider Calyrex Alt Art £60-90", "Ice Rider Calyrex Alt Art £50-80"],
+  "brilliant stars":     ["Charizard VSTAR £15-25", "Arceus VSTAR Alt Art £20-35"],
+  "prismatic evolutions":["Umbreon ex SAR £80-130", "Leafeon ex SAR £60-100", "Sylveon ex SAR £50-80"],
+  "surging sparks":      ["Pikachu ex SAR £160-220", "Raichu ex SAR £40-60"],
+  "destined rivals":     ["Mewtwo ex SAR £80-140", "Mew ex SAR £50-90"],
+  "journey together":    ["Pikachu ex SAR £60-100", "Eevee ex SAR £40-70"],
+  "paradox rift":        ["Roaring Moon ex Alt Art £30-55", "Iron Valiant ex Alt Art £25-45"],
+  "obsidian flames":     ["Charizard ex SAR £35-60", "Tera Charizard ex Alt Art £30-55"],
+  "151":                 ["Mew ex SAR £35-60", "Charizard ex SAR £40-65", "Alakazam ex SAR £25-45"],
+  "paldean fates":       ["Charizard ex SAR £25-40", "Meowscarada ex SAR £15-25"],
+  "crown zenith":        ["Charizard Alt Art £60-100", "Regigigas Alt Art £40-60"],
+  "silver tempest":      ["Lugia V Alt Art £30-55", "Regidrago VSTAR £20-35"],
+  "lost origin":         ["Giratina V Alt Art £50-80", "Giratina VSTAR £30-50"],
+  "astral radiance":     ["Origin Palkia VSTAR £15-25", "Origin Dialga VSTAR £12-20"],
+  "battle styles":       ["Rapid Strike Urshifu Alt Art £40-70", "Single Strike Urshifu Alt Art £35-60"],
+  "phantom forces":      ["Gengar Alt Art £25-45"],
+  "ascended heroes":     ["Charizard ex SAR £40-70", "Mewtwo ex SAR £35-60"],
+  "phantasmal flames":   ["Charizard ex SAR £50-90", "Gengar ex SAR £30-55"],
+  "perfect order":       ["Mewtwo ex SAR £35-65", "Aerodactyl ex SAR £25-45"],
+  "chaos rising":        ["Charizard ex SAR £30-55"],
+  "glory of team rocket":["Dark Charizard ex SAR £40-75", "Dark Mewtwo ex SAR £35-60"],
+  "white flare":         ["Zekrom ex SAR £40-70"],
+  "black bolt":          ["Reshiram ex SAR £40-70"],
+  "battle partners":     ["Pikachu ex SAR £35-65"],
+  "terastal festival":   ["Charizard ex SAR £40-75", "Eevee ex SAR £30-55"],
+  "nihil zero":          ["Mewtwo ex SAR £30-50"],
+  "heatwave arena":      ["Charizard ex SAR £25-45"],
+};
+
 // ─── CARD ─────────────────────────────────────────────────────────────────────
 function Card({ d, rank }) {
   const [open, setOpen] = useState(false);
@@ -496,7 +532,7 @@ function Card({ d, rank }) {
 
       {/* ══ EXPANDED ══ */}
       {open&&(
-        <div style={{ borderTop:"1px solid rgba(255,255,255,0.06)", padding:"14px" }}>
+        <div style={{ padding:"14px" }}>
 
           {/* Product image — larger in expanded view */}
           {d.image&&(
@@ -516,16 +552,16 @@ function Card({ d, rank }) {
                 <span style={{ fontFamily:MONO, fontSize:12, color:"#00FF88", fontWeight:500 }}>£{d.resell?.toFixed(2)}</span>
 
                 <span style={{ fontFamily:MONO, fontSize:12, color:"#C8C8C8" }}>Postage (avg)</span>
-                <span style={{ fontFamily:MONO, fontSize:12, color:"#FF6060" }}>−${POST.toFixed(2)}</span>
+                <span style={{ fontFamily:MONO, fontSize:12, color:"#FF6060" }}>−£{POST.toFixed(2)}</span>
 
                 <span style={{ fontFamily:MONO, fontSize:12, color:"#C8C8C8" }}>Buy price</span>
-                <span style={{ fontFamily:MONO, fontSize:12, color:"#FF6060" }}>−${d.buyNow.toFixed(2)}</span>
+                <span style={{ fontFamily:MONO, fontSize:12, color:"#FF6060" }}>−£{d.buyNow.toFixed(2)}</span>
 
-                <div style={{ gridColumn:"1/-1", height:1, background:"rgba(255,255,255,0.08)", margin:"2px 0" }}/>
+                
 
                 <span style={{ fontFamily:DISP, fontSize:12, fontWeight:500, color:net>=0?"#00FF88":"#FF3B3B", letterSpacing:"0.06em" }}>NET PROFIT</span>
                 <span style={{ fontFamily:DISP, fontSize:12, fontWeight:500, color:net>=0?"#00FF88":"#FF3B3B" }}>
-                  {net>=0?"+":"-"}${Math.abs(net).toFixed(2)}
+                  {net>=0?"+":"-"}£{Math.abs(net).toFixed(2)}
                   <span style={{ fontFamily:MONO, fontSize:11, opacity:0.6 }}> ({roi>=0?"+":""}{roi}%)</span>
                 </span>
               </div>
@@ -547,7 +583,7 @@ function Card({ d, rank }) {
               const basePrice = resell || d.buyNow || 1;
               const gain = Math.round((val - basePrice) / basePrice * 100);
               return (
-                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"9px 0", borderBottom:"1px solid rgba(255,255,255,0.05)" }}>
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"9px 0" }}>
                   <div style={{ fontFamily:MONO, fontSize:9, color:"#666" }}>{label}</div>
                   <div style={{ display:"flex", alignItems:"baseline", gap:8 }}>
                     <div style={{ fontFamily:MONO, fontSize:13, fontWeight:700, color:"#FFFFFF" }}>£{val.toLocaleString()}</div>
@@ -576,6 +612,30 @@ function Card({ d, rank }) {
                 <div style={{ fontFamily:MONO, fontSize:9, color:"#888", lineHeight:1.6, marginTop:8, padding:"8px 10px", background:"rgba(255,255,255,0.03)", borderRadius:4 }}>
                   💡 {h.note}
                 </div>
+              </div>
+            );
+          })()}
+
+          {/* HIT CARDS — chase cards that drive set value */}
+          {(()=>{
+            const tl = d.product.toLowerCase();
+            const hits = Object.entries(HIT_CARDS).find(([k]) => tl.includes(k));
+            if (!hits) return null;
+            return (
+              <div style={{ background:"rgba(255,196,0,0.05)", border:"1px solid rgba(255,196,0,0.18)", borderRadius:6, padding:"12px 14px", marginBottom:10 }}>
+                <div style={{ fontFamily:MONO, fontSize:9, color:"#FFD60A", letterSpacing:"0.15em", marginBottom:8 }}>🎯 CHASE CARDS — WHAT DRIVES VALUE</div>
+                {hits[1].map((card,i)=>{
+                  const parts = card.split(" £");
+                  const name = parts[0];
+                  const range = parts[1] ? "£"+parts[1] : "";
+                  return (
+                    <div key={i} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"5px 0", borderBottom: i<hits[1].length-1 ? "1px solid rgba(255,196,0,0.08)" : "none" }}>
+                      <span style={{ fontFamily:MONO, fontSize:10, color:"#E0E0E0" }}>{name}</span>
+                      <span style={{ fontFamily:MONO, fontSize:10, color:"#FFD60A", flexShrink:0 }}>{range}</span>
+                    </div>
+                  );
+                })}
+                <div style={{ fontFamily:MONO, fontSize:8, color:"#664", marginTop:6 }}>Pulled from a sealed pack · prices vary by condition</div>
               </div>
             );
           })()}
@@ -1516,7 +1576,7 @@ function App() {
               onChange={e=>setSearch(e.target.value)}
               style={{
                 width:"100%", boxSizing:"border-box",
-                background:"#0D0D18", border:`1px solid ${search?"#CC0000":"#222230"}`,
+                background:"#0D0D18", border:`1px solid ${search?"#CC0000":"rgba(255,255,255,0.08)"}`,
                 borderRadius:6, padding:"9px 36px 9px 32px",
                 fontFamily:MONO, fontSize:10, color:"#FFFFFF",
                 letterSpacing:"0.03em", outline:"none",
@@ -1590,20 +1650,18 @@ function App() {
             )}
 
             {!ebayLoading&&ebayListings.filter(item=>{
-              const p = item.price||item.buyNow||0;
-              const m = item.resell||item.marketPrice||0;
-              return m>0 && p>0 && ((m-p-POST)/p)*100>=5;
-            }).sort((a,b)=>{
-              const roiA=(((a.resell||a.marketPrice||0)-(a.price||a.buyNow||0)-POST)/(a.price||a.buyNow||1))*100;
-              const roiB=(((b.resell||b.marketPrice||0)-(b.price||b.buyNow||0)-POST)/(b.price||b.buyNow||1))*100;
-              return roiB-roiA;
-            }).map((item,i)=>{
-              const title = item.title||item.product||"";
-              const price = item.price||item.buyNow||0;
-              const marketPrice = item.resell||item.marketPrice||0;
-              const flipNet = +(marketPrice-price-POST).toFixed(2);
-              const flipRoi = Math.round((flipNet/price)*100);
-              const pctBelow = Math.round((marketPrice-price)/marketPrice*100);
+              // eBay deals use: price, midMarket, roi, netProfit, pctBelow
+              const p = item.price||0;
+              const roi = item.roi||0;
+              return p>0 && roi>=5;
+            }).sort((a,b)=>(b.roi||0)-(a.roi||0))
+            .map((item,i)=>{
+              const title = item.title||"";
+              const price = item.price||0;
+              const marketPrice = item.midMarket||item.marketFloor||0;
+              const flipNet = item.netProfit||+(marketPrice-price-POST).toFixed(2);
+              const flipRoi = item.roi||Math.round((flipNet/price)*100);
+              const pctBelow = item.pctBelow||Math.round((marketPrice-price)/marketPrice*100);
               const gradeColor = flipRoi>=20?"#00FF88":flipRoi>=10?"#39D98A":"#FFD60A";
               const gradeLabel = flipRoi>=20?"🔥 FIRE DEAL":flipRoi>=10?"✅ STRONG BUY":"💰 GOOD FLIP";
               const itemUrl = item.url||item.listingUrl||"#";
@@ -1696,7 +1754,7 @@ function App() {
                   type="email"
                   placeholder="your@email.com"
                   onClick={e=>e.stopPropagation()}
-                  style={{ flex:1, background:"#0F0F18", border:"1px solid #2A2A38", borderRadius:5, padding:"10px 12px", color:"#FFFFFF", fontFamily:MONO, fontSize:11, outline:"none" }}
+                  style={{ flex:1, background:"#0D0D16", border:"1px solid rgba(255,255,255,0.08)", borderRadius:6, padding:"10px 12px", color:"#FFFFFF", fontFamily:MONO, fontSize:11, outline:"none" }}
                 />
                 <button
                   style={{ background:"#CC0000", border:"none", borderRadius:5, padding:"10px 16px", color:"#fff", fontFamily:MONO, fontSize:10, letterSpacing:"0.08em", cursor:"pointer", whiteSpace:"nowrap" }}
@@ -1714,7 +1772,7 @@ function App() {
               <div style={{ fontFamily:MONO, fontSize:9, color:"rgba(255,255,255,0.7)", letterSpacing:"0.12em", marginBottom:3 }}>🔔 ALERT TRIGGERED</div>
               <div style={{ fontFamily:DISP, fontSize:13, fontWeight:600, color:"#FFFFFF" }}>{alertBanner.deal.product}</div>
               <div style={{ fontFamily:MONO, fontSize:10, color:"rgba(255,255,255,0.8)", marginTop:2 }}>
-                ${alertBanner.deal.buyNow.toFixed(2)} @ {alertBanner.deal.retailer} — under your ${alertBanner.alert.maxPrice} target
+                £{alertBanner.deal.buyNow.toFixed(2)} @ {alertBanner.deal.retailer} — under your ${alertBanner.alert.maxPrice} target
               </div>
             </div>
             <div style={{ display:"flex", gap:8, flexShrink:0 }}>
@@ -1743,7 +1801,7 @@ function App() {
                 value={newAlert.product}
                 onChange={e=>setNewAlert(a=>({...a, product:e.target.value}))}
                 placeholder="e.g. 151 Elite Trainer Box"
-                style={{ width:"100%", background:"#0F0F18", border:"1px solid #2A2A38", borderRadius:5, padding:"10px 12px", color:"#FFFFFF", fontFamily:MONO, fontSize:11, outline:"none", marginBottom:10 }}
+                style={{ width:"100%", background:"#0D0D16", border:"1px solid rgba(255,255,255,0.08)", borderRadius:6, padding:"10px 12px", color:"#FFFFFF", fontFamily:MONO, fontSize:11, outline:"none", marginBottom:10, boxSizing:"border-box" }}
               />
               <div style={{ fontFamily:MONO, fontSize:9, color:"#555", marginBottom:8 }}>Alert me when price drops below (£)</div>
               <div style={{ display:"flex", gap:8 }}>
@@ -1752,7 +1810,7 @@ function App() {
                   value={newAlert.maxPrice}
                   onChange={e=>setNewAlert(a=>({...a, maxPrice:e.target.value}))}
                   placeholder="e.g. 50"
-                  style={{ flex:1, background:"#0F0F18", border:"1px solid #2A2A38", borderRadius:5, padding:"10px 12px", color:"#FFFFFF", fontFamily:MONO, fontSize:11, outline:"none" }}
+                  style={{ flex:1, background:"#0D0D16", border:"1px solid rgba(255,255,255,0.08)", borderRadius:6, padding:"10px 12px", color:"#FFFFFF", fontFamily:MONO, fontSize:11, outline:"none" }}
                 />
                 <button
                   onClick={()=>{
