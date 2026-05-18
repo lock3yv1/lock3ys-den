@@ -694,8 +694,7 @@ function Card({ d, rank }) {
               style={{ flex:1, background:"#CC0000", borderRadius:5, padding:"11px 10px", color:"#fff", fontFamily:MONO, fontSize:10, letterSpacing:"0.12em", display:"flex", alignItems:"center", justifyContent:"center", boxShadow:"0 2px 18px rgba(204,0,0,0.4)", fontWeight:700 }}>
               VIEW & BUY →
             </a>
-            <button onClick={e=>{e.stopPropagation();window.open(`https://wa.me/?text=${encodeURIComponent(`${gr.label}: ${d.product}\n£${d.buyNow.toFixed(2)} @ ${d.retailer}\n${vd.v1} — ${vd.v2}\n${d.url}`)}`,"_blank");}}
-              style={{ width:44, background:"transparent", border:"1px solid #2a2a3a", borderRadius:5, color:"#777", fontSize:14, cursor:"pointer" }}>📤</button>
+            <button onClick={e=>{e.stopPropagation();window.open("https://wa.me/?text="+encodeURIComponent(gr.label+": "+d.product+"\n£"+d.buyNow.toFixed(2)+" @ "+d.retailer+"\n"+vd.v1+" — "+vd.v2+"\n"+d.url),"_blank")}}              style={{ width:44, background:"transparent", border:"1px solid #2a2a3a", borderRadius:5, color:"#777", fontSize:14, cursor:"pointer" }}>📤</button>
           </div>
           <div style={{ marginTop:8, fontFamily:MONO, fontSize:8, color:"#888", lineHeight:1.6 }}>
             * Private seller · 0% eBay fees · £4 postage estimate · Hold projections are estimates, not financial advice
