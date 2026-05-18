@@ -16,14 +16,10 @@
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <style>*{box-sizing:border-box;margin:0;padding:0}body{background:#07070D;color:#fff;overflow-x:hidden}</style>
   <script>
-    // Force SW to use latest version - bump this when deploying updates
-    const APP_VERSION = "2.1.0";
+    // Unregister any cached service workers to prevent stale HTML being served
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js').then(reg => {
-          // Force update check on every load
-          reg.update();
-        }).catch(() => {});
+      navigator.serviceWorker.getRegistrations().then(regs => {
+        regs.forEach(r => r.unregister());
       });
     }
   </script>
@@ -1201,8 +1197,8 @@ function HeatTab() {
           ))}
         </div>
         <div style={{ display:"flex", justifyContent:"space-between", marginTop:3 }}>
-          <span style={{ fontFamily:MONO, fontSize:7, color:"#333" }}>Jun '24</span>
-          <span style={{ fontFamily:MONO, fontSize:7, color:"#333" }}>May '26</span>
+          <span style={{ fontFamily:MONO, fontSize:7, color:"#333" }}>Jun &#39;24</span>
+          <span style={{ fontFamily:MONO, fontSize:7, color:"#333" }}>May &#39;26</span>
         </div>
       </div>
     );
