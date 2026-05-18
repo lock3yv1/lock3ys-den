@@ -1207,7 +1207,7 @@ function App() {
           onClick={e=>e.stopPropagation()}>
           <div style={{ width:48,height:4,background:"rgba(255,255,255,0.25)",borderRadius:2,margin:"0 auto 20px" }}/>
           <div style={{ fontFamily:DISP,fontSize:22,fontWeight:700,color:"#FFFFFF",marginBottom:8 }}>Welcome to Shiny Den 👋</div>
-          <div style={{ fontFamily:MONO,fontSize:11,color:"#CCCCCC",marginBottom:20,lineHeight:1.7 }}>Real-time Pokémon market intelligence. Here's what everything means:</div>
+          <div style={{ fontFamily:MONO,fontSize:11,color:"#CCCCCC",marginBottom:20,lineHeight:1.7 }}>Real-time Pokémon market intelligence. Here&#39;s what everything means:</div>
           {[
             ["💰 FLIP","Buy from a retailer, sell on eBay for profit. We calculate net after £4 postage only — private seller, 0% fees."],
             ["📦 HOLD","Buy and store sealed. Strong sets appreciate over time — we track the trajectory."],
@@ -1440,7 +1440,7 @@ function App() {
               </div>
             )}
 
-            {{!ebayLoading&&ebayListings.filter(item=>{
+            {!ebayLoading&&ebayListings.filter(item=>{
               const p = item.price||item.buyNow||0;
               const m = item.resell||item.marketPrice||0;
               return m>0 && p>0 && ((m-p-POST)/p)*100>=5;
