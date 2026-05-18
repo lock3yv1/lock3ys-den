@@ -182,13 +182,13 @@ function getGradeKey(roi, hs=0) {
 
 function getVerdict(roi, net, hs=0, h=null) {
   if (roi===null) return { v1:"IN STOCK", v2:"No eBay price data yet — deal strength unconfirmed" };
-  if (roi>=25)   return { v1:`£{roi}% ROI — FIRE DEAL`, v2:`+££{net?.toFixed(2)} net profit after ££{POST} postage. Private seller, 0% fees.` };
-  if (roi>=15)   return { v1:`£{roi}% ROI — STRONG BUY`, v2:`+££{net?.toFixed(2)} profit. Strong flip opportunity.` };
-  if (roi>=8)    return { v1:`£{roi}% ROI — GOOD DEAL`, v2:`+££{net?.toFixed(2)} profit. Solid flip opportunity.` };
-  if (roi>=2)    return { v1:`MARGINAL FLIP`, v2:`+££{net?.toFixed(2)} — slim margin. Collector value play.` };
+  if (roi>=25)   return { v1:`${roi}% ROI — FIRE DEAL`, v2:`+£${net?.toFixed(2)} net profit after £${POST} postage. Private seller, 0% fees.` };
+  if (roi>=15)   return { v1:`${roi}% ROI — STRONG BUY`, v2:`+£${net?.toFixed(2)} profit. Strong flip opportunity.` };
+  if (roi>=8)    return { v1:`${roi}% ROI — GOOD DEAL`, v2:`+£${net?.toFixed(2)} profit. Solid flip opportunity.` };
+  if (roi>=2)    return { v1:`MARGINAL FLIP`, v2:`+£${net?.toFixed(2)} — slim margin. Collector value play.` };
   // Negative ROI — hold score decides
-  if (hs>=8)     return { v1:`BUY & HOLD`, v2:`Low flip potential (−££{Math.abs(net)?.toFixed(2)}) but strong £{hs}/10 hold score. Store sealed.` };
-  if (hs>=6)     return { v1:`HOLD CANDIDATE`, v2:`Low flip potential (−££{Math.abs(net)?.toFixed(2)}) — hold score £{hs}/10. Consider long term.` };
+  if (hs>=8)     return { v1:`BUY & HOLD`, v2:`Low flip potential (−£${Math.abs(net)?.toFixed(2)}) but strong ${hs}/10 hold score. Store sealed.` };
+  if (hs>=6)     return { v1:`HOLD CANDIDATE`, v2:`Low flip potential (−£${Math.abs(net)?.toFixed(2)}) — hold score ${hs}/10. Consider long term.` };
   if (roi>=-10)  return { v1:`BETTER SEALED HOLD`, v2:`Low flip potential. Collector-focused opportunity.` };
   return           { v1:`LOW SIGNAL`, v2:`Better as a sealed hold or to open and enjoy.` };
 }
@@ -217,7 +217,7 @@ function packCost(title, price) {
 
 function ago(iso) {
   const m = Math.floor((Date.now()-new Date(iso))/60000);
-  return m<1?"now":m<60?`£{m}m`:`£{Math.floor(m/60)}h`;
+  return m<1?"now":m<60?`${m}m`:`${Math.floor(m/60)}h`;
 }
 
 // ─── CARD ─────────────────────────────────────────────────────────────────────
@@ -240,16 +240,16 @@ function Card({ d, rank }) {
   return (
     <div onClick={()=>setOpen(o=>!o)} style={{
       background:"#0A0A10",
-      border:`1px solid £{open ? gr.border : "rgba(255,255,255,0.06)"}`,
+      border:`1px solid ${open ? gr.border : "rgba(255,255,255,0.06)"}`,
       borderRadius:8,
       overflow:"hidden",
       cursor:"pointer",
       marginBottom:10,
       transition:"border-color 0.15s, box-shadow 0.15s",
-      boxShadow: open ? `0 4px 40px £{gr.bg}` : "none",
+      boxShadow: open ? `0 4px 40px ${gr.bg}` : "none",
     }}>
       {/* Grade accent stripe */}
-      <div style={{ height:3, background:`linear-gradient(90deg,£{gr.c},£{gr.c}55,transparent)` }}/>
+      <div style={{ height:3, background:`linear-gradient(90deg,${gr.c},${gr.c}55,transparent)` }}/>
 
       {/* ── TOP ROW ── */}
       <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"10px 14px 0" }}>
@@ -257,11 +257,11 @@ function Card({ d, rank }) {
         <div style={{ display:"flex", alignItems:"center", gap:10 }}>
           <div style={{
             width:34, height:34, borderRadius:6,
-            background:`linear-gradient(135deg,£{gr.bg},transparent)`,
-            border:`2px solid £{gr.c}`,
+            background:`linear-gradient(135deg,${gr.bg},transparent)`,
+            border:`2px solid ${gr.c}`,
             display:"flex", alignItems:"center", justifyContent:"center",
             flexShrink:0,
-            boxShadow:`0 0 16px £{gr.c}44`,
+            boxShadow:`0 0 16px ${gr.c}44`,
           }}>
             <span style={{ fontFamily:DISP, fontSize:12, fontWeight:500, color:gr.c, lineHeight:1 }}>{gk}</span>
           </div>
@@ -272,7 +272,7 @@ function Card({ d, rank }) {
         </div>
         {/* Type + time */}
         <div style={{ display:"flex", alignItems:"center", gap:7 }}>
-          <span style={{ fontFamily:DISP, fontSize:11, fontWeight:500, color:pt.c, background:`£{pt.c}22`, border:`1px solid £{pt.c}55`, padding:"3px 8px", borderRadius:3, letterSpacing:"0.08em" }}>{pt.l}</span>
+          <span style={{ fontFamily:DISP, fontSize:11, fontWeight:500, color:pt.c, background:`${pt.c}22`, border:`1px solid ${pt.c}55`, padding:"3px 8px", borderRadius:3, letterSpacing:"0.08em" }}>{pt.l}</span>
           <span style={{ fontFamily:MONO, fontSize:9, color:"#B0B0B0" }}>{ago(d.lastSeen)}</span>
           <span style={{ fontFamily:MONO, fontSize:8, color:"#999", transform:open?"rotate(180deg)":"none", transition:"transform 0.2s" }}>▼</span>
         </div>
@@ -292,16 +292,16 @@ function Card({ d, rank }) {
           <div style={{ fontFamily:MONO, fontSize:10, color:"#888", marginTop:3, letterSpacing:"0.04em" }}>{d.retailer}</div>
         </div>
         <div style={{ textAlign:"right", flexShrink:0 }}>
-          <div style={{ fontFamily:MONO, fontSize:18, fontWeight:400, color:"#FFFFFF", lineHeight:1, letterSpacing:"0.02em" }}>£{d.buyNow.toFixed(2)}</div>
+          <div style={{ fontFamily:MONO, fontSize:18, fontWeight:400, color:"#FFFFFF", lineHeight:1, letterSpacing:"0.02em" }}>${d.buyNow.toFixed(2)}</div>
           {net!==null&&(
             <div style={{
               display:"inline-block", marginTop:4,
               fontFamily:MONO, fontSize:11, letterSpacing:"0.04em",
               color: net>=0?"#00FF88":"#FF3B3B",
               background: net>=0?"rgba(0,255,136,0.1)":"rgba(255,59,59,0.1)",
-              border:`1px solid £{net>=0?"rgba(0,255,136,0.35)":"rgba(255,59,59,0.35)"}`,
+              border:`1px solid ${net>=0?"rgba(0,255,136,0.35)":"rgba(255,59,59,0.35)"}`,
               padding:"2px 8px", borderRadius:3,
-            }}>{net>=0?"+":"-"}£{Math.abs(net).toFixed(2)} flip</div>
+            }}>{net>=0?"+":"-"}${Math.abs(net).toFixed(2)} flip</div>
           )}
         </div>
       </div>
@@ -318,9 +318,9 @@ function Card({ d, rank }) {
             padding:"5px 11px", borderRadius:4,
             background: vsM<=-15?"rgba(0,255,136,0.15)":vsM<=-5?"rgba(0,255,136,0.1)":vsM<=0?"rgba(57,217,138,0.08)":"rgba(255,59,59,0.12)",
             color:       vsM<=-15?"#00FF88":vsM<=-5?"#39D98A":vsM<=0?"#39D98A":"#FF3B3B",
-            border:`1px solid £{vsM<=0?"rgba(0,255,136,0.4)":"rgba(255,59,59,0.4)"}`,
+            border:`1px solid ${vsM<=0?"rgba(0,255,136,0.4)":"rgba(255,59,59,0.4)"}`,
           }}>
-            {vsM<=-15?`🔥 £{Math.abs(vsM)}% BELOW EBAY`:vsM<0?`↓ £{Math.abs(vsM)}% BELOW EBAY`:`↑ £{vsM}% ABOVE EBAY`}
+            {vsM<=-15?`🔥 ${Math.abs(vsM)}% BELOW EBAY`:vsM<0?`↓ ${Math.abs(vsM)}% BELOW EBAY`:`↑ ${vsM}% ABOVE EBAY`}
           </div>
         )}
 
@@ -331,8 +331,8 @@ function Card({ d, rank }) {
             padding:"5px 10px", borderRadius:4,
             background: vsM<0 ? "rgba(0,255,136,0.1)" : "rgba(255,59,59,0.1)",
             color:       vsM<0 ? "#00FF88" : "#FF3B3B",
-            border:`1px solid £{vsM<0?"rgba(0,255,136,0.3)":"rgba(255,59,59,0.3)"}`,
-          }}>eBay £{d.resell.toFixed(2)}</div>
+            border:`1px solid ${vsM<0?"rgba(0,255,136,0.3)":"rgba(255,59,59,0.3)"}`,
+          }}>eBay ${d.resell.toFixed(2)}</div>
         )}
 
         {/* #3 — RRP: warm gold so it's clearly different from the eBay price */}
@@ -342,7 +342,7 @@ function Card({ d, rank }) {
             padding:"5px 10px", borderRadius:4,
             background:"rgba(255,196,0,0.08)", color:"#FFC400",
             border:"1px solid rgba(255,196,0,0.25)",
-          }}>RRP £{d.rrp.toFixed(2)}{vsR<0?` · £{Math.abs(vsR)}% OFF`:"" }</div>
+          }}>RRP ${d.rrp.toFixed(2)}{vsR<0?` · ${Math.abs(vsR)}% OFF`:"" }</div>
         )}
 
         {/* #4 — Per pack: cyan, clearly different */}
@@ -352,7 +352,7 @@ function Card({ d, rank }) {
             padding:"5px 10px", borderRadius:4,
             background:"rgba(0,200,200,0.08)", color:"#00CCC0",
             border:"1px solid rgba(0,200,200,0.25)",
-          }}>£{pp}/PACK</div>
+          }}>${pp}/PACK</div>
         )}
 
         {/* #5 — Hold trend */}
@@ -360,8 +360,8 @@ function Card({ d, rank }) {
           <div style={{
             fontFamily:MONO, fontSize:11,
             padding:"5px 10px", borderRadius:4,
-            background:`£{tc}12`, color:tc,
-            border:`1px solid £{tc}40`,
+            background:`${tc}12`, color:tc,
+            border:`1px solid ${tc}40`,
           }}>{h.trend==="rising"?"↗":h.trend==="declining"?"↘":"→"} {h.yr1pct>=0?"+":""}{h.yr1pct}% EST YR1</div>
         )}
       </div>
@@ -389,22 +389,22 @@ function Card({ d, rank }) {
           {net!==null&&(
             <div style={{ background:"rgba(0,0,0,0.5)", border:"1px solid rgba(255,255,255,0.08)", borderRadius:6, padding:"14px", marginBottom:10 }}>
               <div style={{ fontFamily:MONO, fontSize:9, color:"#888", letterSpacing:"0.15em", marginBottom:4 }}>FLIP CALCULATOR · PRIVATE SELLER · 0% FEES</div>
-              <div style={{ fontFamily:MONO, fontSize:8, color:"#555", marginBottom:10 }}>Based on recent eBay UK sold listings · avg £{POST} postage</div>
+              <div style={{ fontFamily:MONO, fontSize:8, color:"#555", marginBottom:10 }}>Based on recent eBay UK sold listings · avg ${POST} postage</div>
               <div style={{ display:"grid", gridTemplateColumns:"1fr auto", gap:"8px 20px" }}>
                 <span style={{ fontFamily:MONO, fontSize:12, color:"#C8C8C8" }}>eBay resell price</span>
-                <span style={{ fontFamily:MONO, fontSize:12, color:"#00FF88", fontWeight:500 }}>£{d.resell?.toFixed(2)}</span>
+                <span style={{ fontFamily:MONO, fontSize:12, color:"#00FF88", fontWeight:500 }}>${d.resell?.toFixed(2)}</span>
 
                 <span style={{ fontFamily:MONO, fontSize:12, color:"#C8C8C8" }}>Postage (avg)</span>
-                <span style={{ fontFamily:MONO, fontSize:12, color:"#FF6060" }}>−£{POST.toFixed(2)}</span>
+                <span style={{ fontFamily:MONO, fontSize:12, color:"#FF6060" }}>−${POST.toFixed(2)}</span>
 
                 <span style={{ fontFamily:MONO, fontSize:12, color:"#C8C8C8" }}>Buy price</span>
-                <span style={{ fontFamily:MONO, fontSize:12, color:"#FF6060" }}>−£{d.buyNow.toFixed(2)}</span>
+                <span style={{ fontFamily:MONO, fontSize:12, color:"#FF6060" }}>−${d.buyNow.toFixed(2)}</span>
 
                 <div style={{ gridColumn:"1/-1", height:1, background:"rgba(255,255,255,0.08)", margin:"2px 0" }}/>
 
                 <span style={{ fontFamily:DISP, fontSize:12, fontWeight:500, color:net>=0?"#00FF88":"#FF3B3B", letterSpacing:"0.06em" }}>NET PROFIT</span>
                 <span style={{ fontFamily:DISP, fontSize:12, fontWeight:500, color:net>=0?"#00FF88":"#FF3B3B" }}>
-                  {net>=0?"+":"-"}£{Math.abs(net).toFixed(2)}
+                  {net>=0?"+":"-"}${Math.abs(net).toFixed(2)}
                   <span style={{ fontFamily:MONO, fontSize:11, opacity:0.6 }}> ({roi>=0?"+":""}{roi}%)</span>
                 </span>
               </div>
@@ -428,7 +428,7 @@ function Card({ d, rank }) {
                 <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"9px 0", borderBottom:"1px solid rgba(255,255,255,0.05)" }}>
                   <div style={{ fontFamily:MONO, fontSize:9, color:"#666" }}>{label}</div>
                   <div style={{ display:"flex", alignItems:"baseline", gap:8 }}>
-                    <div style={{ fontFamily:MONO, fontSize:13, fontWeight:700, color:"#FFFFFF" }}>£{val.toLocaleString()}</div>
+                    <div style={{ fontFamily:MONO, fontSize:13, fontWeight:700, color:"#FFFFFF" }}>${val.toLocaleString()}</div>
                     <div style={{ fontFamily:MONO, fontSize:9, color:gain>=0?trendC:"#FF3B3B" }}>{gain>=0?"+":""}{gain}%</div>
                   </div>
                 </div>
@@ -459,7 +459,7 @@ function Card({ d, rank }) {
           })()}
 
           {/* VERDICT — context-appropriate label per grade */}
-          <div style={{ background:gr.bg, border:`1px solid £{gr.border}`, borderRadius:6, padding:"12px 14px", marginBottom:12 }}>
+          <div style={{ background:gr.bg, border:`1px solid ${gr.border}`, borderRadius:6, padding:"12px 14px", marginBottom:12 }}>
             <div style={{ fontFamily:MONO, fontSize:9, color:gr.c, opacity:0.5, letterSpacing:"0.12em", marginBottom:5 }}>
               {gk==="S"||gk==="A"||gk==="B" ? "FLIP NOW — BUY & RESELL ON EBAY" :
                gk==="C" ? "MARGINAL — SMALL PROFIT ONLY" :
@@ -479,7 +479,7 @@ function Card({ d, rank }) {
               style={{ flex:1, background:"#CC0000", borderRadius:5, padding:"10px", color:"#fff", fontFamily:MONO, fontSize:11, letterSpacing:"0.1em", display:"flex", alignItems:"center", justifyContent:"center", boxShadow:"0 2px 12px rgba(204,0,0,0.35)" }}>
               BUY NOW →
             </a>
-            <button onClick={e=>{e.stopPropagation();window.open(`https://wa.me/?text=£{encodeURIComponent(`£{gr.label}: £{d.product}\n££{d.buyNow.toFixed(2)} @ £{d.retailer}\n£{vd.v1} — £{vd.v2}\n£{d.url}`)}`,"_blank");}}
+            <button onClick={e=>{e.stopPropagation();window.open(`https://wa.me/?text=${encodeURIComponent(`${gr.label}: ${d.product}\n£${d.buyNow.toFixed(2)} @ ${d.retailer}\n${vd.v1} — ${vd.v2}\n${d.url}`)}`,"_blank");}}
               style={{ width:44, background:"transparent", border:"1px solid #2a2a3a", borderRadius:5, color:"#777", fontSize:14, cursor:"pointer" }}>📤</button>
           </div>
           <div style={{ marginTop:8, fontFamily:MONO, fontSize:8, color:"#888", lineHeight:1.6 }}>
@@ -658,7 +658,7 @@ function HeatTab() {
     const yScale = v => H - ((v-min)/range)*(H-12) - 6;
 
     // Build path only through non-null points
-    const pts = validData.map(({v,i}) => `£{xScale(i)},£{yScale(v)}`).join(" ");
+    const pts = validData.map(({v,i}) => `${xScale(i)},${yScale(v)}`).join(" ");
     const firstX = xScale(validData[0].i);
     const lastX  = xScale(validData[validData.length-1].i);
 
@@ -685,25 +685,25 @@ function HeatTab() {
       <div>
         <div style={{ display:"flex", justifyContent:"space-between", marginBottom:6 }}>
           <div style={{ fontFamily:MONO, fontSize:9, color:"#555" }}>
-            {activeMonth} — <span style={{ color:"#FFFFFF" }}>£{activeVal.toLocaleString()}</span>
+            {activeMonth} — <span style={{ color:"#FFFFFF" }}>${activeVal.toLocaleString()}</span>
           </div>
           <div style={{ fontFamily:MONO, fontSize:9, color:pct>=0?color:"#FF3B3B" }}>
             {pct>=0?"+":""}{pct}% from start
           </div>
         </div>
-        <svg ref={svgRef} width="100%" viewBox={`0 0 £{W} £{H}`} style={{ display:"block", touchAction:"none", cursor:"crosshair" }}
+        <svg ref={svgRef} width="100%" viewBox={`0 0 ${W} ${H}`} style={{ display:"block", touchAction:"none", cursor:"crosshair" }}
           onMouseMove={handleTouch} onTouchMove={handleTouch}
           onMouseLeave={()=>setIdx(null)} onTouchEnd={()=>setIdx(null)}>
           <defs>
-            <linearGradient id={`g£{color.replace("#","")}`} x1="0" y1="0" x2="0" y2="1">
+            <linearGradient id={`g${color.replace("#","")}`} x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor={color} stopOpacity="0.25"/>
               <stop offset="100%" stopColor={color} stopOpacity="0"/>
             </linearGradient>
           </defs>
           {/* Fill */}
           <polygon
-            points={`£{firstX},£{H} £{pts} £{lastX},£{H}`}
-            fill={`url(#g£{color.replace("#","")})`}
+            points={`${firstX},${H} ${pts} ${lastX},${H}`}
+            fill={`url(#g${color.replace("#","")})`}
           />
           {/* Line */}
           <polyline points={pts} fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
@@ -748,7 +748,7 @@ function HeatTab() {
       <div style={{ display:"flex", gap:5, marginBottom:14, overflowX:"auto", paddingBottom:2, WebkitOverflowScrolling:"touch", scrollbarWidth:"none" }}>
         {["all","Booster Box","Elite Trainer Box","Booster Bundle","Booster Pack","Tin"].map(t=>(
           <button key={t} onClick={()=>setHeatType(t)}
-            style={{ background:heatType===t?"#CC0000":"#161620", border:`1px solid £{heatType===t?"#CC0000":"#333345"}`, borderRadius:4, padding:"5px 10px", flexShrink:0, fontFamily:MONO, fontSize:9, color:heatType===t?"#fff":"#AAAAAA", cursor:"pointer", whiteSpace:"nowrap" }}>
+            style={{ background:heatType===t?"#CC0000":"#161620", border:`1px solid ${heatType===t?"#CC0000":"#333345"}`, borderRadius:4, padding:"5px 10px", flexShrink:0, fontFamily:MONO, fontSize:9, color:heatType===t?"#fff":"#AAAAAA", cursor:"pointer", whiteSpace:"nowrap" }}>
             {t==="all"?"ALL TYPES":t.toUpperCase()}
           </button>
         ))}
@@ -759,7 +759,7 @@ function HeatTab() {
         const q = heatSearch.toLowerCase().trim();
         const filtered = sets.filter(s => {
           if (heatType !== "all" && s.type !== heatType) return false;
-          if (q && !`£{s.n} £{s.type}`.toLowerCase().includes(q)) return false;
+          if (q && !`${s.n} ${s.type}`.toLowerCase().includes(q)) return false;
           return true;
         });
 
@@ -770,7 +770,7 @@ function HeatTab() {
         );
 
         return filtered.map(s => {
-          const key = `£{s.n}|£{s.type}`;
+          const key = `${s.n}|${s.type}`;
           const validHistory = s.history.filter(v=>v!==null);
           if (validHistory.length < 2) return null;
           const currentPrice = validHistory[validHistory.length-1];
@@ -793,7 +793,7 @@ function HeatTab() {
             <div key={key} style={{ marginBottom:8 }}>
               {/* Row */}
               <div onClick={()=>setExpanded(isOpen?null:key)}
-                style={{ background:"#0A0A10", border:`1px solid £{isOpen?tC+"55":"rgba(255,255,255,0.06)"}`, borderLeft:`3px solid £{tC}`, borderRadius:isOpen?"8px 8px 0 0":8, padding:"11px 14px", cursor:"pointer" }}>
+                style={{ background:"#0A0A10", border:`1px solid ${isOpen?tC+"55":"rgba(255,255,255,0.06)"}`, borderLeft:`3px solid ${tC}`, borderRadius:isOpen?"8px 8px 0 0":8, padding:"11px 14px", cursor:"pointer" }}>
                 <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
                   <div style={{ flex:1, minWidth:0 }}>
                     <div style={{ fontFamily:DISP, fontSize:14, fontWeight:500, color:"#FFFFFF" }}>{s.n}</div>
@@ -806,19 +806,19 @@ function HeatTab() {
                     </div>
                   </div>
                   <div style={{ textAlign:"right", flexShrink:0, marginLeft:12 }}>
-                    <div style={{ fontFamily:MONO, fontSize:13, color:"#FFFFFF" }}>£{currentPrice.toLocaleString()}</div>
+                    <div style={{ fontFamily:MONO, fontSize:13, color:"#FFFFFF" }}>${currentPrice.toLocaleString()}</div>
                     <div style={{ fontFamily:MONO, fontSize:9, color:s.y1>=0?tC:"#FF3B3B" }}>{s.y1>=0?"+":""}{s.y1}% yr1</div>
                   </div>
                   <div style={{ fontFamily:MONO, fontSize:10, color:"#444", marginLeft:8 }}>{isOpen?"▲":"▼"}</div>
                 </div>
                 <div style={{ marginTop:7, height:2, background:"rgba(255,255,255,0.05)", borderRadius:2 }}>
-                  <div style={{ height:"100%", width:`£{s.s*10}%`, background:tC, borderRadius:2, opacity:0.5 }}/>
+                  <div style={{ height:"100%", width:`${s.s*10}%`, background:tC, borderRadius:2, opacity:0.5 }}/>
                 </div>
               </div>
 
               {/* Expanded */}
               {isOpen&&(
-                <div style={{ background:"#07070D", border:`1px solid £{tC}33`, borderTop:"none", borderRadius:"0 0 8px 8px", padding:"14px" }}>
+                <div style={{ background:"#07070D", border:`1px solid ${tC}33`, borderTop:"none", borderRadius:"0 0 8px 8px", padding:"14px" }}>
                   {/* Chart */}
                   <InteractiveChart data={s.history} color={tC} months={MONTHS}/>
 
@@ -827,9 +827,9 @@ function HeatTab() {
                     <div style={{ fontFamily:MONO, fontSize:8, color:"#444", letterSpacing:"0.1em", marginBottom:8 }}>ESTIMATED VALUE IF HELD SEALED</div>
                     <div style={{ display:"flex", gap:6 }}>
                       {[{l:"1 YR",v:y1p,r:s.y1},{l:"2 YR",v:y2p,r:s.y2},{l:"3 YR",v:y3p,r:y3rate},{l:"4 YR",v:y4p,r:y4rate}].map(({l,v,r})=>(
-                        <div key={l} style={{ flex:1, background:"#0A0A10", borderRadius:6, padding:"8px 6px", border:`1px solid £{r>=0?"rgba(0,255,136,0.12)":"rgba(255,59,59,0.12)"}`, textAlign:"center" }}>
+                        <div key={l} style={{ flex:1, background:"#0A0A10", borderRadius:6, padding:"8px 6px", border:`1px solid ${r>=0?"rgba(0,255,136,0.12)":"rgba(255,59,59,0.12)"}`, textAlign:"center" }}>
                           <div style={{ fontFamily:MONO, fontSize:7, color:"#555", marginBottom:3 }}>{l}</div>
-                          <div style={{ fontFamily:MONO, fontSize:12, fontWeight:700, color:r>=0?"#39D98A":"#FF3B3B" }}>£{v.toLocaleString()}</div>
+                          <div style={{ fontFamily:MONO, fontSize:12, fontWeight:700, color:r>=0?"#39D98A":"#FF3B3B" }}>${v.toLocaleString()}</div>
                           <div style={{ fontFamily:MONO, fontSize:8, color:r>=0?"#39D98A":"#FF3B3B" }}>{r>=0?"+":""}{Math.round(r)}%</div>
                         </div>
                       ))}
@@ -925,7 +925,7 @@ function App() {
   const GH_WF    = "scraper.yml";
   // PAT needs actions:write scope — add as VITE_GH_PAT in repo settings
   // For now uses a public read approach — trigger via a simple webhook workaround
-  const GH_API   = `https://api.github.com/repos/£{GH_OWNER}/£{GH_REPO}/actions/workflows/£{GH_WF}/dispatches`;
+  const GH_API   = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/actions/workflows/${GH_WF}/dispatches`;
 
   async function triggerScraper() {
     try {
@@ -935,7 +935,7 @@ function App() {
       await fetch(GH_API, {
         method: "POST",
         headers: {
-          "Authorization": `Bearer £{token}`,
+          "Authorization": `Bearer ${token}`,
           "Accept": "application/vnd.github+json",
           "Content-Type": "application/json",
         },
@@ -947,7 +947,7 @@ function App() {
   async function load() {
     setPulse(true);
     try {
-      const r = await fetch(`£{DEALS_URL}?t=£{Date.now()}`);
+      const r = await fetch(`${DEALS_URL}?t=${Date.now()}`);
       if (r.ok) {
         const data = await r.json();
         // Support both flat array (old) and holdData envelope (new scraper)
@@ -976,7 +976,7 @@ function App() {
     // Step 2: get current deals timestamp so we know when data is fresh
     let previousTimestamp = "";
     try {
-      const r = await fetch(`£{DEALS_URL}?t=£{Date.now()}`);
+      const r = await fetch(`${DEALS_URL}?t=${Date.now()}`);
       if (r.ok) {
         const d = await r.json();
         const darr = Array.isArray(d) ? d : (d.deals || []);
@@ -1013,7 +1013,7 @@ function App() {
         await new Promise(r => setTimeout(r, 3000));
       }
       try {
-        const r = await fetch(`£{DEALS_URL}?t=£{Date.now()}`);
+        const r = await fetch(`${DEALS_URL}?t=${Date.now()}`);
         if (r.ok) {
           const data = await r.json();
           const arr = Array.isArray(data) ? data : (data.deals || []);
@@ -1092,7 +1092,7 @@ function App() {
     if (ebayLoading) return;
     setEbayLoading(true);
     try {
-      const r = await fetch(`https://raw.githubusercontent.com/lock3yv1/lock3ys-den/main/ebay_deals.json?t=£{Date.now()}`);
+      const r = await fetch(`https://raw.githubusercontent.com/lock3yv1/lock3ys-den/main/ebay_deals.json?t=${Date.now()}`);
       if (r.ok) {
         const data = await r.json();
         const arr = Array.isArray(data) ? data : (data.deals || []);
@@ -1157,8 +1157,8 @@ function App() {
   const now = updated ? (() => {
     const mins = Math.floor((Date.now() - updated.getTime()) / 60000);
     if (mins < 1) return "just now";
-    if (mins < 60) return `£{mins}m ago`;
-    return `£{Math.floor(mins/60)}h ago`;
+    if (mins < 60) return `${mins}m ago`;
+    return `${Math.floor(mins/60)}h ago`;
   })() : "loading...";
   const best = sorted.find(d => (calcFlip(d.buyNow, d.resell).roi ?? -999) >= 8) || null;
 
@@ -1231,7 +1231,7 @@ function App() {
             <div style={{ display:"flex", alignItems:"center", gap:7 }}>
               <div style={{ width:6, height:6, borderRadius:"50%", background:live?"#00FF88":"#FF8C00", boxShadow:live?"0 0 10px #00FF88":"0 0 10px #FF8C00", animation:"blink 2s infinite" }}/>
               <span style={{ fontSize:9, fontFamily:MONO, color:live?"#00FF88":"#FF8C00" }}>
-                {live ? `LIVE · £{now}` : loading ? "LOADING..." : `LAST SCAN · £{now}`}
+                {live ? `LIVE · ${now}` : loading ? "LOADING..." : `LAST SCAN · ${now}`}
               </span>
             </div>
 
@@ -1246,7 +1246,7 @@ function App() {
             <div style={{ fontFamily:MONO, fontSize:10, color:"#555", letterSpacing:"0.06em" }}>● {deals.length} TOTAL</div>
           </div>
           <button onClick={()=>liveScan()} disabled={scanProgress.active}
-            style={{ background:scanProgress.active?"#1A1A28":"#CC0000", border:`1px solid £{scanProgress.active?"#333":"#CC0000"}`, borderRadius:5, padding:"6px 0", width:68, color:"#fff", fontFamily:MONO, fontSize:10, letterSpacing:"0.06em", cursor:scanProgress.active?"not-allowed":"pointer", boxShadow:scanProgress.active?"none":"0 2px 16px rgba(204,0,0,0.5)", opacity:scanProgress.active?0.6:1, flexShrink:0, textAlign:"center", transition:"all 0.15s" }}>
+            style={{ background:scanProgress.active?"#1A1A28":"#CC0000", border:`1px solid ${scanProgress.active?"#333":"#CC0000"}`, borderRadius:5, padding:"6px 0", width:68, color:"#fff", fontFamily:MONO, fontSize:10, letterSpacing:"0.06em", cursor:scanProgress.active?"not-allowed":"pointer", boxShadow:scanProgress.active?"none":"0 2px 16px rgba(204,0,0,0.5)", opacity:scanProgress.active?0.6:1, flexShrink:0, textAlign:"center", transition:"all 0.15s" }}>
             {scanProgress.active?"...":"⟳ SCAN"}
           </button>
         </div>
@@ -1293,10 +1293,10 @@ function App() {
               <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:12 }}>
                 <div style={{ flex:1 }}>
                   <div style={{ fontFamily:DISP, fontSize:12, fontWeight:500, color:"#FFFFFF", lineHeight:1.2, marginBottom:4 }}>{best.product}</div>
-                  <div style={{ fontFamily:MONO, fontSize:9, color:"#C8C8C8" }}>{best.retailer}{bn>0?` · +££{bn.toFixed(2)} FLIP`:""}</div>
+                  <div style={{ fontFamily:MONO, fontSize:9, color:"#C8C8C8" }}>{best.retailer}{bn>0?` · +£${bn.toFixed(2)} FLIP`:""}</div>
                 </div>
                 <div style={{ textAlign:"right", flexShrink:0 }}>
-                  <div style={{ fontFamily:MONO, fontSize:17, fontWeight:400, color:"#FFFFFF", lineHeight:1 }}>£{best.buyNow.toFixed(2)}</div>
+                  <div style={{ fontFamily:MONO, fontSize:17, fontWeight:400, color:"#FFFFFF", lineHeight:1 }}>${best.buyNow.toFixed(2)}</div>
                   <a href={best.url} target="_blank" rel="noopener noreferrer"
                     style={{ fontFamily:DISP, fontSize:12, fontWeight:500, color:"#fff", background:"#CC0000", padding:"4px 12px", borderRadius:4, display:"inline-block", marginTop:6, letterSpacing:"0.08em" }}>BUY →</a>
                 </div>
@@ -1314,7 +1314,7 @@ function App() {
             {[{id:"all",l:"ALL"},{id:"boxes",l:"📦 BOX"},{id:"half",l:"½ BOX"},{id:"etbs",l:"🎁 ETB"},{id:"packs",l:"🃏 PACK"},{id:"bundles",l:"📫 BUNDLE"},{id:"tins",l:"🥫 TIN+"}].map(f=>(
               <button key={f.id} onClick={()=>setTypeF(f.id)} style={{
                 background: typeF===f.id ? "#CC0000" : "#161620",
-                border: `1px solid £{typeF===f.id ? "#CC0000" : "#333345"}`,
+                border: `1px solid ${typeF===f.id ? "#CC0000" : "#333345"}`,
                 borderRadius:4, padding:"5px 10px",
                 fontFamily:MONO, fontSize:9,
                 color: typeF===f.id ? "#FFFFFF" : "#BBBBBB",
@@ -1334,7 +1334,7 @@ function App() {
             ].map(f=>(
               <button key={f.id} onClick={()=>setFilter(f.id)} style={{
                 background: filter===f.id ? f.bg : "#161620",
-                border: `1px solid £{filter===f.id ? f.ac : "#333345"}`,
+                border: `1px solid ${filter===f.id ? f.ac : "#333345"}`,
                 borderRadius:4, padding:"5px 12px",
                 fontFamily:MONO, fontSize:9,
                 color: filter===f.id ? f.ac : "#BBBBBB",
@@ -1418,7 +1418,7 @@ function App() {
               const itemUrl = item.url||item.listingUrl||"#";
               const img = item.image||null;
               return (
-                <div key={i} style={{ background:"#0A0A10", border:`1px solid £{gradeColor}33`, borderLeft:`3px solid £{gradeColor}`, borderRadius:8, padding:"14px", marginBottom:12 }}>
+                <div key={i} style={{ background:"#0A0A10", border:`1px solid ${gradeColor}33`, borderLeft:`3px solid ${gradeColor}`, borderRadius:8, padding:"14px", marginBottom:12 }}>
                   <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:10, marginBottom:10 }}>
                     {img&&(
                       <div style={{ flexShrink:0, width:52, height:52, borderRadius:6, overflow:"hidden", background:"#16161E", border:"1px solid rgba(255,255,255,0.08)" }}>
@@ -1427,10 +1427,10 @@ function App() {
                     )}
                     <div style={{ flex:1, minWidth:0 }}>
                       <div style={{ fontFamily:DISP, fontSize:13, fontWeight:500, color:"#FFFFFF", lineHeight:1.3, marginBottom:6 }}>{title}</div>
-                      <span style={{ fontFamily:MONO, fontSize:9, fontWeight:700, color:gradeColor, background:`£{gradeColor}18`, border:`1px solid £{gradeColor}40`, padding:"2px 8px", borderRadius:4 }}>{gradeLabel}</span>
+                      <span style={{ fontFamily:MONO, fontSize:9, fontWeight:700, color:gradeColor, background:`${gradeColor}18`, border:`1px solid ${gradeColor}40`, padding:"2px 8px", borderRadius:4 }}>{gradeLabel}</span>
                     </div>
                     <div style={{ textAlign:"right", flexShrink:0 }}>
-                      <div style={{ fontFamily:MONO, fontSize:18, color:"#FFFFFF", lineHeight:1 }}>£{price.toFixed(2)}</div>
+                      <div style={{ fontFamily:MONO, fontSize:18, color:"#FFFFFF", lineHeight:1 }}>${price.toFixed(2)}</div>
                       <div style={{ fontFamily:MONO, fontSize:9, color:"#555", marginTop:2 }}>listed price</div>
                     </div>
                   </div>
@@ -1439,11 +1439,11 @@ function App() {
                     <div style={{ display:"flex", gap:0 }}>
                       <div style={{ flex:1, borderRight:"1px solid rgba(255,255,255,0.06)", paddingRight:10 }}>
                         <div style={{ fontFamily:MONO, fontSize:8, color:"#555", marginBottom:2 }}>eBay market</div>
-                        <div style={{ fontFamily:MONO, fontSize:13, color:"#FFFFFF" }}>£{marketPrice.toFixed(2)}</div>
+                        <div style={{ fontFamily:MONO, fontSize:13, color:"#FFFFFF" }}>${marketPrice.toFixed(2)}</div>
                       </div>
                       <div style={{ flex:1, paddingLeft:10, borderRight:"1px solid rgba(255,255,255,0.06)", paddingRight:10 }}>
                         <div style={{ fontFamily:MONO, fontSize:8, color:"#555", marginBottom:2 }}>flip profit</div>
-                        <div style={{ fontFamily:MONO, fontSize:13, color:"#00FF88" }}>+£{flipNet.toFixed(2)}</div>
+                        <div style={{ fontFamily:MONO, fontSize:13, color:"#00FF88" }}>+${flipNet.toFixed(2)}</div>
                       </div>
                       <div style={{ flex:1, paddingLeft:10 }}>
                         <div style={{ fontFamily:MONO, fontSize:8, color:"#555", marginBottom:2 }}>ROI</div>
@@ -1451,7 +1451,7 @@ function App() {
                       </div>
                     </div>
                     <div style={{ fontFamily:MONO, fontSize:9, color:"#888", marginTop:8, lineHeight:1.5 }}>
-                      Listed {pctBelow}% below eBay market · £{POST} postage · private seller 0% fees
+                      Listed {pctBelow}% below eBay market · ${POST} postage · private seller 0% fees
                     </div>
                   </div>
                   <a href={itemUrl} target="_blank" rel="noopener noreferrer" onClick={e=>e.stopPropagation()}
@@ -1523,7 +1523,7 @@ function App() {
               <div style={{ fontFamily:MONO, fontSize:9, color:"rgba(255,255,255,0.7)", letterSpacing:"0.12em", marginBottom:3 }}>🔔 ALERT TRIGGERED</div>
               <div style={{ fontFamily:DISP, fontSize:13, fontWeight:600, color:"#FFFFFF" }}>{alertBanner.deal.product}</div>
               <div style={{ fontFamily:MONO, fontSize:10, color:"rgba(255,255,255,0.8)", marginTop:2 }}>
-                £{alertBanner.deal.buyNow.toFixed(2)} @ {alertBanner.deal.retailer} — under your £{alertBanner.alert.maxPrice} target
+                ${alertBanner.deal.buyNow.toFixed(2)} @ {alertBanner.deal.retailer} — under your ${alertBanner.alert.maxPrice} target
               </div>
             </div>
             <div style={{ display:"flex", gap:8, flexShrink:0 }}>
@@ -1587,13 +1587,13 @@ function App() {
                   const hit = triggered.find(t => t.alert.id === alert.id);
                   const match = deals.find(d => d.product.toLowerCase().includes(alert.product.toLowerCase()) && d.buyNow <= parseFloat(alert.maxPrice));
                   return (
-                    <div key={alert.id} style={{ background: match ? "rgba(0,255,136,0.06)" : "#0A0A10", border:`1px solid £{match?"rgba(0,255,136,0.3)":"#1E1E2A"}`, borderRadius:8, padding:"13px 14px", marginBottom:8, display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+                    <div key={alert.id} style={{ background: match ? "rgba(0,255,136,0.06)" : "#0A0A10", border:`1px solid ${match?"rgba(0,255,136,0.3)":"#1E1E2A"}`, borderRadius:8, padding:"13px 14px", marginBottom:8, display:"flex", justifyContent:"space-between", alignItems:"center" }}>
                       <div>
                         <div style={{ fontFamily:DISP, fontSize:13, fontWeight:500, color:"#FFFFFF", marginBottom:3 }}>{alert.product}</div>
-                        <div style={{ fontFamily:MONO, fontSize:9, color:"#555" }}>Alert when under £{alert.maxPrice}</div>
+                        <div style={{ fontFamily:MONO, fontSize:9, color:"#555" }}>Alert when under ${alert.maxPrice}</div>
                         {match && (
                           <div style={{ fontFamily:MONO, fontSize:9, color:"#00FF88", marginTop:4 }}>
-                            🔥 LIVE — £{match.buyNow.toFixed(2)} @ {match.retailer}
+                            🔥 LIVE — ${match.buyNow.toFixed(2)} @ {match.retailer}
                           </div>
                         )}
                       </div>
@@ -1630,7 +1630,7 @@ function App() {
                       saveAlerts([...alerts, { id:Date.now(), product:s.product, maxPrice:s.maxPrice, created:new Date().toISOString() }]);
                     }}
                     style={{ background:"#0F0F18", border:"1px solid #2A2A38", borderRadius:5, padding:"7px 12px", color: alerts.find(a=>a.product===s.product)?"#00FF88":"#888", fontFamily:MONO, fontSize:9, cursor:"pointer", textAlign:"left" }}>
-                    {alerts.find(a=>a.product===s.product)?"✓ ":""}{s.product} &lt; £{s.maxPrice}
+                    {alerts.find(a=>a.product===s.product)?"✓ ":""}{s.product} &lt; ${s.maxPrice}
                   </button>
                 ))}
               </div>
@@ -1664,11 +1664,11 @@ function App() {
                 else n=sorted.filter(d=>{const r=calcFlip(d.buyNow,d.resell).roi??1;const h=calcHold(d.resell,d.product);return r<2&&(!h||h.score<6)&&calcFlip(d.buyNow,d.resell).roi!==null;}).length;
                 return (
                   <div key={row.k} style={{ display:"flex", alignItems:"center", gap:12, marginBottom:12 }}>
-                    <div style={{ width:36,height:36,borderRadius:6,background:gd.bg,border:`2px solid £{gd.c}`,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:DISP,fontSize:12,fontWeight:500,color:gd.c,flexShrink:0 }}>{row.k}</div>
+                    <div style={{ width:36,height:36,borderRadius:6,background:gd.bg,border:`2px solid ${gd.c}`,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:DISP,fontSize:12,fontWeight:500,color:gd.c,flexShrink:0 }}>{row.k}</div>
                     <div style={{ flex:1 }}>
                       <div style={{ fontFamily:DISP, fontSize:11, fontWeight:500, color:gd.c, letterSpacing:"0.06em", marginBottom:4 }}>{row.l}</div>
                       <div style={{ height:4,background:"rgba(255,255,255,0.05)",borderRadius:2,overflow:"hidden" }}>
-                        <div style={{ height:"100%",width:`£{deals.length?(n/deals.length*100):0}%`,background:gd.c,borderRadius:2,transition:"width 0.5s" }}/>
+                        <div style={{ height:"100%",width:`${deals.length?(n/deals.length*100):0}%`,background:gd.c,borderRadius:2,transition:"width 0.5s" }}/>
                       </div>
                     </div>
                     <div style={{ fontFamily:DISP, fontSize:12, fontWeight:500, color:gd.c, minWidth:24, textAlign:"right" }}>{n}</div>
@@ -1686,10 +1686,10 @@ function App() {
                   <div key={d.id||i} style={{ display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 0",borderBottom:"1px solid rgba(255,255,255,0.06)" }}>
                     <div style={{ flex:1,minWidth:0,marginRight:12 }}>
                       <div style={{ fontFamily:DISP,fontSize:12,fontWeight:500,color:"#FFFFFF",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",letterSpacing:"0.02em" }}>{d.product}</div>
-                      <div style={{ fontFamily:MONO,fontSize:9,color:"#C0C0C0",marginTop:2 }}>{d.retailer} · £{d.buyNow.toFixed(2)}</div>
+                      <div style={{ fontFamily:MONO,fontSize:9,color:"#C0C0C0",marginTop:2 }}>{d.retailer} · ${d.buyNow.toFixed(2)}</div>
                     </div>
                     <div style={{ textAlign:"right",flexShrink:0 }}>
-                      <div style={{ fontFamily:DISP,fontSize:12,fontWeight:500,color:"#00FF88" }}>+£{n.toFixed(2)}</div>
+                      <div style={{ fontFamily:DISP,fontSize:12,fontWeight:500,color:"#00FF88" }}>+${n.toFixed(2)}</div>
                       <div style={{ fontFamily:MONO,fontSize:9,color:"#C0C0C0" }}>{r}% ROI</div>
                     </div>
                   </div>
