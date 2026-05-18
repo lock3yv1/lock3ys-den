@@ -1440,61 +1440,47 @@ function App() {
               </div>
             )}
 
-            {!ebayLoading&&(()=>{
-              // Only show deals with positive flip ROI — no noise
-              const goodDeals = ebayListings.filter(item => {
-                const price = item.price || item.buyNow || 0;
-                const marketPrice = item.resell || item.marketPrice || null;
-                if (!marketPrice || !price) return false;
-                const net = marketPrice - price - POST;
-                const roi = (net / price) * 100;
-                return roi >= 5; // Only show if 5%+ ROI
-              });
-              if (goodDeals.length === 0) return (
-                <div style={{ textAlign:"center", padding:"40px 0", fontFamily:MONO, color:"#444", fontSize:10 }}>
-                  No strong eBay deals right now — refresh or press SCAN on HQ for fresh data
-                </div>
-              );
-              return goodDeals.map((item, i)=>{
-              const title = item.title || item.product || "";
-              const price = item.price || item.buyNow || 0;
-              const marketPrice = item.resell || item.marketPrice || 0;
-              const flipNet = +(marketPrice - price - POST).toFixed(2);
-              const flipRoi = Math.round((flipNet / price) * 100);
-              const pctBelow = Math.round((marketPrice - price) / marketPrice * 100);
+            {{!ebayLoading&&ebayListings.filter(item=>{
+              const p = item.price||item.buyNow||0;
+              const m = item.resell||item.marketPrice||0;
+              return m>0 && p>0 && ((m-p-POST)/p)*100>=5;
+            }).sort((a,b)=>{
+              const roiA=(((a.resell||a.marketPrice||0)-(a.price||a.buyNow||0)-POST)/(a.price||a.buyNow||1))*100;
+              const roiB=(((b.resell||b.marketPrice||0)-(b.price||b.buyNow||0)-POST)/(b.price||b.buyNow||1))*100;
+              return roiB-roiA;
+            }).map((item,i)=>{
+              const title = item.title||item.product||"";
+              const price = item.price||item.buyNow||0;
+              const marketPrice = item.resell||item.marketPrice||0;
+              const flipNet = +(marketPrice-price-POST).toFixed(2);
+              const flipRoi = Math.round((flipNet/price)*100);
+              const pctBelow = Math.round((marketPrice-price)/marketPrice*100);
               const gradeColor = flipRoi>=20?"#00FF88":flipRoi>=10?"#39D98A":"#FFD60A";
               const gradeLabel = flipRoi>=20?"🔥 FIRE DEAL":flipRoi>=10?"✅ STRONG BUY":"💰 GOOD FLIP";
-              const itemUrl = item.url || item.listingUrl || "#";
-              const img = item.image || null;
+              const itemUrl = item.url||item.listingUrl||"#";
+              const img = item.image||null;
               return (
                 <div key={i} style={{ background:"#0A0A10", border:`1px solid ${gradeColor}33`, borderLeft:`3px solid ${gradeColor}`, borderRadius:8, padding:"14px", marginBottom:12 }}>
-                  {/* Header row */}
                   <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:10, marginBottom:10 }}>
                     {img&&(
                       <div style={{ flexShrink:0, width:52, height:52, borderRadius:6, overflow:"hidden", background:"#16161E", border:"1px solid rgba(255,255,255,0.08)" }}>
-                        <img src={img} alt="" style={{ width:"100%", height:"100%", objectFit:"cover" }} loading="lazy"
-                          onError={e=>e.target.parentElement.style.display="none"}/>
+                        <img src={img} alt="" style={{ width:"100%", height:"100%", objectFit:"cover" }} loading="lazy" onError={e=>e.target.parentElement.style.display="none"}/>
                       </div>
                     )}
                     <div style={{ flex:1, minWidth:0 }}>
                       <div style={{ fontFamily:DISP, fontSize:13, fontWeight:500, color:"#FFFFFF", lineHeight:1.3, marginBottom:6 }}>{title}</div>
-                      {/* Grade badge */}
-                      <span style={{ fontFamily:MONO, fontSize:9, fontWeight:700, color:gradeColor, background:`${gradeColor}18`, border:`1px solid ${gradeColor}40`, padding:"2px 8px", borderRadius:4 }}>
-                        {gradeLabel}
-                      </span>
+                      <span style={{ fontFamily:MONO, fontSize:9, fontWeight:700, color:gradeColor, background:`${gradeColor}18`, border:`1px solid ${gradeColor}40`, padding:"2px 8px", borderRadius:4 }}>{gradeLabel}</span>
                     </div>
                     <div style={{ textAlign:"right", flexShrink:0 }}>
                       <div style={{ fontFamily:MONO, fontSize:18, color:"#FFFFFF", lineHeight:1 }}>£{price.toFixed(2)}</div>
-                      <div style={{ fontFamily:MONO, fontSize:10, color:"#555", marginTop:2 }}>listed price</div>
+                      <div style={{ fontFamily:MONO, fontSize:9, color:"#555", marginTop:2 }}>listed price</div>
                     </div>
                   </div>
-
-                  {/* WHY IT'S A DEAL */}
                   <div style={{ background:"rgba(0,0,0,0.4)", border:"1px solid rgba(255,255,255,0.06)", borderRadius:6, padding:"10px 12px", marginBottom:10 }}>
                     <div style={{ fontFamily:MONO, fontSize:8, color:"#555", letterSpacing:"0.12em", marginBottom:8 }}>WHY IT'S A DEAL</div>
                     <div style={{ display:"flex", gap:0 }}>
                       <div style={{ flex:1, borderRight:"1px solid rgba(255,255,255,0.06)", paddingRight:10 }}>
-                        <div style={{ fontFamily:MONO, fontSize:8, color:"#555", marginBottom:2 }}>eBay market value</div>
+                        <div style={{ fontFamily:MONO, fontSize:8, color:"#555", marginBottom:2 }}>eBay market</div>
                         <div style={{ fontFamily:MONO, fontSize:13, color:"#FFFFFF" }}>£{marketPrice.toFixed(2)}</div>
                       </div>
                       <div style={{ flex:1, paddingLeft:10, borderRight:"1px solid rgba(255,255,255,0.06)", paddingRight:10 }}>
@@ -1507,10 +1493,9 @@ function App() {
                       </div>
                     </div>
                     <div style={{ fontFamily:MONO, fontSize:9, color:"#888", marginTop:8, lineHeight:1.5 }}>
-                      Listed {pctBelow}% below current eBay market · £{POST} postage · private seller 0% fees · net £{flipNet.toFixed(2)} profit
+                      Listed {pctBelow}% below eBay market · £{POST} postage · private seller 0% fees
                     </div>
                   </div>
-
                   <a href={itemUrl} target="_blank" rel="noopener noreferrer" onClick={e=>e.stopPropagation()}
                     style={{ display:"block", textAlign:"center", background:"#CC0000", borderRadius:6, padding:"10px", color:"#fff", fontFamily:MONO, fontSize:10, letterSpacing:"0.1em", boxShadow:"0 2px 12px rgba(204,0,0,0.35)" }}>
                     VIEW ON EBAY →
@@ -1520,7 +1505,7 @@ function App() {
                   </div>
                 </div>
               );
-            });})()
+            })}
           </div>
         )}
 
