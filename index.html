@@ -51,6 +51,12 @@ const HOLD = {
   "paldean fates":        { score:6,  trend:"stable",   yr1:1.02, yr2:1.05, yr3:1.11, yr4:1.18, note:"Shiny vault set. Strong collector demand. Steady floor." },
   "stellar crown":        { score:5,  trend:"stable",   yr1:1.01, yr2:1.03, yr3:1.07, yr4:1.12, note:"Terapagos ex. Moderate hold." },
   "journey together":     { score:5,  trend:"stable",   yr1:1.01, yr2:1.03, yr3:1.06, yr4:1.10, note:"Launched early 2025. Establishing market floor with steady collector demand." },
+  "nihil zero":           { score:6,  trend:"rising",   yr1:1.05, yr2:1.12, yr3:1.22, yr4:1.35, note:"Korean Mega Evolution era. Scarce UK supply. Rising collector interest." },
+  "heatwave arena":       { score:5,  trend:"stable",   yr1:1.03, yr2:1.08, yr3:1.15, yr4:1.22, note:"Japanese SV9a. Popular set, growing UK demand." },
+  "battle partners":      { score:5,  trend:"stable",   yr1:1.02, yr2:1.06, yr3:1.12, yr4:1.18, note:"SV9 era. Solid collector base." },
+  "glory of team rocket": { score:6,  trend:"rising",   yr1:1.06, yr2:1.15, yr3:1.28, yr4:1.40, note:"Team Rocket return — high nostalgia premium. SV10." },
+  "white flare":          { score:5,  trend:"stable",   yr1:1.02, yr2:1.06, yr3:1.10, yr4:1.15, note:"SV11W. New release. Strong Scarlet & Violet collector base." },
+  "black bolt":           { score:5,  trend:"stable",   yr1:1.02, yr2:1.06, yr3:1.10, yr4:1.15, note:"SV11B. New release. Strong parallel to White Flare." },
   "brilliant stars":      { score:5,  trend:"stable",   yr1:1.01, yr2:1.03, yr3:1.07, yr4:1.12, note:"Charizard VSTAR. Consistent collector demand." },
   "chilling reign":       { score:6,  trend:"rising",   yr1:1.02, yr2:1.06, yr3:1.13, yr4:1.22, note:"Ice/Shadow Rider Calyrex. Criminally underrated. Buy now." },
   "battle styles":        { score:5,  trend:"stable",   yr1:1.01, yr2:1.03, yr3:1.07, yr4:1.11, note:"Urshifu V. Solid competitive and collector demand." },
@@ -172,6 +178,19 @@ const MARKET = {
   "ascended heroes booster box":   125, "ascended heroes elite trainer": 160,
   "chaos rising booster box":      145,
   "phantasmal flames booster box": 360, "phantasmal flames elite trainer":120,
+  "chaos rising booster box":      145, "chaos rising elite trainer":    68,
+  "chaos rising booster pack":     8,
+  "perfect order booster pack":    7,   "ascended heroes booster pack":  8,
+  "nihil zero booster box":        70,  "nihil zero booster pack":       5,
+  "heatwave arena booster pack":   5,   "heatwave arena booster box":    45,
+  "battle partners booster pack":  5,   "battle partners booster box":   75,
+  "glory of team rocket booster pack": 7, "glory of team rocket booster box": 200,
+  "white flare booster box":       200, "white flare booster pack":      8,
+  "black bolt booster box":        210, "black bolt booster pack":       9,
+  "space juggler booster box":     100,
+  "unbroken bonds booster box":    260, "cosmic eclipse booster box":    320,
+  "united minds booster box":      280, "team up booster box":           220,
+  "lost thunder booster box":      195,
 };
 
 function getMarket(title) {
@@ -231,7 +250,12 @@ function getGradeKey(roi, hs=0) {
 }
 
 function getVerdict(roi, net, hs=0, h=null) {
-  if (roi===null) return { v1:"IN STOCK", v2:"No eBay market data available yet. Check back after next scan." };
+  // Check hold FIRST — even without eBay data, strong hold sets should be identified
+  if (roi===null) {
+    if (hs>=7) return { v1:"BUY & HOLD", v2:`No live flip data yet, but this set has a ${hs}/10 hold score. Worth buying to store sealed.` };
+    if (hs>=5) return { v1:"HOLD CANDIDATE", v2:`No flip data yet but ${hs}/10 hold score. Could appreciate over 1-2 years.` };
+    return { v1:"IN STOCK", v2:"No eBay market data yet. Scan for fresh prices." };
+  }
   if (roi>=25)   return { v1:`${roi}% ROI — FIRE DEAL`, v2:`Buy at £${net && (parseFloat(net)+POST+0).toFixed ? "" : ""}this price, sell on eBay for +£${net?.toFixed(2)} profit after postage.` };
   if (roi>=15)   return { v1:`${roi}% ROI — STRONG BUY`, v2:`+£${net?.toFixed(2)} profit after £${POST} postage. Strong flip opportunity.` };
   if (roi>=8)    return { v1:`${roi}% ROI — GOOD DEAL`, v2:`+£${net?.toFixed(2)} profit after £${POST} postage. Solid opportunity.` };
@@ -490,8 +514,9 @@ function Card({ d, rank }) {
 
             const HoldRow = ({label, val}) => {
               const trendC = h.trend==="rising"?"#39D98A":h.trend==="declining"?"#FF3B3B":"#FF8C00";
-              const pct = Math.round((val / h.yr1val.toString().replace ? (val/d.resell-1)*100 : (val/d.resell-1)*100));
-              const gain = Math.round((val - d.resell) / d.resell * 100);
+              // Use resell (which falls back to getMarket/buyNow) not d.resell (may be null)
+              const basePrice = resell || d.buyNow || 1;
+              const gain = Math.round((val - basePrice) / basePrice * 100);
               return (
                 <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"9px 0", borderBottom:"1px solid rgba(255,255,255,0.05)" }}>
                   <div style={{ fontFamily:MONO, fontSize:9, color:"#666" }}>{label}</div>
@@ -531,7 +556,7 @@ function Card({ d, rank }) {
             <div style={{ fontFamily:MONO, fontSize:9, color:gr.c, opacity:0.5, letterSpacing:"0.12em", marginBottom:5 }}>
               {gk==="S"||gk==="A"||gk==="B" ? "FLIP NOW — BUY & RESELL ON EBAY" :
                gk==="C" ? "MARGINAL — SMALL PROFIT ONLY" :
-               gk==="H" ? "HOLD PLAY — BUY & STORE SEALED" :
+               gk==="H" ? "WORTH HOLDING — BUY NOW AND STORE UNOPENED" :
                gk==="D" ? "NOT WORTH FLIPPING AT CURRENT PRICES" :
                "IN STOCK — NO MARKET DATA YET"}
             </div>
@@ -544,8 +569,8 @@ function Card({ d, rank }) {
           {/* BUTTONS */}
           <div style={{ display:"flex", gap:8 }}>
             <a href={d.url} target="_blank" rel="noopener noreferrer" onClick={e=>e.stopPropagation()}
-              style={{ flex:1, background:"#CC0000", borderRadius:5, padding:"10px", color:"#fff", fontFamily:MONO, fontSize:11, letterSpacing:"0.1em", display:"flex", alignItems:"center", justifyContent:"center", boxShadow:"0 2px 12px rgba(204,0,0,0.35)" }}>
-              BUY NOW →
+              style={{ flex:1, background:"#CC0000", borderRadius:5, padding:"11px 10px", color:"#fff", fontFamily:MONO, fontSize:10, letterSpacing:"0.12em", display:"flex", alignItems:"center", justifyContent:"center", boxShadow:"0 2px 18px rgba(204,0,0,0.4)", fontWeight:700 }}>
+              VIEW & BUY →
             </a>
             <button onClick={e=>{e.stopPropagation();window.open(`https://wa.me/?text=${encodeURIComponent(`${gr.label}: ${d.product}\n£${d.buyNow.toFixed(2)} @ ${d.retailer}\n${vd.v1} — ${vd.v2}\n${d.url}`)}`,"_blank");}}
               style={{ width:44, background:"transparent", border:"1px solid #2a2a3a", borderRadius:5, color:"#777", fontSize:14, cursor:"pointer" }}>📤</button>
@@ -1329,7 +1354,7 @@ function App() {
           <div style={{ display:"flex", gap:14, alignItems:"center" }}>
             <div style={{ fontFamily:MONO, fontSize:10, color:"#00FF88", letterSpacing:"0.06em" }}>🔥 {excN} HOT</div>
             <div style={{ fontFamily:MONO, fontSize:10, color:"#FFD60A", letterSpacing:"0.06em" }}>💰 {buyN} FLIP</div>
-            <div style={{ fontFamily:MONO, fontSize:10, color:"#444", letterSpacing:"0.04em" }}>· {deals.length}</div>
+            <div style={{ fontFamily:MONO, fontSize:10, color:"#444", letterSpacing:"0.04em" }}>· {deals.length} total</div>
           </div>
           <button onClick={()=>liveScan()} disabled={scanProgress.active}
             style={{ background:scanProgress.active?"#1A1A28":"#CC0000", border:`1px solid ${scanProgress.active?"#333":"#CC0000"}`, borderRadius:5, padding:"6px 0", width:68, color:"#fff", fontFamily:MONO, fontSize:10, letterSpacing:"0.06em", cursor:scanProgress.active?"not-allowed":"pointer", boxShadow:scanProgress.active?"none":"0 2px 16px rgba(204,0,0,0.5)", opacity:scanProgress.active?0.6:1, flexShrink:0, textAlign:"center", transition:"all 0.15s" }}>
