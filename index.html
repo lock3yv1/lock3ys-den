@@ -133,6 +133,56 @@ const DEMO = [
 ].map(d => ({ ...d, image: getDemoImage(d.product) }));
 
 // ─── LOGIC ────────────────────────────────────────────────────────────────────
+
+// ─── STATIC MARKET PRICES (eBay UK sold averages, May 2026) ──────────────────
+const MARKET = {
+  "evolving skies booster box":    215, "evolving skies elite trainer":  150,
+  "evolving skies booster pack":   24,  "evolving skies tin":            40,
+  "hidden fates elite trainer":    310, "hidden fates booster pack":     14,
+  "prismatic evolutions elite trainer": 160, "prismatic evolutions booster bundle": 58,
+  "prismatic evolutions booster pack": 13,
+  "surging sparks booster box":    240, "surging sparks elite trainer":  130,
+  "surging sparks booster bundle": 30,  "surging sparks booster pack":   7,
+  "destined rivals booster box":   175, "destined rivals elite trainer": 160,
+  "journey together booster box":  175, "journey together elite trainer":130,
+  "journey together booster bundle":45, "journey together booster pack": 8,
+  "brilliant stars booster box":   155, "brilliant stars elite trainer": 145,
+  "chilling reign booster box":    210, "chilling reign elite trainer":  150,
+  "crown zenith elite trainer":    268, "crown zenith booster box":      128,
+  "silver tempest booster box":    148, "silver tempest elite trainer":  120,
+  "lost origin elite trainer":     210, "lost origin booster box":       122,
+  "astral radiance booster box":   138, "astral radiance elite trainer": 138,
+  "151 booster box":               178, "151 elite trainer":             115,
+  "151 booster bundle":            55,  "151 booster pack":              8,
+  "paldean fates elite trainer":   58,  "paldean fates booster box":     132,
+  "paradox rift booster box":      120, "paradox rift elite trainer":    50,
+  "obsidian flames booster box":   220, "obsidian flames elite trainer": 55,
+  "twilight masquerade booster box":110,"twilight masquerade elite trainer":120,
+  "temporal forces booster box":   100, "temporal forces elite trainer": 95,
+  "stellar crown booster box":     135, "stellar crown elite trainer":   110,
+  "shrouded fable elite trainer":  100,
+  "shining fates elite trainer":   230, "shining fates booster pack":    15,
+  "champions path elite trainer":  130, "champions path booster pack":   24,
+  "cosmic eclipse booster box":    320,
+  "battle styles booster box":     200, "battle styles elite trainer":   62,
+  "fusion strike booster box":     85,
+  "darkness ablaze booster box":   155, "vivid voltage booster box":     142,
+  "rebel clash booster box":       110,
+  "perfect order elite trainer":   65,  "perfect order booster box":     130,
+  "ascended heroes booster box":   125, "ascended heroes elite trainer": 160,
+  "chaos rising booster box":      145,
+  "phantasmal flames booster box": 360, "phantasmal flames elite trainer":120,
+};
+
+function getMarket(title) {
+  if (!title) return null;
+  const t = title.toLowerCase();
+  for (const [k,v] of Object.entries(MARKET)) {
+    if (t.includes(k)) return v;
+  }
+  return null;
+}
+
 function calcFlip(buy, sell) {
   if (!sell) return { net:null, roi:null, fees:null };
   // Private UK sellers pay 0% eBay fees on trading cards/collectibles
@@ -170,27 +220,26 @@ const G = {
 };
 
 function getGradeKey(roi, hs=0) {
-  if (roi===null) return hs>=8?"H":hs>=6?"H":"?";
+  if (roi===null) return hs>=7?"H":hs>=5?"H":"?";
   if (roi>=25) return "S";
   if (roi>=15) return "A";
   if (roi>=8)  return "B";
   // For marginal/negative ROI — hold score decides
-  if (roi>=2)  return hs>=7?"H":"C";
-  if (roi>=-5) return hs>=8?"H":hs>=6?"H":"C";
-  return hs>=9?"H":"D";
+  if (roi>=2)  return hs>=6?"H":"C";
+  if (roi>=-5) return hs>=7?"H":hs>=5?"H":"C";
+  return hs>=8?"H":"D";
 }
 
 function getVerdict(roi, net, hs=0, h=null) {
-  if (roi===null) return { v1:"IN STOCK", v2:"No eBay price data yet — deal strength unconfirmed" };
-  if (roi>=25)   return { v1:`${roi}% ROI — FIRE DEAL`, v2:`+£${net?.toFixed(2)} net profit after £${POST} postage. Private seller, 0% fees.` };
-  if (roi>=15)   return { v1:`${roi}% ROI — STRONG BUY`, v2:`+£${net?.toFixed(2)} profit. Strong flip opportunity.` };
-  if (roi>=8)    return { v1:`${roi}% ROI — GOOD DEAL`, v2:`+£${net?.toFixed(2)} profit. Solid flip opportunity.` };
-  if (roi>=2)    return { v1:`MARGINAL FLIP`, v2:`+£${net?.toFixed(2)} — slim margin. Collector value play.` };
-  // Negative ROI — hold score decides
-  if (hs>=8)     return { v1:`BUY & HOLD`, v2:`Low flip potential (−£${Math.abs(net)?.toFixed(2)}) but strong ${hs}/10 hold score. Store sealed.` };
-  if (hs>=6)     return { v1:`HOLD CANDIDATE`, v2:`Low flip potential (−£${Math.abs(net)?.toFixed(2)}) — hold score ${hs}/10. Consider long term.` };
-  if (roi>=-10)  return { v1:`BETTER SEALED HOLD`, v2:`Low flip potential. Collector-focused opportunity.` };
-  return           { v1:`LOW SIGNAL`, v2:`Better as a sealed hold or to open and enjoy.` };
+  if (roi===null) return { v1:"IN STOCK", v2:"No eBay market data available yet. Check back after next scan." };
+  if (roi>=25)   return { v1:`${roi}% ROI — FIRE DEAL`, v2:`Buy at £${net && (parseFloat(net)+POST+0).toFixed ? "" : ""}this price, sell on eBay for +£${net?.toFixed(2)} profit after postage.` };
+  if (roi>=15)   return { v1:`${roi}% ROI — STRONG BUY`, v2:`+£${net?.toFixed(2)} profit after £${POST} postage. Strong flip opportunity.` };
+  if (roi>=8)    return { v1:`${roi}% ROI — GOOD DEAL`, v2:`+£${net?.toFixed(2)} profit after £${POST} postage. Solid opportunity.` };
+  if (roi>=2)    return { v1:`MARGINAL FLIP`, v2:`+£${net?.toFixed(2)} margin after £${POST} postage — slim but profitable.` };
+  if (hs>=8)     return { v1:`BUY & HOLD`, v2:`Not worth flipping now but this set has a ${hs}/10 hold score — buy and store sealed for 1-2+ years.` };
+  if (hs>=6)     return { v1:`HOLD FOR APPRECIATION`, v2:`Weak flip. But ${h?.note || "this set appreciates over time"}. Consider storing sealed.` };
+  if (roi>=-10)  return { v1:`NOT A FLIP`, v2:`You'd lose £${Math.abs(net||0).toFixed(2)} flipping this. Only buy if you want to open or collect.` };
+  return           { v1:`AVOID FOR PROFIT`, v2:`Loss-making at current eBay prices. Buyer beware.` };
 }
 
 function getPtype(t) {
@@ -223,14 +272,16 @@ function ago(iso) {
 // ─── CARD ─────────────────────────────────────────────────────────────────────
 function Card({ d, rank }) {
   const [open, setOpen] = useState(false);
-  const { net, roi, fees } = calcFlip(d.buyNow, d.resell);
-  const h   = calcHold(d.resell, d.product);
+  // Use scraped eBay price, or fall back to static market table
+  const resell = d.resell || getMarket(d.product);
+  const { net, roi, fees } = calcFlip(d.buyNow, resell);
+  const h   = calcHold(resell || d.buyNow, d.product);
   const gk  = getGradeKey(roi, h?.score??0);
   const gr  = G[gk];
   const vd  = getVerdict(roi, net, h?.score??0, h);
   const pt  = getPtype(d.product);
   const pp  = packCost(d.product, d.buyNow);
-  const vsM = d.resell ? Math.round((d.buyNow-d.resell)/d.resell*100) : null;
+  const vsM = resell ? Math.round((d.buyNow-resell)/resell*100) : null;
   const vsR = d.rrp    ? Math.round((d.buyNow-d.rrp)/d.rrp*100)      : null;
   const tc  = h?.trend==="rising"?"#39D98A":h?.trend==="declining"?"#FF3B3B":"#FF8C00";
   const DISP = "'Rajdhani', sans-serif";
@@ -294,7 +345,7 @@ function Card({ d, rank }) {
         <div style={{ textAlign:"right", flexShrink:0 }}>
           <div style={{ fontFamily:MONO, fontSize:18, fontWeight:400, color:"#FFFFFF", lineHeight:1, letterSpacing:"0.02em" }}>£{d.buyNow.toFixed(2)}</div>
           {/* Glowing eBay comparison pill — most important signal */}
-          {d.resell && vsM!==null && (
+          {resell && vsM!==null && (
             <div style={{
               display:"inline-block", marginTop:5,
               fontFamily:MONO, fontSize:10, letterSpacing:"0.05em", fontWeight:700,
@@ -337,7 +388,7 @@ function Card({ d, rank }) {
             background: vsM<0 ? "rgba(0,255,136,0.1)" : "rgba(255,59,59,0.1)",
             color:       vsM<0 ? "#00FF88" : "#FF3B3B",
             border:`1px solid ${vsM<0?"rgba(0,255,136,0.3)":"rgba(255,59,59,0.3)"}`,
-          }}>eBay £{d.resell.toFixed(2)}</div>
+          }}>eBay £{resell.toFixed(2)}</div>
         )}
 
         {/* #3 — RRP: warm gold so it's clearly different from the eBay price */}
@@ -481,11 +532,11 @@ function Card({ d, rank }) {
               {gk==="S"||gk==="A"||gk==="B" ? "FLIP NOW — BUY & RESELL ON EBAY" :
                gk==="C" ? "MARGINAL — SMALL PROFIT ONLY" :
                gk==="H" ? "HOLD PLAY — BUY & STORE SEALED" :
-               gk==="D" ? "LOW FLIP POTENTIAL — BETTER SEALED HOLD" :
+               gk==="D" ? "NOT WORTH FLIPPING AT CURRENT PRICES" :
                "IN STOCK — NO MARKET DATA YET"}
             </div>
             <div style={{ fontFamily:DISP, fontSize:13, fontWeight:600, color:gr.c, letterSpacing:"0.06em", marginBottom:3 }}>
-              {gk==="S"?"🔥":gk==="A"?"✅":gk==="B"?"💰":gk==="H"?"📦":gk==="D"?"❌":"📋"} {vd.v1}
+              {gk==="S"?"🔥":gk==="A"?"✅":gk==="B"?"💰":gk==="H"?"📦":gk==="D"?"⚠️":"📋"} {vd.v1}
             </div>
             <div style={{ fontFamily:MONO, fontSize:10, color:gr.c, opacity:0.7 }}>{vd.v2}</div>
           </div>
@@ -894,6 +945,7 @@ function App() {
   const [updated,  setUpdated]  = useState(null);
   const [filter,   setFilter]   = useState("all");
   const [typeF,    setTypeF]    = useState("all");
+  const [langF,    setLangF]    = useState("all");
   const [tab,      setTab]      = useState("deals");
   const [pulse,    setPulse]    = useState(false);
   const [ebayListings, setEbayListings] = useState([]);
@@ -1063,8 +1115,10 @@ function App() {
 
   useEffect(() => {
     load();
+    loadEbay(); // preload eBay data on startup
     const i = setInterval(load, 600000);
-    return () => clearInterval(i);
+    const j = setInterval(loadEbay, 15*60*1000); // refresh eBay every 15 min
+    return () => { clearInterval(i); clearInterval(j); };
   }, []);
 
 
@@ -1133,13 +1187,20 @@ function App() {
   }
 
   useEffect(() => {
-    if (tab === "ebay" && !ebayLoaded && !ebayLoading) loadEbay();
+    if (tab === "ebay" && !ebayLoading) loadEbay();
+  }, [tab]);
+  
+  // Auto-refresh eBay listings every 15 minutes when on eBay tab
+  useEffect(() => {
+    if (tab !== "ebay") return;
+    const interval = setInterval(() => { setEbayLoaded(false); loadEbay(); }, 15 * 60 * 1000);
+    return () => clearInterval(interval);
   }, [tab]);
 
   // Grade priority: S=0, A=1, B=2, C=3, H=4, D=5, ?=6
   function gradePriority(d) {
-    const r = calcFlip(d.buyNow, d.resell).roi;
-    const h = calcHold(d.resell, d.product);
+    const r = calcFlip(d.buyNow, d.resell || getMarket(d.product)).roi;
+    const h = calcHold(d.resell || getMarket(d.product) || d.buyNow, d.product);
     const gk = getGradeKey(r, h?.score??0);
     return {S:0,A:1,B:2,C:3,H:4,D:5,"?":6}[gk] ?? 6;
   }
@@ -1159,13 +1220,21 @@ function App() {
     if(typeF==="tins")  return t.includes("tin")||t.includes("blister")||t.includes("collection");
     return true;
   }).filter(d=>{
-    const r=calcFlip(d.buyNow,d.resell).roi;
-    const h=calcHold(d.resell,d.product);
+    const r=calcFlip(d.buyNow,d.resell||getMarket(d.product)).roi;
+    const h=calcHold(d.resell||getMarket(d.product)||d.buyNow,d.product);
     const gk=getGradeKey(r,h?.score??0);
     if(filter==="buy")  return r!==null&&r>=8;
     if(filter==="flip") return r!==null&&r>0&&r<8;
     if(filter==="hold") return gk==="H";
     if(filter==="avoid")return gk==="D"||(r!==null&&r<=-8);
+    return true;
+  }).filter(d=>{
+    if(langF==="all") return true;
+    const t=d.product.toLowerCase();
+    if(langF==="en")  return !t.includes("japanese")&&!t.includes("korean")&&!t.includes("chinese");
+    if(langF==="jp")  return t.includes("japanese")||t.includes("[jp]");
+    if(langF==="kr")  return t.includes("korean")||t.includes("[kr]");
+    if(langF==="cn")  return t.includes("chinese")||t.includes("[cn]");
     return true;
   });
 
@@ -1257,10 +1326,10 @@ function App() {
 
         {/* Stat strip + scan button */}
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"8px 16px 8px" }}>
-          <div style={{ display:"flex", gap:16 }}>
+          <div style={{ display:"flex", gap:14, alignItems:"center" }}>
             <div style={{ fontFamily:MONO, fontSize:10, color:"#00FF88", letterSpacing:"0.06em" }}>🔥 {excN} HOT</div>
             <div style={{ fontFamily:MONO, fontSize:10, color:"#FFD60A", letterSpacing:"0.06em" }}>💰 {buyN} FLIP</div>
-            <div style={{ fontFamily:MONO, fontSize:10, color:"#555", letterSpacing:"0.06em" }}>● {deals.length} TOTAL</div>
+            <div style={{ fontFamily:MONO, fontSize:10, color:"#444", letterSpacing:"0.04em" }}>· {deals.length}</div>
           </div>
           <button onClick={()=>liveScan()} disabled={scanProgress.active}
             style={{ background:scanProgress.active?"#1A1A28":"#CC0000", border:`1px solid ${scanProgress.active?"#333":"#CC0000"}`, borderRadius:5, padding:"6px 0", width:68, color:"#fff", fontFamily:MONO, fontSize:10, letterSpacing:"0.06em", cursor:scanProgress.active?"not-allowed":"pointer", boxShadow:scanProgress.active?"none":"0 2px 16px rgba(204,0,0,0.5)", opacity:scanProgress.active?0.6:1, flexShrink:0, textAlign:"center", transition:"all 0.15s" }}>
@@ -1326,56 +1395,59 @@ function App() {
 
         {/* ── DEALS ── */}
         {tab==="deals"&&<>
-          {/* Type filter — two clean rows, centred */}
-          <div style={{ marginBottom:8 }}>
-            <div style={{ display:"flex", gap:5, justifyContent:"center", marginBottom:5 }}>
-              {[{id:"all",l:"ALL"},{id:"boxes",l:"BOX"},{id:"half",l:"½ BOX"},{id:"etbs",l:"ETB"},{id:"packs",l:"PACK"}].map(f=>(
-                <button key={f.id} onClick={()=>setTypeF(f.id)} style={{
-                  background: typeF===f.id ? "#CC0000" : "#161620",
-                  border: `1px solid ${typeF===f.id ? "#CC0000" : "#333345"}`,
-                  borderRadius:4, padding:"5px 12px",
-                  fontFamily:MONO, fontSize:9,
-                  color: typeF===f.id ? "#FFFFFF" : "#BBBBBB",
-                  cursor:"pointer", letterSpacing:"0.05em",
-                  transition:"all 0.12s",
-                }}>{f.l}</button>
-              ))}
-            </div>
-            <div style={{ display:"flex", gap:5, justifyContent:"center" }}>
-              {[{id:"bundles",l:"BUNDLE"},{id:"tins",l:"TIN+"}].map(f=>(
-                <button key={f.id} onClick={()=>setTypeF(f.id)} style={{
-                  background: typeF===f.id ? "#CC0000" : "#161620",
-                  border: `1px solid ${typeF===f.id ? "#CC0000" : "#333345"}`,
-                  borderRadius:4, padding:"5px 12px",
-                  fontFamily:MONO, fontSize:9,
-                  color: typeF===f.id ? "#FFFFFF" : "#BBBBBB",
-                  cursor:"pointer", letterSpacing:"0.05em",
-                  transition:"all 0.12s",
-                }}>{f.l}</button>
-              ))}
-            </div>
+          {/* Type filter — single centred row */}
+          <div style={{ display:"flex", gap:5, marginBottom:8, justifyContent:"center", flexWrap:"nowrap" }}>
+            {[{id:"all",l:"ALL"},{id:"boxes",l:"BOX"},{id:"etbs",l:"ETB"},{id:"packs",l:"PACK"},{id:"bundles",l:"BUNDLE"},{id:"tins",l:"TIN"}].map(f=>(
+              <button key={f.id} onClick={()=>setTypeF(f.id)} style={{
+                background: typeF===f.id ? "#CC0000" : "#161620",
+                border: `1px solid ${typeF===f.id ? "#CC0000" : "#333345"}`,
+                borderRadius:4, padding:"5px 10px",
+                fontFamily:MONO, fontSize:9,
+                color: typeF===f.id ? "#FFFFFF" : "#BBBBBB",
+                cursor:"pointer", letterSpacing:"0.03em",
+                transition:"all 0.12s", flexShrink:0,
+              }}>{f.l}</button>
+            ))}
           </div>
-          {/* Deal filter — wrapping centred grid */}
-          <div style={{ display:"flex", flexWrap:"wrap", gap:6, marginBottom:14, justifyContent:"center" }}>
+          {/* Deal filter + language filter */}
+          <div style={{ display:"flex", flexWrap:"wrap", gap:5, marginBottom:8, justifyContent:"center" }}>
             {[
-              {id:"all",  l:"ALL",      ac:"#FFFFFF", bg:"#1E1E2A"},
-              {id:"buy",  l:"✅ BUY",   ac:"#00FF88", bg:"#002A18"},
-              {id:"flip", l:"💰 FLIP",  ac:"#FFD60A", bg:"#2A2200"},
-              {id:"hold", l:"📦 HOLD",  ac:"#B388FF", bg:"#1A1030"},
-              {id:"avoid",l:"📋 WEAK",  ac:"#667788", bg:"#111820"},
+              {id:"all",  l:"ALL",    ac:"#FFFFFF", bg:"#1E1E2A"},
+              {id:"buy",  l:"BUY",    ac:"#00FF88", bg:"#002A18"},
+              {id:"flip", l:"FLIP",   ac:"#FFD60A", bg:"#2A2200"},
+              {id:"hold", l:"HOLD",   ac:"#B388FF", bg:"#1A1030"},
+              {id:"avoid",l:"WEAK",   ac:"#667788", bg:"#111820"},
             ].map(f=>(
               <button key={f.id} onClick={()=>setFilter(f.id)} style={{
                 background: filter===f.id ? f.bg : "#161620",
                 border: `1px solid ${filter===f.id ? f.ac : "#333345"}`,
-                borderRadius:4, padding:"5px 12px",
+                borderRadius:4, padding:"5px 10px",
                 fontFamily:MONO, fontSize:9,
                 color: filter===f.id ? f.ac : "#BBBBBB",
                 cursor:"pointer", transition:"all 0.12s",
-                letterSpacing:"0.06em",
+                letterSpacing:"0.05em",
               }}>{f.l}</button>
             ))}
           </div>
-          <div style={{ fontFamily:MONO, fontSize:9, color:"#888", marginBottom:10, letterSpacing:"0.06em" }}>{filtered.length} RESULTS · BY ROI · TAP FOR FULL BREAKDOWN</div>
+          <div style={{ display:"flex", gap:5, marginBottom:10, justifyContent:"center" }}>
+            {[
+              {id:"all",    l:"🌐 ALL LANGS"},
+              {id:"en",     l:"🇬🇧 English"},
+              {id:"jp",     l:"🇯🇵 Japanese"},
+              {id:"kr",     l:"🇰🇷 Korean"},
+              {id:"cn",     l:"🇨🇳 Chinese"},
+            ].map(f=>(
+              <button key={f.id} onClick={()=>setLangF(f.id)} style={{
+                background: langF===f.id ? "#1A1A28" : "#111119",
+                border: `1px solid ${langF===f.id ? "#38B6FF" : "#222230"}`,
+                borderRadius:4, padding:"4px 8px",
+                fontFamily:MONO, fontSize:8,
+                color: langF===f.id ? "#38B6FF" : "#666",
+                cursor:"pointer", transition:"all 0.12s",
+              }}>{f.l}</button>
+            ))}
+          </div>
+          <div style={{ fontFamily:MONO, fontSize:9, color:"#888", marginBottom:10, letterSpacing:"0.06em", textAlign:"center" }}>{filtered.length} RESULTS · SORTED BY DEAL SCORE · TAP TO EXPAND</div>
           {loading
             ?<div style={{ textAlign:"center",padding:"48px 0",fontFamily:MONO,color:"#B0B0B0",fontSize:11,letterSpacing:"0.1em" }}>SCANNING RETAILERS...</div>
             :filtered.length===0
@@ -1401,13 +1473,15 @@ function App() {
         {/* ── EBAY TAB ── */}
         {tab==="ebay"&&(
           <div style={{animation:"fadeup 0.3s ease"}}>
-            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:10 }}>
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:10 }}>
               <div>
                 <div style={{ fontFamily:DISP, fontSize:16, fontWeight:600, color:"#FFFFFF" }}>eBay</div>
-                <div style={{ fontFamily:MONO, fontSize:9, color:"#666", marginTop:2 }}>eBay listings below market value · flip profit after postage</div>
+                <div style={{ fontFamily:MONO, fontSize:9, color:"#666", marginTop:2 }}>UK listings priced below market · flip profit after postage</div>
+                {ebayListings.length>0&&<div style={{ fontFamily:MONO, fontSize:8, color:"#555", marginTop:2 }}>{ebayListings.length} deals · auto-refreshes every 15 min</div>}
               </div>
-              <button onClick={()=>{setEbayLoaded(false);loadEbay();}} style={{ background:"#1A1A28", border:"1px solid #333", borderRadius:5, padding:"6px 12px", color:"#AAAAAA", fontFamily:MONO, fontSize:9, cursor:"pointer" }}>
-                {ebayLoading?"scanning...":"⟳ refresh"}
+              <button onClick={()=>{setEbayLoaded(false);loadEbay();}} 
+                style={{ background:ebayLoading?"#0A0A14":"#1A1A28", border:`1px solid ${ebayLoading?"#CC0000":"#333"}`, borderRadius:5, padding:"6px 12px", color:ebayLoading?"#CC0000":"#AAAAAA", fontFamily:MONO, fontSize:9, cursor:"pointer", flexShrink:0 }}>
+                {ebayLoading?"⟳ scanning...":"⟳ refresh"}
               </button>
             </div>
 
@@ -1692,8 +1766,8 @@ function App() {
                 else if(row.k==="A")n=sorted.filter(d=>{const r=calcFlip(d.buyNow,d.resell).roi??-999;return r>=15&&r<25;}).length;
                 else if(row.k==="B")n=sorted.filter(d=>{const r=calcFlip(d.buyNow,d.resell).roi??-999;return r>=8&&r<15;}).length;
                 else if(row.k==="C")n=sorted.filter(d=>{const r=calcFlip(d.buyNow,d.resell).roi??-999;return r>=2&&r<8;}).length;
-                else if(row.k==="H")n=sorted.filter(d=>{const r=calcFlip(d.buyNow,d.resell).roi??0;const h=calcHold(d.resell,d.product);return r<2&&h&&h.score>=6;}).length;
-                else n=sorted.filter(d=>{const r=calcFlip(d.buyNow,d.resell).roi??1;const h=calcHold(d.resell,d.product);return r<2&&(!h||h.score<6)&&calcFlip(d.buyNow,d.resell).roi!==null;}).length;
+                else if(row.k==="H")n=sorted.filter(d=>{const r=calcFlip(d.buyNow,d.resell).roi??0;const h=calcHold(d.resell||d.buyNow,d.product);return r<2&&h&&h.score>=6;}).length;
+                else n=sorted.filter(d=>{const r=calcFlip(d.buyNow,d.resell).roi??1;const h=calcHold(d.resell||d.buyNow,d.product);return r<2&&(!h||h.score<6)&&calcFlip(d.buyNow,d.resell).roi!==null;}).length;
                 return (
                   <div key={row.k} style={{ display:"flex", alignItems:"center", gap:12, marginBottom:12 }}>
                     <div style={{ width:36,height:36,borderRadius:6,background:gd.bg,border:`2px solid ${gd.c}`,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:DISP,fontSize:12,fontWeight:500,color:gd.c,flexShrink:0 }}>{row.k}</div>
@@ -1732,8 +1806,8 @@ function App() {
             {/* Best holds */}
             <div style={{ background:"#0A0A10", border:"1px solid rgba(255,255,255,0.07)", borderRadius:8, padding:"16px" }}>
               <div style={{ fontFamily:DISP, fontSize:12, fontWeight:500, color:"#FFFFFF", marginBottom:14, letterSpacing:"0.06em" }}>BEST HOLD PLAYS</div>
-              {sorted.filter(d=>{const h=calcHold(d.resell,d.product);return h&&h.score>=7;}).slice(0,5).map((d,i)=>{
-                const h=calcHold(d.resell,d.product);
+              {sorted.filter(d=>{const h=calcHold(d.resell||d.buyNow,d.product);return h&&h.score>=7;}).slice(0,5).map((d,i)=>{
+                const h=calcHold(d.resell||d.buyNow,d.product);
                 return (
                   <div key={d.id||i} style={{ display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 0",borderBottom:"1px solid rgba(255,255,255,0.06)" }}>
                     <div style={{ flex:1,minWidth:0,marginRight:12 }}>
