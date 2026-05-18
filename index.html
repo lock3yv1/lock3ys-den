@@ -43,8 +43,8 @@ const HOLD = {
   "cosmic eclipse":       { score:7,  trend:"stable",   yr1:1.02, yr2:1.05, yr3:1.10, yr4:1.17, note:"Last Sun & Moon set. Nostalgia premium building slowly." },
   "151":                  { score:8,  trend:"rising",   yr1:1.04, yr2:1.10, yr3:1.22, yr4:1.35, note:"Original 151. Evergreen nostalgia. Bundles consistently rising." },
   "phantasmal flames":    { score:7,  trend:"rising",   yr1:1.05, yr2:1.12, yr3:1.28, yr4:1.44, note:"ME05. Mega Gengar ex SIR. Early buyer window still open." },
-  "chaos rising":         { score:7,  trend:"rising",   yr1:1.04, yr2:1.10, yr3:1.22, yr4:1.36, note:"ME04. Brand new May 2026. Get in before market catches up." },
-  "perfect order":        { score:7,  trend:"rising",   yr1:1.03, yr2:1.08, yr3:1.18, yr4:1.30, note:"ME03. Mega Zygarde ex SIR at £230+. Steady appreciation." },
+  "chaos rising":         { score:7,  trend:"rising",   yr1:1.04, yr2:1.10, yr3:1.22, yr4:1.36, note:"ME04 (May 22, 2026). Mega Greninja ex set. SIR pre-selling £315-630+. Very early — sealed appreciation likely." },
+  "perfect order":        { score:7,  trend:"rising",   yr1:1.03, yr2:1.08, yr3:1.18, yr4:1.30, note:"ME03 (Mar 2026). Mega Zygarde ex, Starmie, Clefable, Skarmory. Top pulls: Meowth ex SIR (£125-175) and Mega Zygarde ex SIR (£90-145). Lumiose City theme." },
   "ascended heroes":      { score:6,  trend:"rising",   yr1:1.03, yr2:1.07, yr3:1.15, yr4:1.25, note:"ME01. Mega Era 2026 flagship. Foundation set." },
   "destined rivals":      { score:5,  trend:"stable",   yr1:1.01, yr2:1.04, yr3:1.08, yr4:1.13, note:"ME02. Still settling post-launch. Hold medium term." },
   "surging sparks":       { score:6,  trend:"rising",   yr1:1.03, yr2:1.08, yr3:1.18, yr4:1.30, note:"Pikachu ex SIR. Box price rose 150%+ over 18 months — consistent demand." },
@@ -326,55 +326,309 @@ function ago(iso) {
 }
 
 
-// ─── CHASE CARDS (verified May 2026, full card names, no jargon) ────────────
+// ─── CHASE CARDS (verified from Cardrake/TCGWatchtower/Beckett, May 2026) ─────
+// USD→GBP at ~0.79 rate. All prices from actual sold data, not speculation.
 const HIT_CARDS = {
-  // Mega Evolution (2025-2026)
-  "ascended heroes":      ["Charizard ex Special Art £55-85","Mewtwo ex Special Art £40-65","Pikachu ex Special Art £30-50"],
-  "phantasmal flames":    ["Charizard ex Special Art £50-80","Gengar ex Special Art £30-50","Rayquaza ex Special Art £40-65"],
-  "perfect order":        ["Mewtwo ex Special Art £30-60","Aerodactyl ex Special Art £20-40","Mew ex Special Art £25-45"],
-  "chaos rising":         ["Charizard ex Special Art £28-50","Blastoise ex Special Art £18-35"],
-  "destined rivals":      ["Mewtwo ex Special Art £75-125","Mew ex Special Art £50-85","Lugia ex Special Art £40-65"],
-  "glory of team rocket": ["Dark Charizard ex Special Art £40-65","Dark Mewtwo ex Special Art £28-50"],
-  // Scarlet & Violet (2023-2026)
-  "journey together":     ["Pikachu ex Special Art £55-95","Eevee ex Special Art £32-60","Miraidon ex Special Art £22-40"],
-  "surging sparks":       ["Pikachu ex Special Art £150-210","Raichu ex Special Art £30-55","Pikachu ex Alt Art £75-110"],
-  "stellar crown":        ["Arceus ex Special Art £28-50","Lugia ex Special Art £22-40"],
-  "shrouded fable":       ["Pecharunt ex Special Art £28-50","Munkidori ex Special Art £18-35"],
-  "twilight masquerade":  ["Ogerpon ex Special Art £28-50","Bloodmoon Ursaluna ex £22-40"],
-  "temporal forces":      ["Walking Wake ex Alt Art £18-32","Iron Leaves ex Alt Art £14-28"],
-  "paradox rift":         ["Roaring Moon ex Alt Art £28-50","Iron Valiant ex Alt Art £22-42"],
-  "obsidian flames":      ["Charizard ex Special Art £32-55","Tera Charizard ex Alt Art £28-50"],
-  "paldea evolved":       ["Iono Special Art £22-40","Miraidon ex Alt Art £18-35"],
-  "paldean fates":        ["Charizard ex Shiny £18-32","Meowscarada ex Shiny £9-18"],
-  "prismatic evolutions": ["Umbreon ex Special Art £75-125","Leafeon ex Special Art £55-95","Sylveon ex Special Art £45-75"],
-  "151":                  ["Mew ex Special Art £32-55","Charizard ex Special Art £38-60","Alakazam ex Special Art £22-42"],
-  // Sword & Shield (2020-2023)
-  "evolving skies":       ["Rayquaza VMAX Alt Art £170-240","Umbreon VMAX Alt Art £185-265","Glaceon VMAX Alt Art £75-115"],
-  "chilling reign":       ["Shadow Rider Calyrex Alt Art £55-85","Ice Rider Calyrex Alt Art £45-75"],
-  "battle styles":        ["Rapid Strike Urshifu Alt Art £38-65","Single Strike Urshifu Alt Art £32-58"],
-  "brilliant stars":      ["Arceus VSTAR Alt Art £18-32","Charizard VSTAR £14-24"],
-  "astral radiance":      ["Origin Palkia VSTAR Alt Art £14-25","Hisuian Lilligant VSTAR £9-18"],
-  "lost origin":          ["Giratina V Alt Art £45-75","Giratina VSTAR £28-48"],
-  "silver tempest":       ["Lugia V Alt Art £28-50","Regidrago VSTAR £18-32"],
-  "crown zenith":         ["Charizard Alt Art £55-90","Regigigas Alt Art £38-55"],
-  "shining fates":        ["Charizard VMAX Shiny £28-55","Pikachu VMAX Shiny £18-38"],
-  "fusion strike":        ["Gengar VMAX Alt Art £22-45","Mew VMAX Alt Art £28-50"],
-  "vivid voltage":        ["Amazing Rare Pikachu £22-42","Zacian V £11-20"],
-  "darkness ablaze":      ["Charizard VMAX £22-42","Centiskorch VMAX Alt Art £18-32"],
-  "rebel clash":          ["Dragapult VMAX Alt Art £18-32","Toxtricity VMAX Alt Art £14-26"],
-  // Sun & Moon
-  "hidden fates":         ["Charizard GX Shiny £55-95","Mewtwo GX Shiny £38-58","Gyarados GX Shiny £28-48"],
-  "cosmic eclipse":       ["Arceus & Dialga & Palkia GX £18-32","Pikachu & Zekrom GX £14-24"],
-  "champions path":       ["Charizard V £75-130","Charizard VMAX Rainbow £55-85","Hatterene V Alt Art £14-26"],
-  "unbroken bonds":       ["Reshiram & Charizard GX £28-50","Gardevoir & Sylveon GX £14-26"],
-  "team up":              ["Pikachu & Zekrom GX £14-26","Eevee & Snorlax GX £11-20"],
-  // Japanese/Korean
-  "white flare":          ["Zekrom ex Special Art £38-65","Reshiram ex Special Art £32-55"],
-  "black bolt":           ["Reshiram ex Special Art £38-65","Zekrom ex Special Art £32-55"],
-  "battle partners":      ["Pikachu ex Special Art £32-60","Charizard ex Special Art £38-70"],
-  "terastal festival":    ["Charizard ex Special Art £38-70","Eevee ex Special Art £28-50"],
-  "nihil zero":           ["Mewtwo ex Special Art £28-50","Gardevoir ex Special Art £18-38"],
-  "heatwave arena":       ["Charizard ex Special Art £22-42","Koraidon ex Special Art £18-35"],
+
+  // ════ MEGA EVOLUTION BLOCK ════════════════════════════════════════════════
+
+  // ME04 Chaos Rising — Released May 22, 2026
+  // Ninja theme. Mega Greninja ex is the mascot. ~122 cards.
+  "chaos rising": [
+    "Mega Greninja ex Special Illustration Rare ~£315-630",
+    "Mega Greninja ex Hyper Rare (Gold) ~£235-475",
+    "Roxie's Performance Special Illustration Rare ~£16-26",
+    "Mega Dragalge ex Special Illustration Rare ~£16-24",
+    "Mega Floette ex Special Illustration Rare ~£15-22",
+  ],
+
+  // ME03 Perfect Order — Released March 27, 2026
+  // Lumiose City / Legends Z-A theme. Mega Zygarde ex mascot.
+  // 6 SIRs: Mega Zygarde, Mega Starmie, Mega Clefable, Meowth ex, Jacinthe, Rosa
+  "perfect order": [
+    "Meowth ex Special Illustration Rare ~£125-175  ← top chase",
+    "Mega Zygarde ex Hyper Rare (Gold) ~£160-200",
+    "Mega Zygarde ex Special Illustration Rare ~£90-145",
+    "Rosa's Encouragement Special Illustration Rare ~£90-120",
+    "Mega Starmie ex Special Illustration Rare ~£65-85",
+    "Mega Clefable ex Special Illustration Rare ~£45-65",
+  ],
+
+  // ME02 Phantasmal Flames — 2025
+  // Charizard-focused. No booster boxes at MSRP now — buy sealed while available.
+  "phantasmal flames": [
+    "Mega Charizard X Special Illustration Rare ~£590-650  ← chase card of the era",
+    "Mega Charizard X Hyper Rare (Gold) ~£250-285",
+    "Mega Sharpedo ex Special Illustration Rare ~£16-28",
+    "Dawn Special Illustration Rare ~£16-28",
+    "Mega Lopunny ex Special Illustration Rare ~£16-28",
+  ],
+
+  // ME01 / Ascended Heroes — Released Jan-Apr 2026
+  // Special expansion — NO booster boxes. Products: ETB, Booster Bundle (6 packs),
+  // Mini Tins (2 packs), 2-Pack Blisters, Mega ex Boxes (4 packs).
+  // Most expensive English set of 2026.
+  "ascended heroes": [
+    "Mega Gengar ex Special Illustration Rare ~£700-920  ← most expensive 2026",
+    "Pikachu ex Special Illustration Rare ~£470-600",
+    "Mega Dragonite ex Special Illustration Rare ~£430-550",
+    "Mega Charizard Y ex Hyper Rare (Gold) ~£280-360",
+    "Team Rocket's Mewtwo ex Special Illustration Rare ~£205-270",
+    "N's Zoroark Special Illustration Rare ~£90-120",
+  ],
+
+  // ════ SCARLET & VIOLET BLOCK ══════════════════════════════════════════════
+
+  // SV10 Destined Rivals — Released May 30, 2025
+  // Team Rocket returns. 182-card set. No booster boxes (special expansion).
+  "destined rivals": [
+    "Team Rocket's Mewtwo ex Special Illustration Rare ~£380-425  ← top chase",
+    "Cynthia's Garchomp ex Special Illustration Rare ~£150-220",
+    "Ethan's Ho-Oh ex Special Illustration Rare ~£113-178",
+    "Giovanni's Nidoking ex Special Illustration Rare ~£45-75",
+    "Misty's Lapras Special Illustration Rare ~£35-60",
+  ],
+
+  // SV8.5 Prismatic Evolutions — Released Jan 2025
+  // Eevee special set. No booster boxes.
+  "prismatic evolutions": [
+    "Umbreon ex Special Illustration Rare ~£75-125",
+    "Leafeon ex Special Illustration Rare ~£55-95",
+    "Sylveon ex Special Illustration Rare ~£45-75",
+    "Espeon ex Special Illustration Rare ~£40-65",
+    "Vaporeon ex Special Illustration Rare ~£35-55",
+  ],
+
+  // SV8 Surging Sparks — Released Nov 2024
+  "surging sparks": [
+    "Pikachu ex Special Illustration Rare ~£150-210  ← top chase",
+    "Pikachu ex Illustration Rare ~£70-105",
+    "Raichu ex Special Illustration Rare ~£30-55",
+    "Miraidon ex Special Illustration Rare ~£25-40",
+  ],
+
+  // SV9.5 Journey Together — Released Feb 2025
+  "journey together": [
+    "Pikachu ex Special Illustration Rare ~£55-95",
+    "Eevee ex Special Illustration Rare ~£32-60",
+    "Miraidon ex Special Illustration Rare ~£20-38",
+  ],
+
+  // SV7 Stellar Crown — Released Sep 2024
+  "stellar crown": [
+    "Terapagos ex Special Illustration Rare ~£25-45",
+    "Arceus ex Special Illustration Rare ~£18-35",
+  ],
+
+  // SV6.5 Shrouded Fable — Released Aug 2024
+  "shrouded fable": [
+    "Pecharunt ex Special Illustration Rare ~£28-50",
+    "Munkidori ex Special Illustration Rare ~£18-35",
+  ],
+
+  // SV6 Twilight Masquerade — Released May 2024
+  "twilight masquerade": [
+    "Ogerpon ex Special Illustration Rare ~£28-50",
+    "Bloodmoon Ursaluna ex Special Illustration Rare ~£22-40",
+    "Kieran Special Illustration Rare ~£18-35",
+  ],
+
+  // SV5 Temporal Forces — Released March 2024
+  "temporal forces": [
+    "Walking Wake ex Special Illustration Rare ~£18-32",
+    "Iron Leaves ex Special Illustration Rare ~£14-28",
+  ],
+
+  // SV4 Paradox Rift — Released Nov 2023
+  "paradox rift": [
+    "Roaring Moon ex Special Illustration Rare ~£28-50",
+    "Iron Valiant ex Special Illustration Rare ~£22-42",
+    "Garchomp ex Special Illustration Rare ~£18-35",
+  ],
+
+  // SV3 Obsidian Flames — Released Aug 2023
+  "obsidian flames": [
+    "Tera Charizard ex Special Illustration Rare ~£35-60",
+    "Charizard ex Illustration Rare ~£22-40",
+    "Tyranitar ex Special Illustration Rare ~£15-28",
+  ],
+
+  // SV2 Paldea Evolved — Released June 2023
+  "paldea evolved": [
+    "Iono Special Illustration Rare ~£25-45",
+    "Miraidon ex Special Illustration Rare ~£18-35",
+    "Koraidon ex Special Illustration Rare ~£18-35",
+  ],
+
+  // SV3.5 151 — Released Sep 2023
+  "151": [
+    "Mew ex Special Illustration Rare ~£32-55",
+    "Charizard ex Special Illustration Rare ~£38-60",
+    "Alakazam ex Special Illustration Rare ~£22-42",
+  ],
+
+  // SV3.5 Paldean Fates — Released Jan 2024 (Shiny set)
+  "paldean fates": [
+    "Charizard ex Shiny Rare ~£18-32",
+    "Meowscarada ex Shiny Rare ~£10-20",
+    "Skeledirge ex Shiny Rare ~£8-16",
+  ],
+
+  // ════ SWORD & SHIELD BLOCK ════════════════════════════════════════════════
+
+  // SWSH7 Evolving Skies — Released Aug 2021 (Dragon / Eeveelution)
+  "evolving skies": [
+    "Umbreon VMAX Alt Art ~£185-265  ← most valuable",
+    "Rayquaza VMAX Alt Art ~£170-240",
+    "Glaceon VMAX Alt Art ~£75-115",
+    "Sylveon VMAX Alt Art ~£55-85",
+  ],
+
+  // SWSH12.5 Crown Zenith — Released Jan 2023
+  "crown zenith": [
+    "Charizard Alt Art ~£55-90",
+    "Regigigas Alt Art ~£38-55",
+    "Regidrago VSTAR Alt Art ~£28-50",
+  ],
+
+  // SWSH4.5 Shining Fates — Released Feb 2021 (Shiny set)
+  "shining fates": [
+    "Charizard VMAX Shiny ~£28-55",
+    "Pikachu VMAX Shiny ~£18-38",
+    "Dragapult VMAX Shiny ~£15-28",
+  ],
+
+  // SWSH9 Brilliant Stars — Released Feb 2022
+  "brilliant stars": [
+    "Arceus VSTAR Alt Art ~£18-32",
+    "Charizard VSTAR ~£14-24",
+    "Mimikyu VSTAR ~£12-22",
+  ],
+
+  // SWSH11 Lost Origin — Released Sep 2022
+  "lost origin": [
+    "Giratina V Alt Art ~£45-75",
+    "Giratina VSTAR Alt Art ~£30-50",
+  ],
+
+  // SWSH12 Silver Tempest — Released Nov 2022
+  "silver tempest": [
+    "Lugia V Alt Art ~£28-50",
+    "Regidrago VSTAR Alt Art ~£18-32",
+  ],
+
+  // SWSH10 Astral Radiance — Released May 2022
+  "astral radiance": [
+    "Origin Palkia VSTAR Alt Art ~£14-25",
+    "Hisuian Lilligant VSTAR Alt Art ~£10-20",
+  ],
+
+  // SWSH6 Chilling Reign — Released Jun 2021
+  "chilling reign": [
+    "Shadow Rider Calyrex Alt Art ~£55-85",
+    "Ice Rider Calyrex Alt Art ~£45-75",
+    "Blaziken VMAX Alt Art ~£30-55",
+  ],
+
+  // SWSH5 Battle Styles — Released Mar 2021
+  "battle styles": [
+    "Rapid Strike Urshifu Alt Art ~£38-65",
+    "Single Strike Urshifu Alt Art ~£32-58",
+    "Empoleon V Alt Art ~£18-35",
+  ],
+
+  // SWSH8 Fusion Strike — Released Nov 2021
+  "fusion strike": [
+    "Gengar VMAX Alt Art ~£22-45",
+    "Mew VMAX Alt Art ~£28-50",
+    "Espeon VMAX Alt Art ~£18-35",
+  ],
+
+  // SWSH3 Darkness Ablaze — Released Aug 2020
+  "darkness ablaze": [
+    "Charizard VMAX ~£22-42",
+    "Centiskorch VMAX Alt Art ~£18-32",
+  ],
+
+  // SWSH4 Vivid Voltage — Released Nov 2020
+  "vivid voltage": [
+    "Amazing Rare Pikachu ~£22-42",
+    "Zacian V Alt Art ~£10-20",
+  ],
+
+  // SWSH2 Rebel Clash — Released May 2020
+  "rebel clash": [
+    "Dragapult VMAX Alt Art ~£18-32",
+    "Toxtricity VMAX Alt Art ~£14-26",
+  ],
+
+  // SWSH1 Sword & Shield Base — Released Feb 2020
+  "sword & shield": [
+    "Zacian V Alt Art ~£18-32",
+    "Zamazenta V Alt Art ~£14-26",
+  ],
+
+  // ════ SUN & MOON BLOCK ════════════════════════════════════════════════════
+
+  // SM Hidden Fates — Released Aug 2019 (Shiny set)
+  "hidden fates": [
+    "Charizard GX Shiny ~£55-95",
+    "Mewtwo GX Shiny ~£38-58",
+    "Gyarados GX Shiny ~£28-48",
+  ],
+
+  // SM Champions Path — Released Oct 2020
+  "champions path": [
+    "Charizard V ~£75-130  ← top chase",
+    "Charizard VMAX Rainbow Rare ~£55-85",
+  ],
+
+  // SM Cosmic Eclipse — Released Nov 2019
+  "cosmic eclipse": [
+    "Arceus & Dialga & Palkia GX Tag Team ~£18-32",
+    "Pikachu & Zekrom GX Tag Team ~£14-24",
+  ],
+
+  // SM Unbroken Bonds — Released May 2019
+  "unbroken bonds": [
+    "Reshiram & Charizard GX Tag Team ~£28-50",
+    "Gardevoir & Sylveon GX Tag Team ~£14-26",
+  ],
+
+  // ════ JAPANESE / KOREAN ═══════════════════════════════════════════════════
+  // Note: JP/KR sets use 5-card packs. SIR equivalents called "SAR" in JP.
+
+  // SV10 Glory of Team Rocket — JP 2026
+  "glory of team rocket": [
+    "Dark Charizard ex Special Art Rare ~£40-70",
+    "Dark Blastoise ex Special Art Rare ~£25-45",
+    "Giovanni Special Art Rare ~£30-55",
+  ],
+
+  // SV11W White Flare — JP 2026
+  "white flare": [
+    "Zekrom ex Special Art Rare ~£38-65",
+    "Reshiram ex Special Art Rare ~£32-55",
+  ],
+
+  // SV11B Black Bolt — JP 2026
+  "black bolt": [
+    "Reshiram ex Special Art Rare ~£38-65",
+    "Zekrom ex Special Art Rare ~£32-55",
+  ],
+
+  // SV9 Battle Partners — JP 2025
+  "battle partners": [
+    "Pikachu ex Special Art Rare ~£32-60",
+    "Charizard ex Special Art Rare ~£38-70",
+  ],
+
+  // SV8A Terastal Festival — JP 2024
+  "terastal festival": [
+    "Charizard ex Special Art Rare ~£38-70",
+    "Eevee ex Special Art Rare ~£28-50",
+    "Pikachu ex Special Art Rare ~£35-60",
+  ],
 };
 
 // ─── CARD ─────────────────────────────────────────────────────────────────────
@@ -384,15 +638,17 @@ function Card({ d, rank }) {
   // The scraper sometimes returns wrong eBay prices (wrong product matched).
   // If d.resell is >40% above our known market price, discard it and use getMarket.
   function sanityResell(scraped, title) {
-    if (!scraped) return getMarket(title);
     const known = getMarket(title);
+    if (!scraped) return known;
     const tl = title.toLowerCase();
-    // Hard type-based caps: single pack blisters cannot sell for >£15 on eBay
-    if ((tl.includes("1-pack") || tl.includes("single pack") || (tl.includes("blister") && !tl.includes("2 pack") && !tl.includes("3 pack"))) && scraped > 15) return known || scraped;
-    // If scraped is more than 40% above our verified market price, discard it
+    // Single-pack blisters: cap at £15, return null if no known price
+    const isBlister = tl.includes("1-pack") || tl.includes("single pack") ||
+      (tl.includes("blister") && !tl.includes("2 pack") && !tl.includes("3 pack") && !tl.includes("2-pack") && !tl.includes("3-pack"));
+    if (isBlister && scraped > 15) return known; // known may be null = no data shown
+    // If >40% above verified price: scraper found wrong item, use known
     if (known && scraped > known * 1.4) return known;
-    // If scraped is less than 50% of known market (suspiciously low), discard it too
-    if (known && scraped < known * 0.5) return known;
+    // If <75% of verified price: scraper likely matched wrong item, use known
+    if (known && scraped < known * 0.75) return known;
     return scraped;
   }
   const resell = sanityResell(d.resell, d.product) || getMarket(d.product);
