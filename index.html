@@ -969,12 +969,14 @@ function App() {
       const r = await fetch(`${DEALS_URL}?t=${Date.now()}`);
       if (r.ok) {
         const data = await r.json();
-        if (Array.isArray(data) && data.length > 0) {
-          setDeals(data);
+        // Support both flat array (old) and holdData envelope (new scraper)
+        const arr = Array.isArray(data) ? data : (data.deals || []);
+        if (arr.length > 0) {
+          setDeals(arr);
           setLive(true);
           setUpdated(new Date());
           setLoading(false);
-          checkAlerts(data);
+          checkAlerts(arr);
         }
       }
     } catch (e) {
@@ -996,7 +998,8 @@ function App() {
       const r = await fetch(`${DEALS_URL}?t=${Date.now()}`);
       if (r.ok) {
         const d = await r.json();
-        if (d.length > 0) previousTimestamp = d[0].lastSeen || "";
+        const darr = Array.isArray(d) ? d : (d.deals || []);
+        if (darr.length > 0) previousTimestamp = darr[0].lastSeen || "";
       }
     } catch {}
 
@@ -1032,16 +1035,17 @@ function App() {
         const r = await fetch(`${DEALS_URL}?t=${Date.now()}`);
         if (r.ok) {
           const data = await r.json();
-          if (Array.isArray(data) && data.length > 0) {
-            const newTimestamp = data[0].lastSeen || "";
+          const arr = Array.isArray(data) ? data : (data.deals || []);
+          if (arr.length > 0) {
+            const newTimestamp = arr[0].lastSeen || "";
             if (newTimestamp !== previousTimestamp) {
               // Fresh data arrived!
-              setDeals(data);
+              setDeals(arr);
               setLive(true);
               setUpdated(new Date());
               setLoading(false);
-              checkAlerts(data);
-              setScanProgress({ active:false, retailer:"", found:data.length, total:0 });
+              checkAlerts(arr);
+              setScanProgress({ active:false, retailer:"", found:arr.length, total:0 });
               setPulse(false);
               gotFresh = true;
               break;
@@ -1199,11 +1203,11 @@ function App() {
     {showOnboard&&(
       <div style={{ position:"fixed",inset:0,background:"rgba(0,0,0,0.88)",zIndex:9999,display:"flex",alignItems:"flex-end" }}
         onClick={()=>{setShowOnboard(false);try{localStorage.setItem("sd_onboarded","1")}catch{}}}>
-        <div style={{ background:"#0F0F1A",borderTop:"1px solid rgba(255,255,255,0.1)",borderRadius:"16px 16px 0 0",padding:"24px 20px 40px",width:"100%" }}
+        <div style={{ background:"#12121F",borderTop:"2px solid rgba(204,0,0,0.5)",borderRadius:"16px 16px 0 0",padding:"24px 20px 40px",width:"100%" }}
           onClick={e=>e.stopPropagation()}>
-          <div style={{ width:36,height:3,background:"rgba(255,255,255,0.15)",borderRadius:2,margin:"0 auto 20px" }}/>
-          <div style={{ fontFamily:DISP,fontSize:20,fontWeight:600,color:"#FFFFFF",marginBottom:6 }}>Welcome to Shiny Den 👋</div>
-          <div style={{ fontFamily:MONO,fontSize:9,color:"#888",marginBottom:20,lineHeight:1.7 }}>Real-time Pokémon market intelligence. Here's what everything means:</div>
+          <div style={{ width:48,height:4,background:"rgba(255,255,255,0.25)",borderRadius:2,margin:"0 auto 20px" }}/>
+          <div style={{ fontFamily:DISP,fontSize:22,fontWeight:700,color:"#FFFFFF",marginBottom:8 }}>Welcome to Shiny Den 👋</div>
+          <div style={{ fontFamily:MONO,fontSize:11,color:"#CCCCCC",marginBottom:20,lineHeight:1.7 }}>Real-time Pokémon market intelligence. Here's what everything means:</div>
           {[
             ["💰 FLIP","Buy from a retailer, sell on eBay for profit. We calculate net after £4 postage only — private seller, 0% fees."],
             ["📦 HOLD","Buy and store sealed. Strong sets appreciate over time — we track the trajectory."],
@@ -1212,8 +1216,8 @@ function App() {
             ["🎯 SNIPES","Set price alerts — get flagged when a deal drops below your target."],
           ].map(([title,desc])=>(
             <div key={title} style={{ display:"flex",gap:12,marginBottom:14,alignItems:"flex-start" }}>
-              <div style={{ fontFamily:MONO,fontSize:10,color:"#00FF88",flexShrink:0,paddingTop:1,minWidth:60 }}>{title}</div>
-              <div style={{ fontFamily:MONO,fontSize:9,color:"#999",lineHeight:1.6 }}>{desc}</div>
+              <div style={{ fontFamily:MONO,fontSize:11,fontWeight:700,color:"#00FF88",flexShrink:0,paddingTop:1,minWidth:72 }}>{title}</div>
+              <div style={{ fontFamily:MONO,fontSize:10,color:"#CCCCCC",lineHeight:1.6 }}>{desc}</div>
             </div>
           ))}
           <button onClick={()=>{setShowOnboard(false);try{localStorage.setItem("sd_onboarded","1")}catch{}}}
@@ -1241,7 +1245,7 @@ function App() {
 
         {/* Status bar below banner */}
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"5px 16px", borderBottom:"1px solid rgba(255,255,255,0.04)", fontSize:9, fontFamily:MONO }}>
-          <span style={{ color:"#666", letterSpacing:"0.1em" }}>Find undervalued Pokémon products before the market catches up</span>
+          <span style={{ color:"#666", letterSpacing:"0.1em" }}>Live Pokémon deals · updated in real time</span>
           <div style={{ display:"flex", alignItems:"center", gap:10 }}>
             <div style={{ display:"flex", alignItems:"center", gap:7 }}>
               <div style={{ width:6, height:6, borderRadius:"50%", background:live?"#00FF88":"#FF8C00", boxShadow:live?"0 0 10px #00FF88":"0 0 10px #FF8C00", animation:"blink 2s infinite" }}/>
@@ -1295,18 +1299,24 @@ function App() {
 
       <div style={{ padding:"14px 16px" }}>
 
-        {/* TRENDING — editorial feel, always visible on deals tab */}
+        {/* HOT SETS — wrapping grid, no horizontal scroll */}
         {tab==="deals"&&(
-          <div style={{ marginBottom:14, overflowX:"auto", display:"flex", gap:6, paddingBottom:2, WebkitOverflowScrolling:"touch", scrollbarWidth:"none" }}>
+          <div style={{ marginBottom:14, display:"flex", flexWrap:"wrap", gap:6, paddingBottom:2 }}>
             {[
               { l:"🔥 Evolving Skies",     c:"#39D98A" },
               { l:"📈 Prismatic Evo",       c:"#39D98A" },
               { l:"⚡ Surging Sparks",      c:"#FFD60A" },
               { l:"👁 Hidden Fates",         c:"#B388FF" },
-              { l:"🆕 Chaos Rising",        c:"#38B6FF" },
               { l:"💎 Champions Path",      c:"#FF8C00" },
+              { l:"🆕 Destined Rivals",     c:"#38B6FF" },
+              { l:"🌟 Ascended Heroes",     c:"#C44DFF" },
+              { l:"🏆 Brilliant Stars",     c:"#FFD60A" },
+              { l:"👾 Chilling Reign",      c:"#39D98A" },
+              { l:"💫 151",                  c:"#FF8C00" },
+              { l:"🔮 Shining Fates",       c:"#B388FF" },
+              { l:"🌀 Paldean Fates",       c:"#38B6FF" },
             ].map((t,i)=>(
-              <div key={i} style={{ flexShrink:0, fontFamily:MONO, fontSize:9, color:t.c, background:`${t.c}12`, border:`1px solid ${t.c}30`, borderRadius:20, padding:"4px 10px", whiteSpace:"nowrap", letterSpacing:"0.04em" }}>
+              <div key={i} style={{ fontFamily:MONO, fontSize:9, color:t.c, background:`${t.c}12`, border:`1px solid ${t.c}30`, borderRadius:20, padding:"4px 10px", whiteSpace:"nowrap", letterSpacing:"0.04em" }}>
                 {t.l}
               </div>
             ))}
@@ -1401,10 +1411,10 @@ function App() {
         {/* ── EBAY TAB ── */}
         {tab==="ebay"&&(
           <div style={{animation:"fadeup 0.3s ease"}}>
-            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:14 }}>
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:10 }}>
               <div>
-                <div style={{ fontFamily:DISP, fontSize:14, fontWeight:600, color:"#FFFFFF" }}>eBay UK Deal Intelligence</div>
-                <div style={{ fontFamily:MONO, fontSize:9, color:"#666", marginTop:2 }}>Live listings scored by deal quality · rule-based only</div>
+                <div style={{ fontFamily:DISP, fontSize:16, fontWeight:600, color:"#FFFFFF" }}>eBay Radar</div>
+                <div style={{ fontFamily:MONO, fontSize:9, color:"#666", marginTop:2 }}>eBay listings below market value · flip profit after postage</div>
               </div>
               <button onClick={()=>{setEbayLoaded(false);loadEbay();}} style={{ background:"#1A1A28", border:"1px solid #333", borderRadius:5, padding:"6px 12px", color:"#AAAAAA", fontFamily:MONO, fontSize:9, cursor:"pointer" }}>
                 {ebayLoading?"scanning...":"⟳ refresh"}
@@ -1424,82 +1434,93 @@ function App() {
             )}
 
             {!ebayLoading&&ebayLoaded&&ebayListings.length===0&&(
-              <div style={{ textAlign:"center", padding:"48px 0", fontFamily:MONO, color:"#444", fontSize:11 }}>
-                No scoreable listings found right now. Try refreshing.
+              <div style={{ textAlign:"center", padding:"40px 0" }}>
+                <div style={{ fontFamily:MONO, fontSize:10, color:"#444" }}>No eBay deals loaded yet.</div>
+                <div style={{ fontFamily:MONO, fontSize:9, color:"#333", marginTop:6 }}>Press SCAN on HQ to trigger a fresh scraper run.</div>
               </div>
             )}
 
-            {!ebayLoading&&ebayListings.map((item, i)=>{
-              // Support both old Finding API schema and new scraper schema
+            {!ebayLoading&&(()=>{
+              // Only show deals with positive flip ROI — no noise
+              const goodDeals = ebayListings.filter(item => {
+                const price = item.price || item.buyNow || 0;
+                const marketPrice = item.resell || item.marketPrice || null;
+                if (!marketPrice || !price) return false;
+                const net = marketPrice - price - POST;
+                const roi = (net / price) * 100;
+                return roi >= 5; // Only show if 5%+ ROI
+              });
+              if (goodDeals.length === 0) return (
+                <div style={{ textAlign:"center", padding:"40px 0", fontFamily:MONO, color:"#444", fontSize:10 }}>
+                  No strong eBay deals right now — refresh or press SCAN on HQ for fresh data
+                </div>
+              );
+              return goodDeals.map((item, i)=>{
               const title = item.title || item.product || "";
               const price = item.price || item.buyNow || 0;
-              const marketPrice = item.resell || item.marketPrice || null;
-              const flipNet = marketPrice && price ? +(marketPrice - price - POST).toFixed(2) : null;
-              const flipRoi = flipNet !== null && price ? Math.round(flipNet/price*100) : (item.roi || null);
-              const pctBelow = marketPrice && price ? Math.round((marketPrice - price)/marketPrice*100) : null;
-              const scoreColor = flipRoi===null?"#38B6FF":flipRoi>=20?"#00FF88":flipRoi>=10?"#39D98A":flipRoi>=5?"#FFD60A":flipRoi>=0?"#FF8C00":"#FF3B3B";
+              const marketPrice = item.resell || item.marketPrice || 0;
+              const flipNet = +(marketPrice - price - POST).toFixed(2);
+              const flipRoi = Math.round((flipNet / price) * 100);
+              const pctBelow = Math.round((marketPrice - price) / marketPrice * 100);
+              const gradeColor = flipRoi>=20?"#00FF88":flipRoi>=10?"#39D98A":"#FFD60A";
+              const gradeLabel = flipRoi>=20?"🔥 FIRE DEAL":flipRoi>=10?"✅ STRONG BUY":"💰 GOOD FLIP";
               const itemUrl = item.url || item.listingUrl || "#";
+              const img = item.image || null;
               return (
-                <div key={item.id} style={{ background:"#0A0A10", border:`1px solid ${scoreColor}33`, borderLeft:`3px solid ${scoreColor}`, borderRadius:8, padding:"12px 14px", marginBottom:10 }}>
-                  <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:10 }}>
-                    {/* Image */}
-                    {item.image&&(
+                <div key={i} style={{ background:"#0A0A10", border:`1px solid ${gradeColor}33`, borderLeft:`3px solid ${gradeColor}`, borderRadius:8, padding:"14px", marginBottom:12 }}>
+                  {/* Header row */}
+                  <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:10, marginBottom:10 }}>
+                    {img&&(
                       <div style={{ flexShrink:0, width:52, height:52, borderRadius:6, overflow:"hidden", background:"#16161E", border:"1px solid rgba(255,255,255,0.08)" }}>
-                        <img src={item.image} alt="" style={{ width:"100%", height:"100%", objectFit:"cover" }} loading="lazy"
-                          onError={e=>{e.target.parentElement.style.display="none"}}/>
+                        <img src={img} alt="" style={{ width:"100%", height:"100%", objectFit:"cover" }} loading="lazy"
+                          onError={e=>e.target.parentElement.style.display="none"}/>
                       </div>
                     )}
                     <div style={{ flex:1, minWidth:0 }}>
-                      <div style={{ fontFamily:DISP, fontSize:13, fontWeight:500, color:"#FFFFFF", lineHeight:1.3, marginBottom:3 }}>{title}</div>
-                      <div style={{ display:"flex", alignItems:"center", gap:8, flexWrap:"wrap" }}>
-                        {/* Deal score */}
-                        <div style={{ fontFamily:MONO, fontSize:10, fontWeight:700, color:scoreColor, background:`${scoreColor}18`, border:`1px solid ${scoreColor}40`, padding:"2px 8px", borderRadius:4 }}>
-                          {item.score}/100
-                        </div>
-                        {/* Signals */}
-                        {item.signals?.slice(0,2).map((s,j)=>(
-                          <span key={j} style={{ fontFamily:MONO, fontSize:9, color:s.c, background:`${s.c}15`, padding:"2px 7px", borderRadius:4, border:`1px solid ${s.c}30` }}>{s.l}</span>
-                        ))}
-                      </div>
+                      <div style={{ fontFamily:DISP, fontSize:13, fontWeight:500, color:"#FFFFFF", lineHeight:1.3, marginBottom:6 }}>{title}</div>
+                      {/* Grade badge */}
+                      <span style={{ fontFamily:MONO, fontSize:9, fontWeight:700, color:gradeColor, background:`${gradeColor}18`, border:`1px solid ${gradeColor}40`, padding:"2px 8px", borderRadius:4 }}>
+                        {gradeLabel}
+                      </span>
                     </div>
-                    {/* Price */}
                     <div style={{ textAlign:"right", flexShrink:0 }}>
-                      <div style={{ fontFamily:MONO, fontSize:17, color:"#FFFFFF" }}>£{price.toFixed(2)}</div>
-                      {pctBelow!==null&&(
-                        <div style={{ fontFamily:MONO, fontSize:9, color:pctBelow>0?"#39D98A":"#FF6060", marginTop:2 }}>
-                          {pctBelow>0?`${pctBelow}% below market`:`${Math.abs(pctBelow)}% above market`}
-                        </div>
-                      )}
+                      <div style={{ fontFamily:MONO, fontSize:18, color:"#FFFFFF", lineHeight:1 }}>£{price.toFixed(2)}</div>
+                      <div style={{ fontFamily:MONO, fontSize:10, color:"#555", marginTop:2 }}>listed price</div>
                     </div>
                   </div>
-                  {/* Market context */}
-                  {marketPrice&&(
-                    <div style={{ fontFamily:MONO, fontSize:9, color:"#555", marginTop:8 }}>
-                      eBay market: £{marketPrice} · {item.condition||"New/Sealed"}{flipNet!==null?` · Net: ${flipNet>=0?"+":""}£${flipNet.toFixed(2)} (${flipRoi}% ROI)`:""}
+
+                  {/* WHY IT'S A DEAL */}
+                  <div style={{ background:"rgba(0,0,0,0.4)", border:"1px solid rgba(255,255,255,0.06)", borderRadius:6, padding:"10px 12px", marginBottom:10 }}>
+                    <div style={{ fontFamily:MONO, fontSize:8, color:"#555", letterSpacing:"0.12em", marginBottom:8 }}>WHY IT'S A DEAL</div>
+                    <div style={{ display:"flex", gap:0 }}>
+                      <div style={{ flex:1, borderRight:"1px solid rgba(255,255,255,0.06)", paddingRight:10 }}>
+                        <div style={{ fontFamily:MONO, fontSize:8, color:"#555", marginBottom:2 }}>eBay market value</div>
+                        <div style={{ fontFamily:MONO, fontSize:13, color:"#FFFFFF" }}>£{marketPrice.toFixed(2)}</div>
+                      </div>
+                      <div style={{ flex:1, paddingLeft:10, borderRight:"1px solid rgba(255,255,255,0.06)", paddingRight:10 }}>
+                        <div style={{ fontFamily:MONO, fontSize:8, color:"#555", marginBottom:2 }}>flip profit</div>
+                        <div style={{ fontFamily:MONO, fontSize:13, color:"#00FF88" }}>+£{flipNet.toFixed(2)}</div>
+                      </div>
+                      <div style={{ flex:1, paddingLeft:10 }}>
+                        <div style={{ fontFamily:MONO, fontSize:8, color:"#555", marginBottom:2 }}>ROI</div>
+                        <div style={{ fontFamily:MONO, fontSize:13, color:gradeColor }}>{flipRoi}%</div>
+                      </div>
                     </div>
-                  )}
-                  <a href={itemUrl} target="_blank" rel="noopener noreferrer"
-                    style={{ display:"inline-block", marginTop:10, background:"#CC0000", borderRadius:4, padding:"6px 14px", color:"#fff", fontFamily:MONO, fontSize:10, letterSpacing:"0.08em" }}>
+                    <div style={{ fontFamily:MONO, fontSize:9, color:"#888", marginTop:8, lineHeight:1.5 }}>
+                      Listed {pctBelow}% below current eBay market · £{POST} postage · private seller 0% fees · net £{flipNet.toFixed(2)} profit
+                    </div>
+                  </div>
+
+                  <a href={itemUrl} target="_blank" rel="noopener noreferrer" onClick={e=>e.stopPropagation()}
+                    style={{ display:"block", textAlign:"center", background:"#CC0000", borderRadius:6, padding:"10px", color:"#fff", fontFamily:MONO, fontSize:10, letterSpacing:"0.1em", boxShadow:"0 2px 12px rgba(204,0,0,0.35)" }}>
                     VIEW ON EBAY →
                   </a>
+                  <div style={{ fontFamily:MONO, fontSize:8, color:"#444", marginTop:6, textAlign:"center" }}>
+                    Based on recent sold listings · private seller · not financial advice
+                  </div>
                 </div>
               );
-            })}
-
-            {!ebayLoaded&&!ebayLoading&&(
-              <div style={{ textAlign:"center", padding:"48px 24px" }}>
-                <div style={{ fontSize:32, marginBottom:16 }}>🛒</div>
-                <div style={{ fontFamily:DISP, fontSize:16, fontWeight:600, color:"#FFFFFF", marginBottom:8 }}>eBay Integration</div>
-                <div style={{ fontFamily:MONO, fontSize:10, color:"#555", lineHeight:1.8, marginBottom:20 }}>
-                  Live eBay UK deal scanning coming soon.<br/>
-                  eBay developer approval pending — will enable<br/>
-                  real-time sold price data across all products.
-                </div>
-                <div style={{ background:"rgba(204,0,0,0.08)", border:"1px solid rgba(204,0,0,0.25)", borderRadius:8, padding:"12px 16px", display:"inline-block" }}>
-                  <div style={{ fontFamily:MONO, fontSize:9, color:"#CC0000", letterSpacing:"0.1em" }}>⏳ AWAITING EBAY API APPROVAL</div>
-                </div>
-              </div>
-            )}
+            });})()
           </div>
         )}
 
