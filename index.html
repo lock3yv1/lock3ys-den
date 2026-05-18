@@ -50,7 +50,7 @@ const HOLD = {
   "surging sparks":       { score:6,  trend:"rising",   yr1:1.03, yr2:1.08, yr3:1.18, yr4:1.30, note:"Pikachu ex SIR. Box price rose 150%+ over 18 months — consistent demand." },
   "paldean fates":        { score:6,  trend:"stable",   yr1:1.02, yr2:1.05, yr3:1.11, yr4:1.18, note:"Shiny vault set. Strong collector demand. Steady floor." },
   "stellar crown":        { score:5,  trend:"stable",   yr1:1.01, yr2:1.03, yr3:1.07, yr4:1.12, note:"Terapagos ex. Moderate hold." },
-  "journey together":     { score:5,  trend:"stable",   yr1:1.03, yr2:1.08, yr3:1.14, yr4:1.22, note:"Feb 2025. Key hits: Pikachu ex SAR (£60-100), Eevee ex SAR (£35-65). Half boxes ~£102 on eBay." },
+  "journey together":     { score:5,  trend:"stable",   yr1:1.03, yr2:1.08, yr3:1.14, yr4:1.22, note:"Feb 2025. Key hits: Pikachu ex Special Art (£60-100), Eevee ex Special Art (£35-65). Half boxes ~£102 on eBay." },
   "nihil zero":           { score:6,  trend:"rising",   yr1:1.05, yr2:1.12, yr3:1.22, yr4:1.35, note:"Korean Mega Evolution era. Scarce UK supply. Rising collector interest." },
   "heatwave arena":       { score:5,  trend:"stable",   yr1:1.03, yr2:1.08, yr3:1.15, yr4:1.22, note:"Japanese SV9a. Popular set, growing UK demand." },
   "battle partners":      { score:5,  trend:"stable",   yr1:1.02, yr2:1.06, yr3:1.12, yr4:1.18, note:"SV9 era. Solid collector base." },
@@ -288,7 +288,7 @@ function getVerdict(roi, net, hs=0, h=null) {
     if (hs>=5) return { v1:"HOLD CANDIDATE", v2:`No flip data yet but ${hs}/10 hold score. Could appreciate over 1-2 years.` };
     return { v1:"IN STOCK", v2:"No eBay market data yet. Scan for fresh prices." };
   }
-  if (roi>=25)   return { v1:`${roi}% ROI — FIRE DEAL`, v2:`Buy at £${net && (parseFloat(net)+POST+0).toFixed ? "" : ""}this price, sell on eBay for +£${net?.toFixed(2)} profit after postage.` };
+  if (roi>=25)   return { v1:`${roi}% ROI — FIRE DEAL`, v2:`Buy now at £${d.buyNow.toFixed(2)}, sell on eBay for +£${net?.toFixed(2)} profit after £${POST} postage.` };
   if (roi>=15)   return { v1:`${roi}% ROI — STRONG BUY`, v2:`+£${net?.toFixed(2)} profit after £${POST} postage. Strong flip opportunity.` };
   if (roi>=8)    return { v1:`${roi}% ROI — GOOD DEAL`, v2:`+£${net?.toFixed(2)} profit after £${POST} postage. Solid opportunity.` };
   if (roi>=2)    return { v1:`MARGINAL FLIP`, v2:`+£${net?.toFixed(2)} margin after £${POST} postage — slim but profitable.` };
@@ -326,64 +326,76 @@ function ago(iso) {
 }
 
 
-// ─── HIT CARDS DATA (verified chase cards per set, May 2026) ───────────────
+// ─── CHASE CARDS (verified May 2026, full card names, no jargon) ────────────
 const HIT_CARDS = {
   // Mega Evolution (2025-2026)
-  "ascended heroes":      ["Charizard ex SAR ~£60-90","Mewtwo ex SAR ~£40-70","Pikachu ex SAR ~£30-50"],
-  "phantasmal flames":    ["Charizard ex SAR ~£55-85","Gengar ex SAR ~£30-55","Rayquaza ex SAR ~£40-65"],
-  "perfect order":        ["Mewtwo ex SAR ~£35-65","Aerodactyl ex SAR ~£20-40","Mew ex SAR ~£25-45"],
-  "chaos rising":         ["Charizard ex SAR ~£30-55","Blastoise ex SAR ~£20-40"],
-  "destined rivals":      ["Mewtwo ex SAR ~£80-130","Mew ex SAR ~£50-90","Lugia ex SAR ~£40-70"],
-  "glory of team rocket": ["Dark Charizard ex SAR ~£40-70","Dark Mewtwo ex SAR ~£30-55"],
+  "ascended heroes":      ["Charizard ex Special Art £55-85","Mewtwo ex Special Art £40-65","Pikachu ex Special Art £30-50"],
+  "phantasmal flames":    ["Charizard ex Special Art £50-80","Gengar ex Special Art £30-50","Rayquaza ex Special Art £40-65"],
+  "perfect order":        ["Mewtwo ex Special Art £30-60","Aerodactyl ex Special Art £20-40","Mew ex Special Art £25-45"],
+  "chaos rising":         ["Charizard ex Special Art £28-50","Blastoise ex Special Art £18-35"],
+  "destined rivals":      ["Mewtwo ex Special Art £75-125","Mew ex Special Art £50-85","Lugia ex Special Art £40-65"],
+  "glory of team rocket": ["Dark Charizard ex Special Art £40-65","Dark Mewtwo ex Special Art £28-50"],
   // Scarlet & Violet (2023-2026)
-  "journey together":     ["Pikachu ex SAR ~£60-100","Eevee ex SAR ~£35-65","Miraidon ex SAR ~£25-45"],
-  "destined rivals":      ["Mewtwo ex SAR ~£80-130","Mew ex SAR ~£50-90"],
-  "surging sparks":       ["Pikachu ex SAR ~£160-220","Raichu ex SAR ~£35-60","Pikachu ex Alt Art ~£80-120"],
-  "stellar crown":        ["Arceus ex SAR ~£30-55","Lugia ex SAR ~£25-45"],
-  "shrouded fable":       ["Pecharunt ex SAR ~£30-55","Munkidori ex SAR ~£20-40"],
-  "twilight masquerade":  ["Ogerpon ex SAR ~£30-55","Bloodmoon Ursaluna ex ~£25-45"],
-  "temporal forces":      ["Walking Wake ex Alt ~£20-35","Iron Leaves ex Alt ~£15-30"],
-  "paradox rift":         ["Roaring Moon ex Alt Art ~£30-55","Iron Valiant ex Alt Art ~£25-45"],
-  "obsidian flames":      ["Charizard ex SAR ~£35-60","Tera Charizard ex Alt Art ~£30-55"],
-  "paldea evolved":       ["Iono SAR ~£25-45","Miraidon ex Alt Art ~£20-40"],
-  "paldean fates":        ["Charizard ex Shiny ~£20-35","Meowscarada ex Shiny ~£10-20"],
-  "prismatic evolutions": ["Umbreon ex SAR ~£80-130","Leafeon ex SAR ~£60-100","Sylveon ex SAR ~£50-80"],
-  "151":                  ["Mew ex SAR ~£35-60","Charizard ex SAR ~£40-65","Alakazam ex SAR ~£25-45"],
+  "journey together":     ["Pikachu ex Special Art £55-95","Eevee ex Special Art £32-60","Miraidon ex Special Art £22-40"],
+  "surging sparks":       ["Pikachu ex Special Art £150-210","Raichu ex Special Art £30-55","Pikachu ex Alt Art £75-110"],
+  "stellar crown":        ["Arceus ex Special Art £28-50","Lugia ex Special Art £22-40"],
+  "shrouded fable":       ["Pecharunt ex Special Art £28-50","Munkidori ex Special Art £18-35"],
+  "twilight masquerade":  ["Ogerpon ex Special Art £28-50","Bloodmoon Ursaluna ex £22-40"],
+  "temporal forces":      ["Walking Wake ex Alt Art £18-32","Iron Leaves ex Alt Art £14-28"],
+  "paradox rift":         ["Roaring Moon ex Alt Art £28-50","Iron Valiant ex Alt Art £22-42"],
+  "obsidian flames":      ["Charizard ex Special Art £32-55","Tera Charizard ex Alt Art £28-50"],
+  "paldea evolved":       ["Iono Special Art £22-40","Miraidon ex Alt Art £18-35"],
+  "paldean fates":        ["Charizard ex Shiny £18-32","Meowscarada ex Shiny £9-18"],
+  "prismatic evolutions": ["Umbreon ex Special Art £75-125","Leafeon ex Special Art £55-95","Sylveon ex Special Art £45-75"],
+  "151":                  ["Mew ex Special Art £32-55","Charizard ex Special Art £38-60","Alakazam ex Special Art £22-42"],
   // Sword & Shield (2020-2023)
-  "evolving skies":       ["Rayquaza VMAX Alt Art ~£180-250","Umbreon VMAX Alt Art ~£200-280","Glaceon VMAX Alt Art ~£80-120"],
-  "chilling reign":       ["Shadow Rider Calyrex Alt Art ~£60-90","Ice Rider Calyrex Alt Art ~£50-80"],
-  "battle styles":        ["Rapid Strike Urshifu Alt Art ~£40-70","Single Strike Urshifu Alt Art ~£35-60"],
-  "brilliant stars":      ["Arceus VSTAR Alt Art ~£20-35","Charizard VSTAR ~£15-25"],
-  "astral radiance":      ["Origin Palkia VSTAR Alt ~£15-28","Hisuian Lilligant VSTAR ~£10-20"],
-  "lost origin":          ["Giratina V Alt Art ~£50-80","Giratina VSTAR ~£30-50"],
-  "silver tempest":       ["Lugia V Alt Art ~£30-55","Regidrago VSTAR ~£20-35"],
-  "crown zenith":         ["Charizard Alt Art ~£60-100","Regigigas Alt Art ~£40-60"],
-  "shining fates":        ["Charizard VMAX Shiny ~£30-60","Pikachu VMAX Shiny ~£20-40"],
-  "fusion strike":        ["Gengar VMAX Alt Art ~£25-50","Mew VMAX Alt Art ~£30-55"],
-  "vivid voltage":        ["Amazing Pikachu ~£25-45","Zacian V ~£12-22"],
-  "darkness ablaze":      ["Charizard VMAX ~£25-45","Centiskorch VMAX Alt Art ~£20-35"],
-  "rebel clash":          ["Dragapult VMAX Alt Art ~£20-35","Toxtricity VMAX Alt Art ~£15-28"],
-  "battle styles":        ["Rapid Strike Urshifu Alt Art ~£40-70","Single Strike Urshifu Alt Art ~£35-60"],
+  "evolving skies":       ["Rayquaza VMAX Alt Art £170-240","Umbreon VMAX Alt Art £185-265","Glaceon VMAX Alt Art £75-115"],
+  "chilling reign":       ["Shadow Rider Calyrex Alt Art £55-85","Ice Rider Calyrex Alt Art £45-75"],
+  "battle styles":        ["Rapid Strike Urshifu Alt Art £38-65","Single Strike Urshifu Alt Art £32-58"],
+  "brilliant stars":      ["Arceus VSTAR Alt Art £18-32","Charizard VSTAR £14-24"],
+  "astral radiance":      ["Origin Palkia VSTAR Alt Art £14-25","Hisuian Lilligant VSTAR £9-18"],
+  "lost origin":          ["Giratina V Alt Art £45-75","Giratina VSTAR £28-48"],
+  "silver tempest":       ["Lugia V Alt Art £28-50","Regidrago VSTAR £18-32"],
+  "crown zenith":         ["Charizard Alt Art £55-90","Regigigas Alt Art £38-55"],
+  "shining fates":        ["Charizard VMAX Shiny £28-55","Pikachu VMAX Shiny £18-38"],
+  "fusion strike":        ["Gengar VMAX Alt Art £22-45","Mew VMAX Alt Art £28-50"],
+  "vivid voltage":        ["Amazing Rare Pikachu £22-42","Zacian V £11-20"],
+  "darkness ablaze":      ["Charizard VMAX £22-42","Centiskorch VMAX Alt Art £18-32"],
+  "rebel clash":          ["Dragapult VMAX Alt Art £18-32","Toxtricity VMAX Alt Art £14-26"],
   // Sun & Moon
-  "hidden fates":         ["Charizard GX Shiny ~£60-100","Mewtwo GX Shiny ~£40-60","Gyarados GX Shiny ~£30-50"],
-  "cosmic eclipse":       ["Arceus & Dialga & Palkia GX ~£20-35","Pikachu & Zekrom GX ~£15-25"],
-  "champions path":       ["Charizard V ~£80-140","Charizard VMAX Rainbow ~£60-90","Hatterene V Alt ~£15-28"],
-  "unbroken bonds":       ["Reshiram & Charizard GX ~£30-55","Gardevoir & Sylveon GX ~£15-28"],
-  "team up":              ["Pikachu & Zekrom GX ~£15-28","Eevee & Snorlax GX ~£12-22"],
+  "hidden fates":         ["Charizard GX Shiny £55-95","Mewtwo GX Shiny £38-58","Gyarados GX Shiny £28-48"],
+  "cosmic eclipse":       ["Arceus & Dialga & Palkia GX £18-32","Pikachu & Zekrom GX £14-24"],
+  "champions path":       ["Charizard V £75-130","Charizard VMAX Rainbow £55-85","Hatterene V Alt Art £14-26"],
+  "unbroken bonds":       ["Reshiram & Charizard GX £28-50","Gardevoir & Sylveon GX £14-26"],
+  "team up":              ["Pikachu & Zekrom GX £14-26","Eevee & Snorlax GX £11-20"],
   // Japanese/Korean
-  "white flare":          ["Zekrom ex SAR ~£40-70","Reshiram ex SAR ~£35-60"],
-  "black bolt":           ["Reshiram ex SAR ~£40-70","Zekrom ex SAR ~£35-60"],
-  "battle partners":      ["Pikachu ex SAR ~£35-65","Charizard ex SAR ~£40-75"],
-  "terastal festival":    ["Charizard ex SAR ~£40-75","Eevee ex SAR ~£30-55","Pikachu ex SAR ~£35-60"],
-  "nihil zero":           ["Mewtwo ex SAR ~£30-55","Gardevoir ex SAR ~£20-40"],
-  "heatwave arena":       ["Charizard ex SAR ~£25-45","Koraidon ex SAR ~£20-38"],
+  "white flare":          ["Zekrom ex Special Art £38-65","Reshiram ex Special Art £32-55"],
+  "black bolt":           ["Reshiram ex Special Art £38-65","Zekrom ex Special Art £32-55"],
+  "battle partners":      ["Pikachu ex Special Art £32-60","Charizard ex Special Art £38-70"],
+  "terastal festival":    ["Charizard ex Special Art £38-70","Eevee ex Special Art £28-50"],
+  "nihil zero":           ["Mewtwo ex Special Art £28-50","Gardevoir ex Special Art £18-38"],
+  "heatwave arena":       ["Charizard ex Special Art £22-42","Koraidon ex Special Art £18-35"],
 };
 
 // ─── CARD ─────────────────────────────────────────────────────────────────────
 function Card({ d, rank }) {
   const [open, setOpen] = useState(false);
-  // Use scraped eBay price, or fall back to static market table
-  const resell = d.resell || getMarket(d.product);
+  // Use scraped eBay price, but sanity-check it against our market table.
+  // The scraper sometimes returns wrong eBay prices (wrong product matched).
+  // If d.resell is >40% above our known market price, discard it and use getMarket.
+  function sanityResell(scraped, title) {
+    if (!scraped) return getMarket(title);
+    const known = getMarket(title);
+    const tl = title.toLowerCase();
+    // Hard type-based caps: single pack blisters cannot sell for >£15 on eBay
+    if ((tl.includes("1-pack") || tl.includes("single pack") || (tl.includes("blister") && !tl.includes("2 pack") && !tl.includes("3 pack"))) && scraped > 15) return known || scraped;
+    // If scraped is more than 40% above our verified market price, discard it
+    if (known && scraped > known * 1.4) return known;
+    // If scraped is less than 50% of known market (suspiciously low), discard it too
+    if (known && scraped < known * 0.5) return known;
+    return scraped;
+  }
+  const resell = sanityResell(d.resell, d.product) || getMarket(d.product);
   const { net, roi, fees } = calcFlip(d.buyNow, resell);
   const h   = calcHold(resell || d.buyNow, d.product);
   const gk  = getGradeKey(roi, h?.score??0);
@@ -1377,9 +1389,10 @@ function App() {
     const q = search.toLowerCase().trim();
     return d.product.toLowerCase().includes(q) || (d.retailer||"").toLowerCase().includes(q);
   }).filter((d,i,arr)=>{
-    // Dedup: if same product+price from different retailer, keep best deal only
-    const key = d.product.toLowerCase().trim() + "|" + d.buyNow;
-    return arr.findIndex(x => x.product.toLowerCase().trim() + "|" + x.buyNow === key) === i;
+    // Dedup: normalise product name (strip punctuation) + price to catch near-duplicates
+    const norm = p => p.toLowerCase().replace(/[^\w\s]/g,"").replace(/\s+/g," ").trim();
+    const key = norm(d.product) + "|" + d.buyNow;
+    return arr.findIndex(x => norm(x.product) + "|" + x.buyNow === key) === i;
   });
 
   const buyN=sorted.filter(d=>(calcFlip(d.buyNow,d.resell).roi??-999)>=8).length;
