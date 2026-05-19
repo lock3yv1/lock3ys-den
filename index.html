@@ -1668,7 +1668,7 @@ function App() {
     const r = d.resell || getMarket(d.product);
     if (!r) return false;
     return (calcFlip(d.buyNow, r).roi ?? -999) >= 8;
-  }) |;
+  }) || null;
 
   // ── ONBOARDING ───────────────────────────────────────────────────────────
 
