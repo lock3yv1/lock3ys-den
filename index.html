@@ -11,9 +11,9 @@
   <link rel="manifest" href="manifest.json"/>
   <link rel="apple-touch-icon" href="icon-192.png"/>
   <title>Shiny Den — Pokémon Deal Finder</title>
-  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.23.10/babel.min.js" crossorigin="anonymous"></script>
   <style>*{box-sizing:border-box;margin:0;padding:0}body{background:#07070D;color:#fff;overflow-x:hidden}</style>
   <script>
     // Unregister any cached service workers to prevent stale HTML being served
@@ -51,7 +51,7 @@
   };
 </script>
 <script type="text/babel" data-presets="react">
-console.log("ShinyDen v2.6 loading - " + new Date().toISOString());
+console.log("ShinyDen v2.7 loading - " + new Date().toISOString());
 const { useState, useEffect } = React;
 
 const DEALS_URL = "https://raw.githubusercontent.com/lock3yv1/lock3ys-den/main/deals.json";
@@ -1686,7 +1686,7 @@ function App() {
     // Block acrylic case bundles (inflated price)
     if (tl.includes("acrylic case")) return false;
     // Block insane prices (>£500 unless it's a genuine premium set)
-    if (buy > 500 && !tl.includes("prismatic") && !tl.includes("charizard ultra")) return false;)) return false;
+    if (buy > 500) return false;
     // Block 4-pack value packs and random packs (no reliable market price)
     if (tl.includes("value pack") || tl.includes("random selection") || 
         tl.includes("single booster pack (random")) return false;
