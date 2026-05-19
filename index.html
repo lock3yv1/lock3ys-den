@@ -665,7 +665,6 @@ function Card({ d, rank }) {
   const pt  = getPtype(d.product);
   const pp  = packCost(d.product, d.buyNow);
   const vsM = resell ? Math.round((d.buyNow-resell)/resell*100) : null;
-  const vsR = d.rrp    ? Math.round((d.buyNow-d.rrp)/d.rrp*100)      : null;
   const tc  = h?.trend==="rising"?"#39D98A":h?.trend==="declining"?"#FF3B3B":"#FF8C00";
   const DISP = "'Rajdhani', sans-serif";
   const MONO = "'Share Tech Mono', 'Courier New', monospace";
@@ -774,9 +773,7 @@ function Card({ d, rank }) {
           }}>eBay £{resell?.toFixed(2)}</div>
         )}
 
-        {/* #3 — RRP: warm gold so it's clearly different from the eBay price */}
-        {vsR<0?` · ${Math.abs(vsR)}% OFF`:"" }</div>
-        )}
+        
 
         {/* #4 — Per pack: cyan, clearly different */}
         {pp&&(
