@@ -26,7 +26,32 @@
 </head>
 <body>
 <div id="root"></div>
+<div id="fallback" style="display:none;background:#07070D;color:#FF3B3B;padding:24px;font-family:monospace;font-size:12px;min-height:100vh">
+  <div style="font-size:16px;margin-bottom:12px">⚠ Shiny Den — Failed to start</div>
+  <div style="color:#888;margin-bottom:8px">Babel could not compile the app. This is a code error.</div>
+  <div id="fallback-error" style="color:#FFF"></div>
+</div>
+<script>
+  // If React never mounts within 5s, show fallback
+  setTimeout(function() {
+    var root = document.getElementById('root');
+    if (!root || !root.firstChild) {
+      document.getElementById('fallback').style.display = 'block';
+      root.style.display = 'none';
+    }
+  }, 5000);
+  window.onerror = function(msg, src, line) {
+    var fb = document.getElementById('fallback');
+    var err = document.getElementById('fallback-error');
+    if (fb && err) {
+      fb.style.display = 'block';
+      document.getElementById('root').style.display = 'none';
+      err.textContent = 'Error: ' + msg + ' (line ' + line + ')';
+    }
+  };
+</script>
 <script type="text/babel" data-presets="react">
+console.log("ShinyDen v2.6 loading - " + new Date().toISOString());
 const { useState, useEffect } = React;
 
 const DEALS_URL = "https://raw.githubusercontent.com/lock3yv1/lock3ys-den/main/deals.json";
