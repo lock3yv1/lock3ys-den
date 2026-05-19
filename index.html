@@ -700,7 +700,7 @@ function Card({ d, rank }) {
           </div>
           <div>
             <div style={{ fontFamily:DISP, fontSize:11, fontWeight:500, color:gr.c, letterSpacing:"0.08em", lineHeight:1 }}>{gr.label}</div>
-            {rank<=5 && <div style={{ fontFamily:MONO, fontSize:8, color:"#777", marginTop:2, letterSpacing:"0.08em" }}>#{rank} right now</div>}
+            {rank<=5 && <div style={{ fontFamily:MONO, fontSize:8, color:"#AAAAAA", marginTop:2, letterSpacing:"0.08em" }}>#{rank} right now</div>}
           </div>
         </div>
         {/* Type + time */}
@@ -722,7 +722,7 @@ function Card({ d, rank }) {
         )}
         <div style={{ flex:1, minWidth:0 }}>
           <div style={{ fontFamily:DISP, fontSize:14, fontWeight:500, color:"#FFFFFF", lineHeight:1.3, letterSpacing:"0.01em", wordBreak:"break-word" }}>{d.product}</div>
-          <div style={{ fontFamily:MONO, fontSize:10, color:"#888", marginTop:3, letterSpacing:"0.04em" }}>{d.retailer}</div>
+          <div style={{ fontFamily:MONO, fontSize:10, color:"#AAAAAA", marginTop:3, letterSpacing:"0.04em" }}>{d.retailer}</div>
         </div>
         <div style={{ textAlign:"right", flexShrink:0 }}>
           <div style={{ fontFamily:MONO, fontSize:18, fontWeight:400, color:"#FFFFFF", lineHeight:1, letterSpacing:"0.02em" }}>£{d.buyNow.toFixed(2)}</div>
@@ -809,7 +809,7 @@ function Card({ d, rank }) {
               <span style={{ fontFamily:MONO, fontSize:8, color:"#00FF88", letterSpacing:"0.08em" }}>LIVE</span>
             </div>
           )}
-          <span style={{ fontFamily:MONO, fontSize:9, color:"#555", cursor:"pointer" }}>
+          <span style={{ fontFamily:MONO, fontSize:9, color:"#888", cursor:"pointer" }}>
             {open ? "▲ less" : "▼ FULL BREAKDOWN"}
           </span>
         </div>
@@ -830,8 +830,8 @@ function Card({ d, rank }) {
           {/* FLIP CALCULATOR */}
           {net!==null&&(
             <div style={{ background:"rgba(0,0,0,0.5)", border:"1px solid rgba(255,255,255,0.08)", borderRadius:6, padding:"14px", marginBottom:10 }}>
-              <div style={{ fontFamily:MONO, fontSize:9, color:"#888", letterSpacing:"0.15em", marginBottom:4 }}>PROJECTED FLIP PROFIT · PRIVATE SELLER</div>
-              <div style={{ fontFamily:MONO, fontSize:8, color:"#555", marginBottom:10 }}>After £{POST} postage · 0% eBay fees for private sellers · based on recent sold data</div>
+              <div style={{ fontFamily:MONO, fontSize:9, color:"#AAAAAA", letterSpacing:"0.15em", marginBottom:4 }}>PROJECTED FLIP PROFIT · PRIVATE SELLER</div>
+              <div style={{ fontFamily:MONO, fontSize:8, color:"#888", marginBottom:10 }}>After £{POST} postage · 0% eBay fees for private sellers · based on recent sold data</div>
               <div style={{ display:"grid", gridTemplateColumns:"1fr auto", gap:"8px 20px" }}>
                 <span style={{ fontFamily:MONO, fontSize:12, color:"#C8C8C8" }}>eBay resell price</span>
                 <span style={{ fontFamily:MONO, fontSize:12, color:"#00FF88", fontWeight:500 }}>£{resell?.toFixed(2)}</span>
@@ -869,7 +869,7 @@ function Card({ d, rank }) {
               const gain = Math.round((val - basePrice) / basePrice * 100);
               return (
                 <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"9px 0" }}>
-                  <div style={{ fontFamily:MONO, fontSize:9, color:"#666" }}>{label}</div>
+                  <div style={{ fontFamily:MONO, fontSize:9, color:"#999" }}>{label}</div>
                   <div style={{ display:"flex", alignItems:"baseline", gap:8 }}>
                     <div style={{ fontFamily:MONO, fontSize:13, fontWeight:700, color:"#FFFFFF" }}>£{val.toLocaleString()}</div>
                     <div style={{ fontFamily:MONO, fontSize:9, color:gain>=0?trendC:"#FF3B3B" }}>{gain>=0?"+":""}{gain}%</div>
@@ -882,8 +882,8 @@ function Card({ d, rank }) {
               <div style={{ background:"rgba(0,0,0,0.5)", border:"1px solid rgba(255,255,255,0.08)", borderRadius:6, padding:"14px", marginBottom:10 }}>
                 <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:10 }}>
                   <div>
-                    <div style={{ fontFamily:MONO, fontSize:9, color:"#888", letterSpacing:"0.15em" }}>HOLD ANALYSIS</div>
-                    <div style={{ fontFamily:MONO, fontSize:8, color:"#444", marginTop:2 }}>Historical trend estimates · not financial advice</div>
+                    <div style={{ fontFamily:MONO, fontSize:9, color:"#AAAAAA", letterSpacing:"0.15em" }}>HOLD ANALYSIS</div>
+                    <div style={{ fontFamily:MONO, fontSize:8, color:"#777", marginTop:2 }}>Historical trend estimates · not financial advice</div>
                   </div>
                   <div style={{ display:"flex", alignItems:"center", gap:8 }}>
                     <span style={{ fontFamily:MONO, fontSize:9, color:tC }}>{h.trend==="rising"?"↗ RISING":h.trend==="declining"?"↘ FALLING":"→ STABLE"}</span>
@@ -894,7 +894,7 @@ function Card({ d, rank }) {
                 <HoldRow label="2 YEARS" val={yr2v}/>
                 <HoldRow label="3 YEARS" val={yr3v}/>
                 <HoldRow label="4 YEARS" val={yr4v}/>
-                <div style={{ fontFamily:MONO, fontSize:9, color:"#888", lineHeight:1.6, marginTop:8, padding:"8px 10px", background:"rgba(255,255,255,0.03)", borderRadius:4 }}>
+                <div style={{ fontFamily:MONO, fontSize:9, color:"#AAAAAA", lineHeight:1.6, marginTop:8, padding:"8px 10px", background:"rgba(255,255,255,0.03)", borderRadius:4 }}>
                   💡 {(h.note||"").split(". Top pulls:")[0].split(". Key hits:")[0].split(". Top pull:")[0]}
                 </div>
               </div>
@@ -946,9 +946,9 @@ function Card({ d, rank }) {
               style={{ flex:1, background:"#CC0000", borderRadius:5, padding:"11px 10px", color:"#fff", fontFamily:MONO, fontSize:10, letterSpacing:"0.12em", display:"flex", alignItems:"center", justifyContent:"center", boxShadow:"0 2px 18px rgba(204,0,0,0.4)", fontWeight:700 }}>
               VIEW & BUY →
             </a>
-            <button onClick={e=>{e.stopPropagation();window.open("https://wa.me/?text="+encodeURIComponent(gr.label+": "+d.product+"\n£"+d.buyNow.toFixed(2)+" @ "+d.retailer+"\n"+vd.v1+" — "+vd.v2+"\n"+d.url),"_blank")}}              style={{ width:44, background:"transparent", border:"1px solid #2a2a3a", borderRadius:5, color:"#777", fontSize:14, cursor:"pointer" }}>📤</button>
+            <button onClick={e=>{e.stopPropagation();window.open("https://wa.me/?text="+encodeURIComponent(gr.label+": "+d.product+"\n£"+d.buyNow.toFixed(2)+" @ "+d.retailer+"\n"+vd.v1+" — "+vd.v2+"\n"+d.url),"_blank")}}              style={{ width:44, background:"transparent", border:"1px solid #2a2a3a", borderRadius:5, color:"#AAAAAA", fontSize:14, cursor:"pointer" }}>📤</button>
           </div>
-          <div style={{ marginTop:8, fontFamily:MONO, fontSize:8, color:"#888", lineHeight:1.6 }}>
+          <div style={{ marginTop:8, fontFamily:MONO, fontSize:8, color:"#AAAAAA", lineHeight:1.6 }}>
             * Private seller · 0% eBay fees · £4 postage estimate · Hold projections are estimates, not financial advice
           </div>
         </div>
@@ -1150,7 +1150,7 @@ function HeatTab() {
     return (
       <div>
         <div style={{ display:"flex", justifyContent:"space-between", marginBottom:6 }}>
-          <div style={{ fontFamily:MONO, fontSize:9, color:"#555" }}>
+          <div style={{ fontFamily:MONO, fontSize:9, color:"#888" }}>
             {activeMonth} — <span style={{ color:"#FFFFFF" }}>£{activeVal.toLocaleString()}</span>
           </div>
           <div style={{ fontFamily:MONO, fontSize:9, color:pct>=0?color:"#FF3B3B" }}>
@@ -1230,7 +1230,7 @@ function HeatTab() {
         });
 
         if (filtered.length === 0) return (
-          <div style={{ fontFamily:MONO, fontSize:11, color:"#444", textAlign:"center", padding:"32px 0" }}>
+          <div style={{ fontFamily:MONO, fontSize:11, color:"#777", textAlign:"center", padding:"32px 0" }}>
             No results for "{heatSearch}"
           </div>
         );
@@ -1263,10 +1263,10 @@ function HeatTab() {
                 <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
                   <div style={{ flex:1, minWidth:0 }}>
                     <div style={{ fontFamily:DISP, fontSize:14, fontWeight:500, color:"#FFFFFF" }}>{s.n}</div>
-                    <div style={{ fontFamily:MONO, fontSize:9, color:"#555", marginTop:1 }}>{s.type}</div>
+                    <div style={{ fontFamily:MONO, fontSize:9, color:"#888", marginTop:1 }}>{s.type}</div>
                     <div style={{ display:"flex", gap:8, marginTop:3, flexWrap:"wrap" }}>
                       <span style={{ fontFamily:MONO, fontSize:9, color:tC }}>{s.t==="rising"?"↗ RISING":s.t==="declining"?"↘ FALLING":"→ STABLE"}</span>
-                      <span style={{ fontFamily:MONO, fontSize:9, color:"#444" }}>{s.s}/10</span>
+                      <span style={{ fontFamily:MONO, fontSize:9, color:"#777" }}>{s.s}/10</span>
                       <span style={{ fontFamily:MONO, fontSize:9, color:Number(totalGain)>=0?"#39D98A":"#FF3B3B" }}>{Number(totalGain)>=0?"+":""}{totalGain}% since launch</span>
                       {potentialHold&&longTermGain&&<span style={{ fontFamily:MONO, fontSize:8, color:"#B388FF", background:"rgba(179,136,255,0.1)", padding:"1px 5px", borderRadius:3 }}>HOLD POTENTIAL</span>}
                     </div>
@@ -1275,7 +1275,7 @@ function HeatTab() {
                     <div style={{ fontFamily:MONO, fontSize:13, color:"#FFFFFF" }}>£{currentPrice.toLocaleString()}</div>
                     <div style={{ fontFamily:MONO, fontSize:9, color:s.y1>=0?tC:"#FF3B3B" }}>{s.y1>=0?"+":""}{s.y1}% yr1</div>
                   </div>
-                  <div style={{ fontFamily:MONO, fontSize:10, color:"#444", marginLeft:8 }}>{isOpen?"▲":"▼"}</div>
+                  <div style={{ fontFamily:MONO, fontSize:10, color:"#777", marginLeft:8 }}>{isOpen?"▲":"▼"}</div>
                 </div>
                 <div style={{ marginTop:7, height:2, background:"rgba(255,255,255,0.05)", borderRadius:2 }}>
                   <div style={{ height:"100%", width:`${s.s*10}%`, background:tC, borderRadius:2, opacity:0.5 }}/>
@@ -1290,11 +1290,11 @@ function HeatTab() {
 
                   {/* Projections — all 4 years */}
                   <div style={{ marginTop:12, marginBottom:10 }}>
-                    <div style={{ fontFamily:MONO, fontSize:8, color:"#444", letterSpacing:"0.1em", marginBottom:8 }}>ESTIMATED VALUE IF HELD SEALED</div>
+                    <div style={{ fontFamily:MONO, fontSize:8, color:"#777", letterSpacing:"0.1em", marginBottom:8 }}>ESTIMATED VALUE IF HELD SEALED</div>
                     <div style={{ display:"flex", gap:6 }}>
                       {[{l:"1 YR",v:y1p,r:s.y1},{l:"2 YR",v:y2p,r:s.y2},{l:"3 YR",v:y3p,r:y3rate},{l:"4 YR",v:y4p,r:y4rate}].map(({l,v,r})=>(
                         <div key={l} style={{ flex:1, background:"#0A0A10", borderRadius:6, padding:"8px 6px", border:`1px solid ${r>=0?"rgba(0,255,136,0.12)":"rgba(255,59,59,0.12)"}`, textAlign:"center" }}>
-                          <div style={{ fontFamily:MONO, fontSize:7, color:"#555", marginBottom:3 }}>{l}</div>
+                          <div style={{ fontFamily:MONO, fontSize:7, color:"#888", marginBottom:3 }}>{l}</div>
                           <div style={{ fontFamily:MONO, fontSize:12, fontWeight:700, color:r>=0?"#39D98A":"#FF3B3B" }}>£{v.toLocaleString()}</div>
                           <div style={{ fontFamily:MONO, fontSize:8, color:r>=0?"#39D98A":"#FF3B3B" }}>{r>=0?"+":""}{Math.round(r)}%</div>
                         </div>
@@ -1306,13 +1306,13 @@ function HeatTab() {
                   {potentialHold&&longTermGain&&(
                     <div style={{ background:"rgba(179,136,255,0.06)", border:"1px solid rgba(179,136,255,0.25)", borderRadius:6, padding:"10px 12px", marginBottom:10 }}>
                       <div style={{ fontFamily:MONO, fontSize:9, color:"#B388FF", fontWeight:700, marginBottom:3 }}>📦 AVOID NOW — POSSIBLE LONG TERM HOLD</div>
-                      <div style={{ fontFamily:MONO, fontSize:8, color:"#888", lineHeight:1.6 }}>
+                      <div style={{ fontFamily:MONO, fontSize:8, color:"#AAAAAA", lineHeight:1.6 }}>
                         Currently declining and not worth flipping. However the 3-4 year projection suggests potential recovery. Only consider if you can hold sealed for 3+ years without needing the capital.
                       </div>
                     </div>
                   )}
 
-                  <div style={{ fontFamily:MONO, fontSize:9, color:"#777", lineHeight:1.7, background:"#0A0A10", borderRadius:6, padding:"10px 12px" }}>
+                  <div style={{ fontFamily:MONO, fontSize:9, color:"#AAAAAA", lineHeight:1.7, background:"#0A0A10", borderRadius:6, padding:"10px 12px" }}>
                     💡 {s.t==="rising"?"Strong hold. Prices rising consistently.":s.t==="declining"?"Prices falling. Avoid for investment unless holding 3-4+ years.":"Stable. Modest appreciation. Low risk, low reward."}
                   </div>
                   <div style={{ fontFamily:MONO, fontSize:7, color:"#2A2A38", textAlign:"center", marginTop:8 }}>
@@ -1623,14 +1623,17 @@ function App() {
     if(typeF==="tins")  return t.includes("tin")||t.includes("blister")||t.includes("collection");
     return true;
   }).filter(d=>{
-    const r=calcFlip(d.buyNow,d.resell||getMarket(d.product)).roi;
-    const h=calcHold(d.resell||getMarket(d.product)||d.buyNow,d.product);
+    const resellF = d.resell || getMarket(d.product);
+    const r=calcFlip(d.buyNow, resellF).roi;
+    const h=calcHold(resellF||d.buyNow,d.product);
     const gk=getGradeKey(r,h?.score??0);
     if(filter==="buy")  return r!==null&&r>=8;
     if(filter==="flip") return r!==null&&r>0&&r<8;
     if(filter==="hold") return gk==="H";
     if(filter==="avoid")return gk==="D"||(r!==null&&r<=-8);
-    return true;
+    // Default ALL view: only show genuinely useful deals (S/A/B/H grades)
+    // Hide C (marginal), D (avoid), ? (no data) from default view
+    return gk==="S"||gk==="A"||gk==="B"||gk==="H";
   }).filter(d=>{
     if(langF==="all") return true;
     const t=d.product.toLowerCase();
@@ -1640,10 +1643,28 @@ function App() {
     if(langF==="cn")  return t.includes("chinese")||t.includes("[cn]");
     return true;
   }).filter(d=>{
-    // Remove battle decks and league battle decks
     const tl = d.product.toLowerCase();
+    const buy = d.buyNow || 0;
+    // Block battle decks
     if (tl.includes("league battle deck") || tl.includes("battle deck") ||
         tl.includes("build & battle") || tl.includes("build and battle")) return false;
+    // Block single vintage cards (not sealed product)
+    if (tl.includes("1st edition") || tl.includes("holo rare") || 
+        tl.includes("common near mint") || tl.includes("uncommon rev") ||
+        tl.includes("reverse holo") || tl.includes("gym heroes") ||
+        tl.includes("expedition base") || tl.includes("team rocket returns") ||
+        tl.includes("aquapolis") || tl.includes("neo destiny")) return false;
+    // Block damaged items
+    if (tl.includes("damaged") || tl.includes("slightly damaged")) return false;
+    // Block trade/VAT-priced items (massively inflated)
+    if (tl.includes("vat gvms") || tl.includes("0% vat")) return false;
+    // Block acrylic case bundles (inflated price)
+    if (tl.includes("acrylic case")) return false;
+    // Block insane prices (>£500 unless it's a genuine premium set)
+    if (buy > 500 && !tl.includes("prismatic") && !tl.includes("charizard ultra")) return false;)) return false;
+    // Block 4-pack value packs and random packs (no reliable market price)
+    if (tl.includes("value pack") || tl.includes("random selection") || 
+        tl.includes("single booster pack (random")) return false;
     return true;
   }).filter(d=>{
     if(!search.trim()) return true;
@@ -1704,7 +1725,7 @@ function App() {
 
         {/* Status bar below banner */}
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"5px 16px", borderBottom:"1px solid rgba(255,255,255,0.04)", fontSize:9, fontFamily:MONO }}>
-          <span style={{ color:"#555", letterSpacing:"0.05em", fontSize:9 }}>Real-time Pokémon TCG deal intelligence</span>
+          <span style={{ color:"#888", letterSpacing:"0.05em", fontSize:9 }}>Real-time Pokémon TCG deal intelligence</span>
           <div style={{ display:"flex", alignItems:"center", gap:10 }}>
             <div style={{ display:"flex", alignItems:"center", gap:7 }}>
               <div style={{ width:6, height:6, borderRadius:"50%", background:live?"#00FF88":"#FF8C00", boxShadow:live?"0 0 10px #00FF88":"0 0 10px #FF8C00", animation:"blink 2s infinite" }}/>
@@ -1721,7 +1742,7 @@ function App() {
           <div style={{ display:"flex", gap:14, alignItems:"center" }}>
             <div style={{ fontFamily:MONO, fontSize:10, color:"#00FF88", letterSpacing:"0.06em" }}>🔥 {excN} HOT</div>
             <div style={{ fontFamily:MONO, fontSize:10, color:"#FFD60A", letterSpacing:"0.06em" }}>💰 {buyN} FLIP</div>
-            <div style={{ fontFamily:MONO, fontSize:10, color:"#444", letterSpacing:"0.04em" }}>· {deals.length} total</div>
+            <div style={{ fontFamily:MONO, fontSize:10, color:"#777", letterSpacing:"0.04em" }}>· {deals.length} total</div>
           </div>
           <button onClick={()=>liveScan()} disabled={scanProgress.active}
             style={{ background:scanProgress.active?"#1A1A28":"#CC0000", border:`1px solid ${scanProgress.active?"#333":"#CC0000"}`, borderRadius:5, padding:"6px 0", width:68, color:"#fff", fontFamily:MONO, fontSize:10, letterSpacing:"0.06em", cursor:scanProgress.active?"not-allowed":"pointer", boxShadow:scanProgress.active?"none":"0 2px 16px rgba(204,0,0,0.5)", opacity:scanProgress.active?0.6:1, flexShrink:0, textAlign:"center", transition:"all 0.15s" }}>
@@ -1740,7 +1761,7 @@ function App() {
                 SCANNING
               </div>
             </div>
-            <div style={{ fontFamily:MONO, fontSize:9, color:"#555" }}>
+            <div style={{ fontFamily:MONO, fontSize:9, color:"#888" }}>
               checking 25 UK retailers
             </div>
           </div>
@@ -1791,7 +1812,7 @@ function App() {
         {tab==="info"&&(
           <div style={{ animation:"fadeIn 0.2s ease", padding:"0 0 40px" }}>
             <div style={{ fontFamily:DISP, fontSize:18, fontWeight:600, color:"#FFFFFF", marginBottom:4 }}>How Shiny Den Works</div>
-            <div style={{ fontFamily:MONO, fontSize:9, color:"#555", marginBottom:20 }}>Pokémon TCG deal intelligence · UK market</div>
+            <div style={{ fontFamily:MONO, fontSize:9, color:"#888", marginBottom:20 }}>Pokémon TCG deal intelligence · UK market</div>
 
             {[
               ["⚡ HOME", "Live deals from 10+ UK retailers, updated every hour. Sorted by deal score — best opportunities at the top. Tap any card to see full analysis."],
@@ -1806,7 +1827,7 @@ function App() {
               </div>
             ))}
 
-            <div style={{ fontFamily:MONO, fontSize:9, color:"#444", marginTop:8, marginBottom:20, letterSpacing:"0.06em" }}>READING A DEAL CARD</div>
+            <div style={{ fontFamily:MONO, fontSize:9, color:"#777", marginTop:8, marginBottom:20, letterSpacing:"0.06em" }}>READING A DEAL CARD</div>
             {[
               ["S — FIRE DEAL", "25%+ ROI. Buy now and flip on eBay for significant profit."],
               ["A — STRONG BUY", "15-25% ROI. Solid flip opportunity after postage."],
@@ -1819,7 +1840,7 @@ function App() {
             ].map(([term, def], i) => (
               <div key={i} style={{ display:"flex", gap:12, marginBottom:10, paddingBottom:10, borderBottom:i<7?"1px solid #111":"none" }}>
                 <div style={{ fontFamily:MONO, fontSize:9, color:"#CC0000", flexShrink:0, width:120 }}>{term}</div>
-                <div style={{ fontFamily:MONO, fontSize:9, color:"#888", lineHeight:1.5 }}>{def}</div>
+                <div style={{ fontFamily:MONO, fontSize:9, color:"#AAAAAA", lineHeight:1.5 }}>{def}</div>
               </div>
             ))}
 
@@ -1883,7 +1904,7 @@ function App() {
           </div>
           {/* Search bar */}
           <div style={{ position:"relative", marginBottom:10 }}>
-            <div style={{ position:"absolute", left:12, top:"50%", transform:"translateY(-50%)", color:"#444", fontSize:12, pointerEvents:"none" }}>🔍</div>
+            <div style={{ position:"absolute", left:12, top:"50%", transform:"translateY(-50%)", color:"#777", fontSize:12, pointerEvents:"none" }}>🔍</div>
             <input
               type="text"
               placeholder="Search products, sets, retailers..."
@@ -1900,12 +1921,12 @@ function App() {
             />
             {search&&(
               <button onClick={()=>setSearch("")}
-                style={{ position:"absolute", right:10, top:"50%", transform:"translateY(-50%)", background:"none", border:"none", color:"#555", cursor:"pointer", fontSize:14, lineHeight:1, padding:2 }}>
+                style={{ position:"absolute", right:10, top:"50%", transform:"translateY(-50%)", background:"none", border:"none", color:"#888", cursor:"pointer", fontSize:14, lineHeight:1, padding:2 }}>
                 ✕
               </button>
             )}
           </div>
-          <div style={{ fontFamily:MONO, fontSize:9, color:"#888", marginBottom:10, letterSpacing:"0.06em", textAlign:"center" }}>
+          <div style={{ fontFamily:MONO, fontSize:9, color:"#AAAAAA", marginBottom:10, letterSpacing:"0.06em", textAlign:"center" }}>
             {filtered.length} RESULTS{search ? ` matching "${search}"` : " · SORTED BY DEAL SCORE"} · TAP TO EXPAND
           </div>
           {loading
@@ -1917,7 +1938,7 @@ function App() {
                 <div style={{ textAlign:"center", padding:"48px 24px" }}>
                   <div style={{ fontSize:32, marginBottom:12 }}>🔍</div>
                   <div style={{ fontFamily:DISP, fontSize:16, fontWeight:500, color:"#FFFFFF", marginBottom:8 }}>No deals match this filter</div>
-                  <div style={{ fontFamily:MONO, fontSize:10, color:"#444", lineHeight:1.8 }}>
+                  <div style={{ fontFamily:MONO, fontSize:10, color:"#777", lineHeight:1.8 }}>
                     Try switching to ALL or press SCAN for fresh results
                   </div>
                   <button onClick={()=>{setFilter("all");setTypeF("all");}}
@@ -1936,8 +1957,8 @@ function App() {
             <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:10 }}>
               <div>
                 <div style={{ fontFamily:DISP, fontSize:16, fontWeight:600, color:"#FFFFFF" }}>eBay</div>
-                <div style={{ fontFamily:MONO, fontSize:9, color:"#666", marginTop:2 }}>UK listings priced below market · flip profit after postage</div>
-                {ebayListings.length>0&&<div style={{ fontFamily:MONO, fontSize:8, color:"#555", marginTop:2 }}>{ebayListings.length} deals · auto-refreshes every 15 min</div>}
+                <div style={{ fontFamily:MONO, fontSize:9, color:"#999", marginTop:2 }}>UK listings priced below market · flip profit after postage</div>
+                {ebayListings.length>0&&<div style={{ fontFamily:MONO, fontSize:8, color:"#888", marginTop:2 }}>{ebayListings.length} deals · auto-refreshes every 15 min</div>}
               </div>
               <button onClick={()=>{setEbayLoaded(false);loadEbay();}} 
                 style={{ background:ebayLoading?"#0A0A14":"#1A1A28", border:`1px solid ${ebayLoading?"#CC0000":"#333"}`, borderRadius:5, padding:"6px 12px", color:ebayLoading?"#CC0000":"#AAAAAA", fontFamily:MONO, fontSize:9, cursor:"pointer", flexShrink:0 }}>
@@ -1953,13 +1974,13 @@ function App() {
                     <div style={{ height:8, background:"#141420", borderRadius:4, width:"40%" }}/>
                   </div>
                 ))}
-                <div style={{ fontFamily:MONO, fontSize:10, color:"#555", textAlign:"center", padding:"8px 0" }}>Scanning eBay UK listings...</div>
+                <div style={{ fontFamily:MONO, fontSize:10, color:"#888", textAlign:"center", padding:"8px 0" }}>Scanning eBay UK listings...</div>
               </div>
             )}
 
             {!ebayLoading&&ebayLoaded&&ebayListings.length===0&&(
               <div style={{ textAlign:"center", padding:"40px 0" }}>
-                <div style={{ fontFamily:MONO, fontSize:10, color:"#444" }}>No eBay deals loaded yet.</div>
+                <div style={{ fontFamily:MONO, fontSize:10, color:"#777" }}>No eBay deals loaded yet.</div>
                 <div style={{ fontFamily:MONO, fontSize:9, color:"#333", marginTop:6 }}>Press SCAN on HQ to trigger a fresh scraper run.</div>
               </div>
             )}
@@ -1995,26 +2016,26 @@ function App() {
                     </div>
                     <div style={{ textAlign:"right", flexShrink:0 }}>
                       <div style={{ fontFamily:MONO, fontSize:18, color:"#FFFFFF", lineHeight:1 }}>£{price.toFixed(2)}</div>
-                      <div style={{ fontFamily:MONO, fontSize:9, color:"#555", marginTop:2 }}>listed price</div>
+                      <div style={{ fontFamily:MONO, fontSize:9, color:"#888", marginTop:2 }}>listed price</div>
                     </div>
                   </div>
                   <div style={{ background:"rgba(0,0,0,0.4)", border:"1px solid rgba(255,255,255,0.06)", borderRadius:6, padding:"10px 12px", marginBottom:10 }}>
-                    <div style={{ fontFamily:MONO, fontSize:8, color:"#555", letterSpacing:"0.12em", marginBottom:8 }}>WHY IT&#39;S A DEAL</div>
+                    <div style={{ fontFamily:MONO, fontSize:8, color:"#888", letterSpacing:"0.12em", marginBottom:8 }}>WHY IT&#39;S A DEAL</div>
                     <div style={{ display:"flex", gap:0 }}>
                       <div style={{ flex:1, borderRight:"1px solid rgba(255,255,255,0.06)", paddingRight:10 }}>
-                        <div style={{ fontFamily:MONO, fontSize:8, color:"#555", marginBottom:2 }}>eBay market</div>
+                        <div style={{ fontFamily:MONO, fontSize:8, color:"#888", marginBottom:2 }}>eBay market</div>
                         <div style={{ fontFamily:MONO, fontSize:13, color:"#FFFFFF" }}>£{marketPrice.toFixed(2)}</div>
                       </div>
                       <div style={{ flex:1, paddingLeft:10, borderRight:"1px solid rgba(255,255,255,0.06)", paddingRight:10 }}>
-                        <div style={{ fontFamily:MONO, fontSize:8, color:"#555", marginBottom:2 }}>flip profit</div>
+                        <div style={{ fontFamily:MONO, fontSize:8, color:"#888", marginBottom:2 }}>flip profit</div>
                         <div style={{ fontFamily:MONO, fontSize:13, color:"#00FF88" }}>+£{flipNet.toFixed(2)}</div>
                       </div>
                       <div style={{ flex:1, paddingLeft:10 }}>
-                        <div style={{ fontFamily:MONO, fontSize:8, color:"#555", marginBottom:2 }}>ROI</div>
+                        <div style={{ fontFamily:MONO, fontSize:8, color:"#888", marginBottom:2 }}>ROI</div>
                         <div style={{ fontFamily:MONO, fontSize:13, color:gradeColor }}>{flipRoi}%</div>
                       </div>
                     </div>
-                    <div style={{ fontFamily:MONO, fontSize:9, color:"#888", marginTop:8, lineHeight:1.5 }}>
+                    <div style={{ fontFamily:MONO, fontSize:9, color:"#AAAAAA", marginTop:8, lineHeight:1.5 }}>
                       Listed {pctBelow}% below eBay market · ${POST} postage · private seller 0% fees
                     </div>
                   </div>
@@ -2022,7 +2043,7 @@ function App() {
                     style={{ display:"block", textAlign:"center", background:"#CC0000", borderRadius:6, padding:"10px", color:"#fff", fontFamily:MONO, fontSize:10, letterSpacing:"0.1em", boxShadow:"0 2px 12px rgba(204,0,0,0.35)" }}>
                     VIEW ON EBAY →
                   </a>
-                  <div style={{ fontFamily:MONO, fontSize:8, color:"#444", marginTop:6, textAlign:"center" }}>
+                  <div style={{ fontFamily:MONO, fontSize:8, color:"#777", marginTop:6, textAlign:"center" }}>
                     Based on recent sold listings · private seller · not financial advice
                   </div>
                 </div>
@@ -2035,13 +2056,13 @@ function App() {
         {tab==="market"&&(
           <div style={{animation:"fadeup 0.3s ease"}}>
             <div style={{ fontFamily:DISP, fontSize:16, fontWeight:600, color:"#FFFFFF", marginBottom:4 }}>Marketplace</div>
-            <div style={{ fontFamily:MONO, fontSize:9, color:"#555", marginBottom:24 }}>Buy and sell sealed Pokémon products directly</div>
+            <div style={{ fontFamily:MONO, fontSize:9, color:"#888", marginBottom:24 }}>Buy and sell sealed Pokémon products directly</div>
 
             {/* Coming soon hero */}
             <div style={{ background:"#0A0A10", border:"1px solid #1E1E2A", borderRadius:10, padding:"28px 20px", textAlign:"center", marginBottom:16 }}>
               <div style={{ fontSize:40, marginBottom:12 }}>🏷️</div>
               <div style={{ fontFamily:DISP, fontSize:18, fontWeight:600, color:"#FFFFFF", marginBottom:8 }}>Coming Soon</div>
-              <div style={{ fontFamily:MONO, fontSize:10, color:"#555", lineHeight:1.7, marginBottom:20 }}>
+              <div style={{ fontFamily:MONO, fontSize:10, color:"#888", lineHeight:1.7, marginBottom:20 }}>
                 Buy and sell sealed Pokémon products directly with other collectors. No eBay fees. No middleman.
               </div>
               <div style={{ display:"flex", flexDirection:"column", gap:10, textAlign:"left" }}>
@@ -2063,7 +2084,7 @@ function App() {
             {/* Notify me */}
             <div style={{ background:"#0A0A10", border:"1px solid #CC000033", borderRadius:10, padding:"16px 20px" }}>
               <div style={{ fontFamily:DISP, fontSize:13, fontWeight:600, color:"#FFFFFF", marginBottom:4 }}>Get early access</div>
-              <div style={{ fontFamily:MONO, fontSize:9, color:"#555", marginBottom:12 }}>Be first to know when Marketplace launches</div>
+              <div style={{ fontFamily:MONO, fontSize:9, color:"#888", marginBottom:12 }}>Be first to know when Marketplace launches</div>
               <div style={{ display:"flex", gap:8 }}>
                 <input
                   type="email"
@@ -2105,12 +2126,12 @@ function App() {
         {tab==="alerts"&&(
           <div style={{animation:"fadeup 0.3s ease"}}>
             <div style={{ fontFamily:DISP, fontSize:16, fontWeight:600, color:"#FFFFFF", marginBottom:4 }}>Price Alerts</div>
-            <div style={{ fontFamily:MONO, fontSize:9, color:"#555", marginBottom:20 }}>Get notified the moment a deal hits your target price</div>
+            <div style={{ fontFamily:MONO, fontSize:9, color:"#888", marginBottom:20 }}>Get notified the moment a deal hits your target price</div>
 
             {/* Add alert form */}
             <div style={{ background:"#0A0A10", border:"1px solid #1E1E2A", borderRadius:8, padding:"16px", marginBottom:16 }}>
-              <div style={{ fontFamily:MONO, fontSize:9, color:"#888", letterSpacing:"0.12em", marginBottom:12 }}>NEW ALERT</div>
-              <div style={{ fontFamily:MONO, fontSize:9, color:"#555", marginBottom:8 }}>Product keyword (e.g. "151 ETB", "Evolving Skies booster box")</div>
+              <div style={{ fontFamily:MONO, fontSize:9, color:"#AAAAAA", letterSpacing:"0.12em", marginBottom:12 }}>NEW ALERT</div>
+              <div style={{ fontFamily:MONO, fontSize:9, color:"#888", marginBottom:8 }}>Product keyword (e.g. "151 ETB", "Evolving Skies booster box")</div>
               <input
                 type="text"
                 value={newAlert.product}
@@ -2118,7 +2139,7 @@ function App() {
                 placeholder="e.g. 151 Elite Trainer Box"
                 style={{ width:"100%", background:"#0D0D16", border:"1px solid rgba(255,255,255,0.08)", borderRadius:6, padding:"10px 12px", color:"#FFFFFF", fontFamily:MONO, fontSize:11, outline:"none", marginBottom:10, boxSizing:"border-box" }}
               />
-              <div style={{ fontFamily:MONO, fontSize:9, color:"#555", marginBottom:8 }}>Alert me when price drops below (£)</div>
+              <div style={{ fontFamily:MONO, fontSize:9, color:"#888", marginBottom:8 }}>Alert me when price drops below (£)</div>
               <div style={{ display:"flex", gap:8 }}>
                 <input
                   type="number"
@@ -2146,7 +2167,7 @@ function App() {
               </div>
             ) : (
               <div>
-                <div style={{ fontFamily:MONO, fontSize:9, color:"#555", letterSpacing:"0.12em", marginBottom:10 }}>ACTIVE ALERTS — {alerts.length}</div>
+                <div style={{ fontFamily:MONO, fontSize:9, color:"#888", letterSpacing:"0.12em", marginBottom:10 }}>ACTIVE ALERTS — {alerts.length}</div>
                 {alerts.map(alert => {
                   const hit = triggered.find(t => t.alert.id === alert.id);
                   const match = deals.find(d => d.product.toLowerCase().includes(alert.product.toLowerCase()) && d.buyNow <= parseFloat(alert.maxPrice));
@@ -2154,7 +2175,7 @@ function App() {
                     <div key={alert.id} style={{ background: match ? "rgba(0,255,136,0.06)" : "#0A0A10", border:`1px solid ${match?"rgba(0,255,136,0.3)":"#1E1E2A"}`, borderRadius:8, padding:"13px 14px", marginBottom:8, display:"flex", justifyContent:"space-between", alignItems:"center" }}>
                       <div>
                         <div style={{ fontFamily:DISP, fontSize:13, fontWeight:500, color:"#FFFFFF", marginBottom:3 }}>{alert.product}</div>
-                        <div style={{ fontFamily:MONO, fontSize:9, color:"#555" }}>Alert when under ${alert.maxPrice}</div>
+                        <div style={{ fontFamily:MONO, fontSize:9, color:"#888" }}>Alert when under ${alert.maxPrice}</div>
                         {match && (
                           <div style={{ fontFamily:MONO, fontSize:9, color:"#00FF88", marginTop:4 }}>
                             🔥 LIVE — ${match.buyNow.toFixed(2)} @ {match.retailer}
@@ -2168,7 +2189,7 @@ function App() {
                         )}
                         <button
                           onClick={()=>saveAlerts(alerts.filter(a=>a.id!==alert.id))}
-                          style={{ background:"transparent", border:"1px solid #2A2A38", borderRadius:4, padding:"6px 10px", color:"#555", fontFamily:MONO, fontSize:9, cursor:"pointer" }}>✕</button>
+                          style={{ background:"transparent", border:"1px solid #2A2A38", borderRadius:4, padding:"6px 10px", color:"#888", fontFamily:MONO, fontSize:9, cursor:"pointer" }}>✕</button>
                       </div>
                     </div>
                   );
@@ -2178,7 +2199,7 @@ function App() {
 
             {/* Quick add suggestions */}
             <div style={{ marginTop:20 }}>
-              <div style={{ fontFamily:MONO, fontSize:9, color:"#444", letterSpacing:"0.12em", marginBottom:10 }}>QUICK ADD</div>
+              <div style={{ fontFamily:MONO, fontSize:9, color:"#777", letterSpacing:"0.12em", marginBottom:10 }}>QUICK ADD</div>
               <div style={{ display:"flex", flexWrap:"wrap", gap:8 }}>
                 {[
                   { product:"151 Elite Trainer Box", maxPrice:"55" },
