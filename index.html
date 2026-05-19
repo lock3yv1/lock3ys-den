@@ -225,11 +225,15 @@ const MARKET = {
 
 function getMarket(title) {
   if (!title) return null;
-  const t = title.toLowerCase();
-  // Sort by key length descending so "half booster box" matches before "booster box"
-  // and "elite trainer box" matches before "booster box" etc.
+  // Normalise: remove dashes, pipes, extra spaces so "chaos rising - booster pack" 
+  // matches key "chaos rising booster pack"
+  const t = title.toLowerCase().replace(/[|\-]/g, " ").replace(/\s+/g, " ").trim();
+  const isBox = t.includes("booster box") || t.includes("display box");
+  const isHalf = t.includes("half") || t.includes("18 pack");
   const entries = Object.entries(MARKET).sort((a,b) => b[0].length - a[0].length);
   for (const [k,v] of entries) {
+    // Skip pack keys when title describes a box
+    if (isBox && !isHalf && k.includes("booster pack") && !k.includes("booster box")) continue;
     if (t.includes(k)) return v;
   }
   return null;
@@ -285,7 +289,7 @@ function getGradeKey(roi, hs=0) {
 function getVerdict(roi, net, hs=0, h=null) {
   // Check hold FIRST — even without eBay data, strong hold sets should be identified
   if (roi===null) {
-    if (hs>=7) return { v1:"BUY & HOLD", v2:`No live flip data yet, but this set has a ${hs}/10 hold score. Worth buying to store sealed.` };
+    if (hs>=7) return { v1:"BUY & HOLD", v2:`No live flip data yet but ${hs}/10 hold score. Strong candidate for sealed storage — sets with this score average 15-30% gains over 3 years.` };
     if (hs>=5) return { v1:"HOLD CANDIDATE", v2:`No flip data yet but ${hs}/10 hold score. Could appreciate over 1-2 years.` };
     return { v1:"IN STOCK", v2:"No eBay market data yet. Scan for fresh prices." };
   }
@@ -294,7 +298,7 @@ function getVerdict(roi, net, hs=0, h=null) {
   if (roi>=8)    return { v1:`${roi}% ROI — GOOD DEAL`, v2:`+£${net?.toFixed(2)} profit after £${POST} postage. Solid opportunity.` };
   if (roi>=2)    return { v1:`MARGINAL FLIP`, v2:`+£${net?.toFixed(2)} margin after £${POST} postage — slim but profitable.` };
   if (hs>=8)     return { v1:`BUY & HOLD`, v2:`Not worth flipping now but this set has a ${hs}/10 hold score — buy and store sealed for 1-2+ years.` };
-  if (hs>=6)     return { v1:`HOLD FOR APPRECIATION`, v2:`Weak flip. But ${h?.note || "this set appreciates over time"}. Consider storing sealed.` };
+  if (hs>=6)     return { v1:`HOLD FOR APPRECIATION`, v2:`Not profitable to flip right now. This set has a ${hs}/10 hold score — storing sealed could pay off in 2-4 years as supply tightens.` };
   if (roi>=-10)  return { v1:`NOT A FLIP`, v2:`You'd lose £${Math.abs(net||0).toFixed(2)} flipping this. Only buy if you want to open or collect.` };
   return           { v1:`AVOID FOR PROFIT`, v2:`Loss-making at current eBay prices. Buyer beware.` };
 }
@@ -760,7 +764,7 @@ function Card({ d, rank }) {
         )}
 
         {/* #2 — eBay resell: green = buying below market (profit possible), red = above */}
-        {d.resell&&(
+        {resell&&(
           <div style={{
             fontFamily:MONO, fontSize:11, fontWeight:700,
             padding:"5px 10px", borderRadius:4,
@@ -771,13 +775,7 @@ function Card({ d, rank }) {
         )}
 
         {/* #3 — RRP: warm gold so it's clearly different from the eBay price */}
-        {d.rrp&&vsR!==null&&(
-          <div style={{
-            fontFamily:MONO, fontSize:11,
-            padding:"5px 10px", borderRadius:4,
-            background:"rgba(255,196,0,0.08)", color:"#FFC400",
-            border:"1px solid rgba(255,196,0,0.25)",
-          }}>RRP £{d.rrp.toFixed(2)}{vsR<0?` · ${Math.abs(vsR)}% OFF`:"" }</div>
+        {vsR<0?` · ${Math.abs(vsR)}% OFF`:"" }</div>
         )}
 
         {/* #4 — Per pack: cyan, clearly different */}
@@ -839,7 +837,7 @@ function Card({ d, rank }) {
               <div style={{ fontFamily:MONO, fontSize:8, color:"#555", marginBottom:10 }}>After £{POST} postage · 0% eBay fees for private sellers · based on recent sold data</div>
               <div style={{ display:"grid", gridTemplateColumns:"1fr auto", gap:"8px 20px" }}>
                 <span style={{ fontFamily:MONO, fontSize:12, color:"#C8C8C8" }}>eBay resell price</span>
-                <span style={{ fontFamily:MONO, fontSize:12, color:"#00FF88", fontWeight:500 }}>£{d.resell?.toFixed(2)}</span>
+                <span style={{ fontFamily:MONO, fontSize:12, color:"#00FF88", fontWeight:500 }}>£{resell?.toFixed(2)}</span>
 
                 <span style={{ fontFamily:MONO, fontSize:12, color:"#C8C8C8" }}>Postage (avg)</span>
                 <span style={{ fontFamily:MONO, fontSize:12, color:"#FF6060" }}>−£{POST.toFixed(2)}</span>
@@ -983,13 +981,13 @@ function HeatTab() {
 
   const sets = [
     // ── SCARLET & VIOLET ERA (2023–2026) ────────────────────────────────────
-    { n:"Destined Rivals",      type:"Booster Box",      y1:5,  y2:12, s:5, t:"stable",   history:genHistory(105,24,"stable") },
-    { n:"Destined Rivals",      type:"Elite Trainer Box", y1:4,  y2:8,  s:4, t:"stable",   history:genHistory(52,24,"stable") },
+    { n:"Destined Rivals",      type:"Booster Box",      y1:5,  y2:12, s:5, t:"stable",   history:genHistory(155,24,"stable") },
+    { n:"Destined Rivals",      type:"Elite Trainer Box", y1:4,  y2:8,  s:4, t:"stable",   history:genHistory(148,24,"stable") },
     { n:"Destined Rivals",      type:"Booster Bundle",   y1:3,  y2:6,  s:4, t:"stable",   history:genHistory(28,24,"stable") },
-    { n:"Destined Rivals",      type:"Booster Pack",     y1:2,  y2:5,  s:3, t:"stable",   history:genHistory(6,24,"stable") },
-    { n:"Ascended Heroes",      type:"Booster Box",      y1:10, y2:21, s:6, t:"rising",   history:genHistory(125,24,"rising") },
-    { n:"Ascended Heroes",      type:"Elite Trainer Box", y1:10, y2:22, s:6, t:"rising",   history:genHistory(160,24,"rising") },
-    { n:"Ascended Heroes",      type:"Booster Bundle",   y1:8,  y2:18, s:5, t:"rising",   history:genHistory(35,24,"rising") },
+    { n:"Destined Rivals",      type:"Booster Pack",     y1:2,  y2:5,  s:3, t:"stable",   history:genHistory(8,24,"stable") },
+    { n:"Ascended Heroes",      type:"Booster Box",      y1:10, y2:21, s:6, t:"rising",   history:genHistory(105,24,"rising") },
+    { n:"Ascended Heroes",      type:"Elite Trainer Box", y1:10, y2:22, s:6, t:"rising",   history:genHistory(135,24,"rising") },
+    { n:"Ascended Heroes",      type:"Booster Bundle",   y1:8,  y2:18, s:5, t:"rising",   history:genHistory(55,24,"rising") },
     { n:"Phantasmal Flames",    type:"Booster Box",      y1:20, y2:44, s:7, t:"rising",   history:[null,null,null,null,null,null,null,null,null,null,null,null,280,295,310,320,330,338,345,350,355,358,360,360] },
     { n:"Phantasmal Flames",    type:"Elite Trainer Box", y1:18, y2:38, s:7, t:"rising",   history:[null,null,null,null,null,null,null,null,null,null,null,null,90,95,102,108,112,115,117,119,120,120,120,120] },
     { n:"Chaos Rising",         type:"Booster Box",      y1:15, y2:32, s:7, t:"rising",   history:[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,110,118,125,132,139,145] },
@@ -1029,13 +1027,13 @@ function HeatTab() {
     { n:"Evolving Skies",       type:"Tin",              y1:8,  y2:18, s:7, t:"rising",   history:[28,29,30,31,32,33,34,35,36,37,38,39,39,40,40,40,40,40,40,40,40,40,40,40] },
     { n:"Chilling Reign",       type:"Booster Box",      y1:8,  y2:17, s:6, t:"rising",   history:[130,132,134,135,137,138,140,141,143,144,146,147,148,149,150,150,151,151,152,152,152,152,152,152] },
     { n:"Chilling Reign",       type:"Elite Trainer Box", y1:6,  y2:12, s:5, t:"rising",   history:genHistory(60,24,"rising") },
-    { n:"Battle Styles",        type:"Booster Box",      y1:5,  y2:10, s:5, t:"stable",   history:genHistory(172,24,"stable") },
-    { n:"Battle Styles",        type:"Elite Trainer Box", y1:4,  y2:8,  s:4, t:"stable",   history:genHistory(62,24,"stable") },
+    { n:"Battle Styles",        type:"Booster Box",      y1:5,  y2:10, s:5, t:"stable",   history:genHistory(270,24,"stable") },
+    { n:"Battle Styles",        type:"Elite Trainer Box", y1:4,  y2:8,  s:4, t:"stable",   history:genHistory(125,24,"stable") },
     { n:"Shining Fates",        type:"Elite Trainer Box", y1:10, y2:21, s:8, t:"stable",   history:[98,100,103,106,109,112,115,118,120,122,224,226,228,230,232,233,234,235,236,237,238,239,239,240] },
     { n:"Shining Fates",        type:"Booster Pack",     y1:8,  y2:15, s:7, t:"stable",   history:[13,13,14,14,14,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15] },
     { n:"Shining Fates",        type:"Tin",              y1:6,  y2:14, s:6, t:"stable",   history:[22,22,23,24,25,26,26,27,27,28,28,28,28,29,29,29,29,29,29,29,29,29,29,29] },
     { n:"Brilliant Stars",      type:"Booster Box",      y1:5,  y2:10, s:5, t:"stable",   history:[128,129,130,131,132,133,134,135,136,137,138,139,140,140,141,141,142,142,142,142,142,142,142,142] },
-    { n:"Brilliant Stars",      type:"Elite Trainer Box", y1:4,  y2:8,  s:4, t:"stable",   history:genHistory(56,24,"stable") },
+    { n:"Brilliant Stars",      type:"Elite Trainer Box", y1:4,  y2:8,  s:4, t:"stable",   history:genHistory(78,24,"stable") },
     { n:"Fusion Strike",        type:"Booster Box",      y1:3,  y2:7,  s:4, t:"stable",   history:genHistory(138,24,"stable") },
     { n:"Lost Origin",          type:"Booster Box",      y1:2,  y2:4,  s:4, t:"stable",   history:genHistory(122,24,"stable") },
     { n:"Silver Tempest",       type:"Booster Box",      y1:3,  y2:7,  s:5, t:"stable",   history:genHistory(112,24,"stable") },
@@ -1603,10 +1601,14 @@ function App() {
 
   // Grade priority: S=0, A=1, B=2, C=3, H=4, D=5, ?=6
   function gradePriority(d) {
-    const r = calcFlip(d.buyNow, d.resell || getMarket(d.product)).roi;
-    const h = calcHold(d.resell || getMarket(d.product) || d.buyNow, d.product);
+    const resellP = d.resell || getMarket(d.product);
+    const r = calcFlip(d.buyNow, resellP).roi;
+    const h = calcHold(resellP || d.buyNow, d.product);
     const gk = getGradeKey(r, h?.score??0);
-    return {S:0,A:1,B:2,C:3,H:4,D:5,"?":6}[gk] ?? 6;
+    // Items with no resell price data rank below items with real price data
+    const base = {S:0,A:1,B:2,C:3,H:4,D:5,"?":6}[gk] ?? 6;
+    const noData = !resellP ? 0.5 : 0; // push no-data items down within their grade
+    return base + noData;
   }
   const sorted = [...deals].sort((a,b) => {
     const pa = gradePriority(a), pb = gradePriority(b);
@@ -1639,6 +1641,12 @@ function App() {
     if(langF==="jp")  return t.includes("japanese")||t.includes("[jp]");
     if(langF==="kr")  return t.includes("korean")||t.includes("[kr]");
     if(langF==="cn")  return t.includes("chinese")||t.includes("[cn]");
+    return true;
+  }).filter(d=>{
+    // Remove battle decks and league battle decks
+    const tl = d.product.toLowerCase();
+    if (tl.includes("league battle deck") || tl.includes("battle deck") ||
+        tl.includes("build & battle") || tl.includes("build and battle")) return false;
     return true;
   }).filter(d=>{
     if(!search.trim()) return true;
