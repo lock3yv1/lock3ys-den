@@ -1667,7 +1667,6 @@ function App() {
   const best = sorted.find(d => (calcFlip(d.buyNow, d.resell).roi ?? -999) >= 8) || null;
 
   // ── ONBOARDING ───────────────────────────────────────────────────────────
-  const [showOnboard, setShowOnboard] = React.useState(()=>{ try{return !localStorage.getItem("sd_onboarded")}catch{return true} });
 
   return (<>
     <style>{`
@@ -1683,34 +1682,6 @@ function App() {
       ::-webkit-scrollbar{width:2px}::-webkit-scrollbar-thumb{background:#333}
       a{text-decoration:none;color:inherit}
     `}</style>
-
-    {/* Onboarding modal */}
-    {showOnboard&&(
-      <div style={{ position:"fixed",inset:0,background:"rgba(0,0,0,0.88)",zIndex:9999,display:"flex",alignItems:"flex-end" }}>
-        <div style={{ background:"#12121F",borderTop:"2px solid rgba(204,0,0,0.5)",borderRadius:"16px 16px 0 0",padding:"24px 20px 40px",width:"100%" }}
-          onClick={e=>e.stopPropagation()}>
-          <div style={{ width:48,height:4,background:"rgba(255,255,255,0.25)",borderRadius:2,margin:"0 auto 20px" }}/>
-          <div style={{ fontFamily:DISP,fontSize:22,fontWeight:700,color:"#FFFFFF",marginBottom:8 }}>Welcome to Shiny Den 👋</div>
-          <div style={{ fontFamily:MONO,fontSize:11,color:"#CCCCCC",marginBottom:20,lineHeight:1.7 }}>Real-time Pokémon market intelligence. Here&#39;s what everything means:</div>
-          {[
-            ["💰 FLIP","Buy from a retailer, sell on eBay for profit. We calculate net after £4 postage only — private seller, 0% fees."],
-            ["📦 HOLD","Buy and store sealed. Strong sets appreciate over time — we track the trajectory."],
-            ["🔥 HEAT","Price history charts for every major set. See what's rising and what's tanking."],
-            ["🛒 eBay","Live eBay listings priced below market value — scored by flip profit."],
-            ["🎯 SNIPES","Set price alerts — get flagged when a deal drops below your target."],
-          ].map(([title,desc])=>(
-            <div key={title} style={{ display:"flex",gap:12,marginBottom:14,alignItems:"flex-start" }}>
-              <div style={{ fontFamily:MONO,fontSize:11,fontWeight:700,color:"#00FF88",flexShrink:0,paddingTop:1,minWidth:72 }}>{title}</div>
-              <div style={{ fontFamily:MONO,fontSize:10,color:"#CCCCCC",lineHeight:1.6 }}>{desc}</div>
-            </div>
-          ))}
-          <button onClick={()=>{setShowOnboard(false);try{localStorage.setItem("sd_onboarded","1")}catch{}}}
-            style={{ width:"100%",background:"#CC0000",border:"none",borderRadius:8,padding:"13px",color:"#fff",fontFamily:MONO,fontSize:11,letterSpacing:"0.1em",cursor:"pointer",marginTop:8,boxShadow:"0 2px 20px rgba(204,0,0,0.4)" }}>
-            LET&#39;S GO →
-          </button>
-        </div>
-      </div>
-    )}
 
     {/* Subtle scanline overlay — Dr Disrespect signature */}
     <div style={{ position:"fixed", inset:0, pointerEvents:"none", zIndex:9999,
@@ -1811,6 +1782,48 @@ function App() {
         {/* ── CONTENT ── */}
 
         {/* ── DEALS ── */}
+
+        {/* ── INFO TAB ── */}
+        {tab==="info"&&(
+          <div style={{ animation:"fadeIn 0.2s ease", padding:"0 0 40px" }}>
+            <div style={{ fontFamily:DISP, fontSize:18, fontWeight:600, color:"#FFFFFF", marginBottom:4 }}>How Shiny Den Works</div>
+            <div style={{ fontFamily:MONO, fontSize:9, color:"#555", marginBottom:20 }}>Pokémon TCG deal intelligence · UK market</div>
+
+            {[
+              ["⚡ HOME", "Live deals from 10+ UK retailers, updated every hour. Sorted by deal score — best opportunities at the top. Tap any card to see full analysis."],
+              ["🛒 eBay", "eBay listings priced below their sold market value. Only shows deals where you can flip for profit after £4 postage. Refreshes every 15 minutes."],
+              ["🔥 HEAT", "Price trend charts for every major set. See which sets are rising or falling in value over the last 24 months."],
+              ["🎯 SNIPES", "Set price alerts. Enter a product and your target price — we flag it when a retailer drops below that number."],
+              ["🏛 VAULT", "Market intelligence. Track set values, sealed appreciation, and investment grades across all eras."],
+            ].map(([title, desc], i) => (
+              <div key={i} style={{ marginBottom:14, background:"#0D0D18", border:"1px solid #1A1A28", borderRadius:8, padding:"14px" }}>
+                <div style={{ fontFamily:MONO, fontSize:10, color:"#CC0000", letterSpacing:"0.1em", marginBottom:6 }}>{title}</div>
+                <div style={{ fontFamily:MONO, fontSize:10, color:"#AAAAAA", lineHeight:1.6 }}>{desc}</div>
+              </div>
+            ))}
+
+            <div style={{ fontFamily:MONO, fontSize:9, color:"#444", marginTop:8, marginBottom:20, letterSpacing:"0.06em" }}>READING A DEAL CARD</div>
+            {[
+              ["S — FIRE DEAL", "25%+ ROI. Buy now and flip on eBay for significant profit."],
+              ["A — STRONG BUY", "15-25% ROI. Solid flip opportunity after postage."],
+              ["B — GOOD DEAL", "8-15% ROI. Worthwhile if you act quickly."],
+              ["H — HOLD", "Not worth flipping now but strong long-term appreciation expected. Store sealed."],
+              ["D — LOW SIGNAL", "Priced at or above eBay market. No flip opportunity."],
+              ["🔥 X% below eBay", "How far below the eBay sold price the retailer is charging."],
+              ["Flip +£X profit", "Estimated profit after £4 postage. Private seller — 0% eBay fees."],
+              ["X/10 hold score", "Our estimate of long-term sealed appreciation potential."],
+            ].map(([term, def], i) => (
+              <div key={i} style={{ display:"flex", gap:12, marginBottom:10, paddingBottom:10, borderBottom:i<7?"1px solid #111":"none" }}>
+                <div style={{ fontFamily:MONO, fontSize:9, color:"#CC0000", flexShrink:0, width:120 }}>{term}</div>
+                <div style={{ fontFamily:MONO, fontSize:9, color:"#888", lineHeight:1.5 }}>{def}</div>
+              </div>
+            ))}
+
+            <div style={{ fontFamily:MONO, fontSize:8, color:"#333", marginTop:20, lineHeight:1.8 }}>
+              * All prices based on recent eBay UK sold listings · Private seller 0% fees · £4 avg postage deducted · Hold projections are estimates, not financial advice · Prices update hourly
+            </div>
+          </div>
+        )}
         {tab==="deals"&&<>
           {/* Type filter — single centred row */}
           <div style={{ display:"flex", gap:5, marginBottom:8, justifyContent:"center", flexWrap:"nowrap" }}>
@@ -2299,7 +2312,7 @@ function App() {
 
     {/* ══ BOTTOM NAV ══ */}
     <div style={{ position:"fixed",bottom:0,left:0,right:0,background:"rgba(7,7,13,0.98)",borderTop:"1px solid rgba(255,255,255,0.07)",display:"flex",padding:"10px 0 24px",zIndex:100,backdropFilter:"blur(20px)" }}>
-      {[{id:"deals",icon:"⚡",l:"Home"},{id:"ebay",icon:"🛒",l:"eBay"},{id:"heat",icon:"🔥",l:"HEAT"},{id:"alerts",icon:"🎯",l:"SNIPES"},{id:"market",icon:"🏛",l:"VAULT"}].map(n=>(
+      {[{id:"deals",icon:"⚡",l:"Home"},{id:"ebay",icon:"🛒",l:"eBay"},{id:"heat",icon:"🔥",l:"HEAT"},{id:"alerts",icon:"🎯",l:"SNIPES"},{id:"market",icon:"🏛",l:"VAULT"},{id:"info",icon:"ℹ️",l:"INFO"}].map(n=>(
         <button key={n.id} onClick={()=>setTab(n.id)} style={{ flex:1,background:"transparent",border:"none",color:tab===n.id?"#CC0000":"#888",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:3,fontFamily:DISP,fontSize:11,fontWeight:500,letterSpacing:"0.1em",transition:"color 0.15s" }}>
           <span style={{ fontSize:19 }}>{n.icon}</span>{n.l}
         </button>
