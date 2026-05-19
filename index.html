@@ -895,7 +895,7 @@ function Card({ d, rank }) {
                 <HoldRow label="3 YEARS" val={yr3v}/>
                 <HoldRow label="4 YEARS" val={yr4v}/>
                 <div style={{ fontFamily:MONO, fontSize:9, color:"#888", lineHeight:1.6, marginTop:8, padding:"8px 10px", background:"rgba(255,255,255,0.03)", borderRadius:4 }}>
-                  💡 {h.note}
+                  💡 {(h.note||"").split(". Top pulls:")[0].split(". Key hits:")[0].split(". Top pull:")[0]}
                 </div>
               </div>
             );
@@ -1602,10 +1602,10 @@ function App() {
     const r = calcFlip(d.buyNow, resellP).roi;
     const h = calcHold(resellP || d.buyNow, d.product);
     const gk = getGradeKey(r, h?.score??0);
-    // Items with no resell price data rank below items with real price data
     const base = {S:0,A:1,B:2,C:3,H:4,D:5,"?":6}[gk] ?? 6;
-    const noData = !resellP ? 0.5 : 0; // push no-data items down within their grade
-    return base + noData;
+    // Items with NO market price data rank at the very bottom regardless of grade
+    if (!resellP) return 7;
+    return base;
   }
   const sorted = [...deals].sort((a,b) => {
     const pa = gradePriority(a), pb = gradePriority(b);
@@ -1664,7 +1664,11 @@ function App() {
     if (mins < 60) return `${mins}m ago`;
     return `${Math.floor(mins/60)}h ago`;
   })() : "loading...";
-  const best = sorted.find(d => (calcFlip(d.buyNow, d.resell).roi ?? -999) >= 8) || null;
+  const best = sorted.find(d => {
+    const r = d.resell || getMarket(d.product);
+    if (!r) return false;
+    return (calcFlip(d.buyNow, r).roi ?? -999) >= 8;
+  }) |;
 
   // ── ONBOARDING ───────────────────────────────────────────────────────────
 
@@ -1757,7 +1761,7 @@ function App() {
 
         {/* BEST DEAL SPOTLIGHT */}
         {best&&tab==="deals"&&(()=>{
-          const{net:bn}=calcFlip(best.buyNow,best.resell);
+          const bestResell=best.resell||getMarket(best.product);const{net:bn}=calcFlip(best.buyNow,bestResell);
           const bh=calcHold(best.resell,best.product);
           const bg=G[getGradeKey(calcFlip(best.buyNow,best.resell).roi,bh?.score??0)];
           return (
