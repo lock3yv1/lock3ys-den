@@ -749,8 +749,7 @@ function Card({ d, rank }) {
         )}
         <div style={{ flex:1, minWidth:0 }}>
           <div style={{ fontFamily:DISP, fontSize:14, fontWeight:500, color:"#FFFFFF", lineHeight:1.3, letterSpacing:"0.01em", wordBreak:"break-word" }}>{d.product}</div>
-          <div style={{ fontFamily:MONO, fontSize:10, color:"#CCCCCC", marginTop:3, letterSpacing:"0.04em" }}>{d.retailer}</div>
-        </div>
+          <div style={{ fontFamily:MONO, fontSize:10, color:"#CCCCCC", marginTop:3, letterSpacing:"0.04em" }}>{d.retailer}</div>        </div>
         <div style={{ textAlign:"right", flexShrink:0 }}>
           <div style={{ fontFamily:MONO, fontSize:18, fontWeight:400, color:"#FFFFFF", lineHeight:1, letterSpacing:"0.02em" }}>£{d.buyNow.toFixed(2)}</div>
           {/* Glowing eBay comparison pill — most important signal */}
@@ -1012,6 +1011,9 @@ function HeatTab() {
     { n:"Ascended Heroes",      type:"Booster Box",      y1:10, y2:21, s:6, t:"rising",   history:genHistory(105,24,"rising") },
     { n:"Ascended Heroes",      type:"Elite Trainer Box", y1:10, y2:22, s:6, t:"rising",   history:genHistory(135,24,"rising") },
     { n:"Ascended Heroes",      type:"Booster Bundle",   y1:8,  y2:18, s:5, t:"rising",   history:genHistory(55,24,"rising") },
+    { n:"Journey Together",     type:"Booster Box",      y1:8,  y2:18, s:5, t:"stable",   history:genHistory(160,24,"stable") },
+    { n:"Journey Together",     type:"Elite Trainer Box", y1:8,  y2:16, s:5, t:"stable",   history:genHistory(115,24,"stable") },
+    { n:"Journey Together",     type:"Booster Bundle",   y1:5,  y2:10, s:4, t:"stable",   history:genHistory(43,24,"stable") },
     { n:"Phantasmal Flames",    type:"Booster Box",      y1:20, y2:44, s:7, t:"rising",   history:[null,null,null,null,null,null,null,null,null,null,null,null,280,295,310,320,330,338,345,350,355,358,360,360] },
     { n:"Phantasmal Flames",    type:"Elite Trainer Box", y1:18, y2:38, s:7, t:"rising",   history:[null,null,null,null,null,null,null,null,null,null,null,null,90,95,102,108,112,115,117,119,120,120,120,120] },
     { n:"Chaos Rising",         type:"Booster Box",      y1:15, y2:32, s:7, t:"rising",   history:[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,110,118,125,132,139,145] },
@@ -1026,21 +1028,21 @@ function HeatTab() {
     { n:"Surging Sparks",       type:"Elite Trainer Box", y1:5,  y2:12, s:5, t:"stable",   history:[null,null,null,null,null,null,48,50,52,54,55,56,57,57,57,57,58,58,58,58,58,58,58,58] },
     { n:"Surging Sparks",       type:"Booster Bundle",   y1:5,  y2:10, s:5, t:"stable",   history:[null,null,null,null,null,null,22,24,25,27,28,29,30,30,30,30,30,30,30,30,30,30,30,30] },
     { n:"Surging Sparks",       type:"Booster Pack",     y1:3,  y2:8,  s:5, t:"stable",   history:[null,null,null,null,null,null,6,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7] },
-    { n:"Stellar Crown",        type:"Booster Box",      y1:3,  y2:7,  s:4, t:"stable",   history:genHistory(148,24,"stable") },
-    { n:"Stellar Crown",        type:"Elite Trainer Box", y1:3,  y2:6,  s:4, t:"stable",   history:genHistory(58,24,"stable") },
-    { n:"Twilight Masquerade",  type:"Booster Box",      y1:3,  y2:7,  s:4, t:"stable",   history:genHistory(118,24,"stable") },
+    { n:"Stellar Crown",        type:"Booster Box",      y1:3,  y2:7,  s:4, t:"stable",   history:genHistory(130,24,"stable") },
+    { n:"Stellar Crown",        type:"Elite Trainer Box", y1:3,  y2:6,  s:4, t:"stable",   history:genHistory(45,24,"stable") },
+    { n:"Twilight Masquerade",  type:"Booster Box",      y1:3,  y2:7,  s:4, t:"stable",   history:genHistory(145,24,"stable") },
     { n:"Twilight Masquerade",  type:"Elite Trainer Box", y1:3,  y2:6,  s:4, t:"stable",   history:genHistory(48,24,"stable") },
-    { n:"Temporal Forces",      type:"Booster Box",      y1:2,  y2:5,  s:4, t:"stable",   history:genHistory(102,24,"stable") },
-    { n:"Temporal Forces",      type:"Elite Trainer Box", y1:2,  y2:5,  s:4, t:"stable",   history:genHistory(46,24,"stable") },
-    { n:"Paldean Fates",        type:"Booster Box",      y1:8,  y2:17, s:6, t:"stable",   history:genHistory(132,24,"stable") },
-    { n:"Paldean Fates",        type:"Elite Trainer Box", y1:6,  y2:12, s:5, t:"stable",   history:genHistory(60,24,"stable") },
-    { n:"Paradox Rift",         type:"Booster Box",      y1:-2, y2:-4, s:4, t:"declining",history:[128,126,125,123,122,120,119,118,117,116,115,114,113,112,112,111,110,110,110,109,109,109,108,108] },
+    { n:"Temporal Forces",      type:"Booster Box",      y1:2,  y2:5,  s:4, t:"stable",   history:genHistory(100,24,"stable") },
+    { n:"Temporal Forces",      type:"Elite Trainer Box", y1:2,  y2:5,  s:4, t:"stable",   history:genHistory(45,24,"stable") },
+    { n:"Paldean Fates",        type:"Booster Box",      y1:8,  y2:17, s:6, t:"stable",   history:genHistory(115,24,"stable") },
+    { n:"Paldean Fates",        type:"Elite Trainer Box", y1:6,  y2:12, s:5, t:"stable",   history:genHistory(68,24,"stable") },
+    { n:"Paradox Rift",         type:"Booster Box",      y1:-2, y2:-4, s:4, t:"declining",history:[150,148,146,145,143,141,140,139,138,137,136,135,134,133,132,132,131,131,130,130,130,130,130,130] },
     { n:"Paradox Rift",         type:"Elite Trainer Box", y1:-2, y2:-4, s:4, t:"declining",history:genHistory(46,24,"declining") },
-    { n:"Obsidian Flames",      type:"Booster Box",      y1:-2, y2:-4, s:4, t:"declining",history:[140,138,136,134,133,131,130,129,128,127,126,125,124,123,122,121,120,120,119,119,118,118,118,118] },
+    { n:"Obsidian Flames",      type:"Booster Box",      y1:-2, y2:-4, s:4, t:"declining",history:[240,237,234,231,229,226,224,222,220,218,217,216,215,215,214,213,213,212,211,211,210,210,210,210] },
     { n:"Obsidian Flames",      type:"Elite Trainer Box", y1:-2, y2:-4, s:4, t:"declining",history:genHistory(50,24,"declining") },
-    { n:"Paldea Evolved",       type:"Booster Box",      y1:-5, y2:-10,s:3, t:"declining",history:[125,122,119,116,114,112,110,108,107,106,105,103,102,101,100,99,98,97,96,95,94,93,92,92] },
+    { n:"Paldea Evolved",       type:"Booster Box",      y1:-5, y2:-10,s:3, t:"declining",history:[160,157,154,151,149,146,145,143,142,140,139,138,137,136,136,135,135,135,135,135,135,135,135,135] },
     { n:"Paldea Evolved",       type:"Elite Trainer Box", y1:-4, y2:-8, s:3, t:"declining",history:genHistory(42,24,"declining") },
-    { n:"151",                  type:"Booster Box",      y1:15, y2:32, s:8, t:"rising",   history:[125,128,132,136,140,144,148,152,156,160,163,166,169,171,173,174,175,176,177,178,178,178,178,178] },
+    { n:"151",                  type:"Booster Box",      y1:15, y2:32, s:8, t:"rising",   history:[130,133,137,141,145,149,152,157,161,166,170,174,178,181,184,186,188,190,192,193,194,195,195,195] },
     { n:"151",                  type:"Booster Bundle",   y1:10, y2:22, s:7, t:"rising",   history:[38,39,40,41,42,43,44,45,46,47,48,49,49,50,50,50,50,50,50,50,50,50,50,50] },
     { n:"151",                  type:"Booster Pack",     y1:5,  y2:10, s:6, t:"rising",   history:[6,6,7,7,7,7,7,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8] },
     { n:"Scarlet & Violet Base", type:"Booster Box",     y1:2,  y2:4,  s:3, t:"stable",   history:genHistory(95,24,"stable") },
@@ -1050,22 +1052,22 @@ function HeatTab() {
     { n:"Evolving Skies",       type:"Booster Pack",     y1:15, y2:32, s:9, t:"rising",   history:[18,19,20,21,22,23,23,24,24,25,25,25,25,25,25,25,25,25,25,25,25,25,25,25] },
     { n:"Evolving Skies",       type:"Tin",              y1:8,  y2:18, s:7, t:"rising",   history:[28,29,30,31,32,33,34,35,36,37,38,39,39,40,40,40,40,40,40,40,40,40,40,40] },
     { n:"Chilling Reign",       type:"Booster Box",      y1:8,  y2:17, s:6, t:"rising",   history:[130,132,134,135,137,138,140,141,143,144,146,147,148,149,150,150,151,151,152,152,152,152,152,152] },
-    { n:"Chilling Reign",       type:"Elite Trainer Box", y1:6,  y2:12, s:5, t:"rising",   history:genHistory(60,24,"rising") },
+    { n:"Chilling Reign",       type:"Elite Trainer Box", y1:6,  y2:12, s:5, t:"rising",   history:genHistory(108,24,"rising") },
     { n:"Battle Styles",        type:"Booster Box",      y1:5,  y2:10, s:5, t:"stable",   history:genHistory(270,24,"stable") },
     { n:"Battle Styles",        type:"Elite Trainer Box", y1:4,  y2:8,  s:4, t:"stable",   history:genHistory(125,24,"stable") },
     { n:"Shining Fates",        type:"Elite Trainer Box", y1:10, y2:21, s:8, t:"stable",   history:[98,100,103,106,109,112,115,118,120,122,224,226,228,230,232,233,234,235,236,237,238,239,239,240] },
     { n:"Shining Fates",        type:"Booster Pack",     y1:8,  y2:15, s:7, t:"stable",   history:[13,13,14,14,14,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15] },
     { n:"Shining Fates",        type:"Tin",              y1:6,  y2:14, s:6, t:"stable",   history:[22,22,23,24,25,26,26,27,27,28,28,28,28,29,29,29,29,29,29,29,29,29,29,29] },
-    { n:"Brilliant Stars",      type:"Booster Box",      y1:5,  y2:10, s:5, t:"stable",   history:[128,129,130,131,132,133,134,135,136,137,138,139,140,140,141,141,142,142,142,142,142,142,142,142] },
+    { n:"Brilliant Stars",      type:"Booster Box",      y1:5,  y2:10, s:5, t:"stable",   history:genHistory(210,24,"stable") },
     { n:"Brilliant Stars",      type:"Elite Trainer Box", y1:4,  y2:8,  s:4, t:"stable",   history:genHistory(78,24,"stable") },
-    { n:"Fusion Strike",        type:"Booster Box",      y1:3,  y2:7,  s:4, t:"stable",   history:genHistory(138,24,"stable") },
-    { n:"Lost Origin",          type:"Booster Box",      y1:2,  y2:4,  s:4, t:"stable",   history:genHistory(122,24,"stable") },
-    { n:"Silver Tempest",       type:"Booster Box",      y1:3,  y2:7,  s:5, t:"stable",   history:genHistory(112,24,"stable") },
-    { n:"Crown Zenith",         type:"Booster Box",      y1:2,  y2:5,  s:4, t:"stable",   history:genHistory(128,24,"stable") },
-    { n:"Astral Radiance",      type:"Booster Box",      y1:2,  y2:4,  s:3, t:"stable",   history:genHistory(120,24,"stable") },
-    { n:"Darkness Ablaze",      type:"Booster Box",      y1:3,  y2:6,  s:5, t:"stable",   history:genHistory(132,24,"stable") },
-    { n:"Vivid Voltage",        type:"Booster Box",      y1:3,  y2:6,  s:4, t:"stable",   history:genHistory(142,24,"stable") },
-    { n:"Rebel Clash",          type:"Booster Box",      y1:2,  y2:4,  s:3, t:"stable",   history:genHistory(110,24,"stable") },
+    { n:"Fusion Strike",        type:"Booster Box",      y1:3,  y2:7,  s:4, t:"stable",   history:genHistory(200,24,"stable") },
+    { n:"Lost Origin",          type:"Booster Box",      y1:2,  y2:4,  s:4, t:"stable",   history:genHistory(180,24,"stable") },
+    { n:"Silver Tempest",       type:"Booster Box",      y1:3,  y2:7,  s:5, t:"stable",   history:genHistory(145,24,"stable") },
+    { n:"Crown Zenith",         type:"Booster Box",      y1:2,  y2:5,  s:4, t:"stable",   history:genHistory(300,24,"stable") },
+    { n:"Astral Radiance",      type:"Booster Box",      y1:2,  y2:4,  s:3, t:"stable",   history:genHistory(175,24,"stable") },
+    { n:"Darkness Ablaze",      type:"Booster Box",      y1:3,  y2:6,  s:5, t:"stable",   history:genHistory(165,24,"stable") },
+    { n:"Vivid Voltage",        type:"Booster Box",      y1:3,  y2:6,  s:4, t:"stable",   history:genHistory(185,24,"stable") },
+    { n:"Rebel Clash",          type:"Booster Box",      y1:2,  y2:4,  s:3, t:"stable",   history:genHistory(160,24,"stable") },
     // ── SUN & MOON ERA (2017–2020) ────────────────────────────────────────────
     { n:"Hidden Fates",         type:"Booster Box",      y1:15, y2:32, s:9, t:"rising",   history:[290,298,306,315,324,333,341,348,355,361,367,372,376,378,380,381,382,383,384,385,385,385,385,385] },
     { n:"Hidden Fates",         type:"Elite Trainer Box", y1:12, y2:25, s:9, t:"rising",   history:[88,90,93,96,99,102,105,107,108,109,110,110,111,111,111,112,112,112,112,112,112,112,112,112] },
@@ -1215,12 +1217,12 @@ function HeatTab() {
         {/* Month axis — show 6 evenly spaced labels */}
         <div style={{ display:"flex", justifyContent:"space-between", marginTop:4 }}>
           {[0,4,8,12,16,20,23].map(i=>(
-            <span key={i} style={{ fontFamily:MONO, fontSize:7, color:"#333" }}>{months[i]}</span>
+            <span key={i} style={{ fontFamily:MONO, fontSize:7, color:"#666" }}>{months[i]}</span>
           ))}
         </div>
         <div style={{ display:"flex", justifyContent:"space-between", marginTop:3 }}>
-          <span style={{ fontFamily:MONO, fontSize:7, color:"#333" }}>Jun &#39;24</span>
-          <span style={{ fontFamily:MONO, fontSize:7, color:"#333" }}>May &#39;26</span>
+          <span style={{ fontFamily:MONO, fontSize:7, color:"#666" }}>Jun &#39;24</span>
+          <span style={{ fontFamily:MONO, fontSize:7, color:"#666" }}>May &#39;26</span>
         </div>
       </div>
     );
@@ -1342,7 +1344,7 @@ function HeatTab() {
                   <div style={{ fontFamily:MONO, fontSize:9, color:"#CCCCCC", lineHeight:1.7, background:"#0A0A10", borderRadius:6, padding:"10px 12px" }}>
                     💡 {s.t==="rising"?"Strong hold. Prices rising consistently.":s.t==="declining"?"Prices falling. Avoid for investment unless holding 3-4+ years.":"Stable. Modest appreciation. Low risk, low reward."}
                   </div>
-                  <div style={{ fontFamily:MONO, fontSize:7, color:"#2A2A38", textAlign:"center", marginTop:8 }}>
+                  <div style={{ fontFamily:MONO, fontSize:7, color:"#555", textAlign:"center", marginTop:8 }}>
                     Drag chart · eBay UK sold data estimates · Not financial advice
                   </div>
                 </div>
@@ -1352,7 +1354,7 @@ function HeatTab() {
         });
       })()}
 
-      <div style={{ fontFamily:MONO, fontSize:8, color:"#2A2A38", textAlign:"center", marginTop:16, paddingBottom:8 }}>
+      <div style={{ fontFamily:MONO, fontSize:8, color:"#555", textAlign:"center", marginTop:16, paddingBottom:8 }}>
         {sets.length} products tracked · Updated May 2026
       </div>
     </div>
@@ -1588,27 +1590,32 @@ function App() {
   async function loadEbay() {
     if (ebayLoading) return;
     setEbayLoading(true);
+    setEbayLoaded(false);
+    const minDelay = new Promise(r => setTimeout(r, 2500)); // minimum 2.5s loading feel
     try {
       const r = await fetch(`https://raw.githubusercontent.com/lock3yv1/lock3ys-den/main/ebay_deals.json?t=${Date.now()}`);
       if (r.ok) {
         const data = await r.json();
         const arr = Array.isArray(data) ? data : (data.deals || []);
+        await minDelay; // ensure loading state is visible
         setEbayListings(arr);
         setEbayLoaded(true);
+      } else {
+        await minDelay;
       }
     } catch(e) {
       console.log("eBay deals fetch error:", e.message);
+      await minDelay;
     }
     setEbayLoading(false);
   }
 
   function isValidEbayTitle(title) {
     const t = title.toLowerCase();
-    if (!t.includes("pokemon")) return false;
-    const hasProduct = ["booster box","elite trainer","etb","booster bundle","booster pack","tin","collection","blister"].some(p => t.includes(p));
-    const hasSet = ["evolving skies","prismatic evolutions","shining fates","hidden fates","151","surging sparks","chilling reign","battle styles","brilliant stars","temporal forces","paradox rift","obsidian flames","paldean fates"].some(s => t.includes(s));
-    if (!hasProduct || !hasSet) return false;
-    const blocked = ["korean","japanese","proxy","fake","damaged","job lot","bundle lot","graded","psa","cgc"];
+    if (!t.includes("pokemon") && !t.includes("pokémon")) return false;
+    const hasProduct = ["booster box","elite trainer","etb","booster bundle","booster pack","tin","collection","blister","half box","half booster"].some(p => t.includes(p));
+    if (!hasProduct) return false;
+    const blocked = ["proxy","fake","damaged","job lot","bundle lot","graded","psa","cgc","empty box","no cards","opened"];
     return !blocked.some(b => t.includes(b));
   }
 
@@ -1624,15 +1631,20 @@ function App() {
   }, [tab]);
 
   // Grade priority: S=0, A=1, B=2, C=3, H=4, D=5, ?=6
+  // KEY FIX: hold-only items (no profitable flip ROI) always rank BELOW real flip deals.
+  // This prevents "BUY & HOLD" items from appearing above fire deals.
   function gradePriority(d) {
     const resellP = d.resell || getMarket(d.product);
     const r = calcFlip(d.buyNow, resellP).roi;
     const h = calcHold(resellP || d.buyNow, d.product);
     const gk = getGradeKey(r, h?.score??0);
-    const base = {S:0,A:1,B:2,C:3,H:4,D:5,"?":6}[gk] ?? 6;
-    // Items with NO market price data rank at the very bottom regardless of grade
-    if (!resellP) return 7;
-    return base;
+    // Items with NO market price data rank at the very bottom
+    if (!resellP) return 8;
+    // If grade is H but ROI is actually profitable (≥8%), treat as B-grade flip
+    if (gk === "H" && r !== null && r >= 8) return 2;
+    // If grade is H but ROI < 8% — pure hold, rank below all flip grades
+    if (gk === "H") return 5;
+    return {S:0,A:1,B:2,C:3,D:6,"?":7}[gk] ?? 7;
   }
   const sorted = [...deals].sort((a,b) => {
     const pa = gradePriority(a), pb = gradePriority(b);
@@ -1715,7 +1727,8 @@ function App() {
   const best = sorted.find(d => {
     const r = d.resell || getMarket(d.product);
     if (!r) return false;
-    return (calcFlip(d.buyNow, r).roi ?? -999) >= 8;
+    const roi = calcFlip(d.buyNow, r).roi;
+    return roi !== null && roi >= 8;
   }) || null;
 
   // ── ONBOARDING ───────────────────────────────────────────────────────────
@@ -1984,24 +1997,40 @@ function App() {
             <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:10 }}>
               <div>
                 <div style={{ fontFamily:DISP, fontSize:16, fontWeight:600, color:"#FFFFFF" }}>eBay</div>
-                <div style={{ fontFamily:MONO, fontSize:9, color:"#B8B8B8", marginTop:2 }}>UK listings priced below market · flip profit after postage</div>
-                {ebayListings.length>0&&<div style={{ fontFamily:MONO, fontSize:8, color:"#B0B0B0", marginTop:2 }}>{ebayListings.length} deals · auto-refreshes every 15 min</div>}
+                <div style={{ fontFamily:MONO, fontSize:9, color:"#CCCCCC", marginTop:2 }}>UK listings priced below market · flip profit after postage</div>
+                {ebayListings.length>0&&<div style={{ fontFamily:MONO, fontSize:8, color:"#999", marginTop:2 }}>{ebayListings.length} deals · auto-refreshes every 15 min</div>}
               </div>
               <button onClick={()=>{setEbayLoaded(false);loadEbay();}} 
-                style={{ background:ebayLoading?"#0A0A14":"#1A1A28", border:`1px solid ${ebayLoading?"#CC0000":"#333"}`, borderRadius:5, padding:"6px 12px", color:ebayLoading?"#CC0000":"#AAAAAA", fontFamily:MONO, fontSize:9, cursor:"pointer", flexShrink:0 }}>
-                {ebayLoading?"⟳ scanning...":"⟳ refresh"}
+                style={{ background:ebayLoading?"#0A0A14":"#1A1A28", border:`1px solid ${ebayLoading?"#CC0000":"#333"}`, borderRadius:5, padding:"6px 12px", color:ebayLoading?"#CC0000":"#AAAAAA", fontFamily:MONO, fontSize:9, cursor:ebayLoading?"not-allowed":"pointer", flexShrink:0, transition:"all 0.2s" }}>
+                {ebayLoading ? (
+                  <span style={{ display:"flex", alignItems:"center", gap:5 }}>
+                    <span style={{ display:"inline-block", width:7, height:7, borderRadius:"50%", background:"#CC0000", animation:"blink 0.6s infinite" }}/>
+                    scanning...
+                  </span>
+                ) : "⟳ refresh"}
               </button>
             </div>
 
             {ebayLoading&&(
               <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+                <div style={{ background:"#0A0008", border:"1px solid rgba(204,0,0,0.3)", borderRadius:8, padding:"14px 16px", marginBottom:4 }}>
+                  <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:8 }}>
+                    <div style={{ width:8, height:8, borderRadius:"50%", background:"#CC0000", boxShadow:"0 0 8px #CC0000", animation:"blink 0.6s infinite" }}/>
+                    <div style={{ fontFamily:MONO, fontSize:10, color:"#CC0000", letterSpacing:"0.1em" }}>SCANNING EBAY UK</div>
+                  </div>
+                  <div style={{ fontFamily:MONO, fontSize:9, color:"#888", lineHeight:1.6 }}>
+                    Checking live listings · comparing against eBay sold data · calculating flip profit...
+                  </div>
+                  <div style={{ height:2, background:"rgba(255,255,255,0.05)", borderRadius:2, overflow:"hidden", position:"relative", marginTop:10 }}>
+                    <div style={{ position:"absolute", top:0, height:"100%", background:"linear-gradient(90deg,transparent,#CC0000,#FF6644,#CC0000,transparent)", animation:"knightrider 2.5s ease-in-out infinite", borderRadius:2 }}/>
+                  </div>
+                </div>
                 {[1,2,3,4].map(i=>(
                   <div key={i} style={{ background:"#0A0A10", borderRadius:8, padding:14, border:"1px solid #1A1A24" }}>
-                    <div style={{ height:12, background:"#1A1A24", borderRadius:4, marginBottom:8, width:"60%", animation:"fadeup 1s ease infinite" }}/>
+                    <div style={{ height:12, background:"#1A1A24", borderRadius:4, marginBottom:8, width:`${40+i*12}%` }}/>
                     <div style={{ height:8, background:"#141420", borderRadius:4, width:"40%" }}/>
                   </div>
                 ))}
-                <div style={{ fontFamily:MONO, fontSize:10, color:"#B0B0B0", textAlign:"center", padding:"8px 0" }}>Scanning eBay UK listings...</div>
               </div>
             )}
 
@@ -2063,7 +2092,7 @@ function App() {
                       </div>
                     </div>
                     <div style={{ fontFamily:MONO, fontSize:9, color:"#CCCCCC", marginTop:8, lineHeight:1.5 }}>
-                      Listed {pctBelow}% below eBay market · ${POST} postage · private seller 0% fees
+                      Listed {pctBelow}% below eBay market · £{POST} postage · private seller 0% fees
                     </div>
                   </div>
                   <a href={itemUrl} target="_blank" rel="noopener noreferrer" onClick={e=>e.stopPropagation()}
@@ -2072,8 +2101,7 @@ function App() {
                   </a>
                   <div style={{ fontFamily:MONO, fontSize:8, color:"#777", marginTop:6, textAlign:"center" }}>
                     Based on recent sold listings · private seller · not financial advice
-                  </div>
-                </div>
+                  </div>                </div>
               );
             })}
           </div>
