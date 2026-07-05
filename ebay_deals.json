@@ -1,6 +1,23 @@
 {
   "deals": [
     {
+      "id": "v1|358725664456|0",
+      "title": "Pokémon Scarlet & Violet White Flare SV11W Korean Booster Box ",
+      "type": "Booster Box",
+      "price": 65,
+      "marketFloor": 120,
+      "marketCeil": 180,
+      "midMarket": 150,
+      "netProfit": 61.35,
+      "roi": 94,
+      "pctBelow": 46,
+      "image": "https://i.ebayimg.com/images/g/PxEAAeSw9fpp62~S/s-l1600.jpg",
+      "url": "https://www.ebay.co.uk/itm/358725664456?_skw=pokemon+white+flare+japanese+booster+box&hash=item5385b73ec8:g:PxEAAeSw9fpp62~S&amdata=enc%3AAQALAAABAACCtXRWQnOEpyOqnQQ8KGaFswaNW8j5iVQgVV4ZhBle3IT5Oy91Gnid8QaCE0gTnXrE8svHmuaLM744JZU961zgZ%2BHDU3pcsbXCQ7DzdzQ46%2BQmeiMrZWoLYGA06v9O7IfIOPfE7ksEA6ltX53Q3k0KcGzh4TklukRXicZZ7nnXql6uNAli6r%2BcfmmNp9VopQ3vMW8GXuaVkBmMey0bbY2SWoJ7BfROZnscYqDMvVJynwUP2Mci1Tg69JZudWFXCJdsD7dOUVK2WHjcteGPvEKFW4D3vmq0sGN1UdkZpE10Xr%2FbY%2BZAHrJbwlCXD1TMbZ44KoeXpsL%2B2YoGYBH8C4E%3D",
+      "condition": "New/Factory Sealed",
+      "source": "ebay_live",
+      "scannedAt": "2026-07-05T14:09:20.672Z"
+    },
+    {
       "id": "v1|278145133019|0",
       "title": "Sealed Leafeon VSTAR Special Collection Box - Pokemon TCG [Evolving Skies]",
       "type": "Booster Box",
@@ -15,7 +32,7 @@
       "url": "https://www.ebay.co.uk/itm/278145133019?_skw=pokemon+evolving+skies+booster+box+sealed+english&hash=item40c2bde9db:g:FqAAAeSwvNJqRXiJ",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:08:51.206Z"
+      "scannedAt": "2026-07-05T14:08:23.786Z"
     },
     {
       "id": "v1|287439470620|0",
@@ -29,10 +46,27 @@
       "roi": 71,
       "pctBelow": 40,
       "image": "https://i.ebayimg.com/images/g/0MYAAeSwCNRqSj-x/s-l1600.jpg",
-      "url": "https://www.ebay.co.uk/itm/287439470620?_skw=pokemon+ascended+heroes+booster+box+sealed+english&hash=item42ecba401c:g:0MYAAeSwCNRqSj-x&amdata=enc%3AAQALAAABEACCtXRWQnOEpyOqnQQ8KGbawoFu%2BF8R1TofrknzTWDgtXTBtO1nZhWgR8QIGQkNIw3%2BiIWnBu6ljTHmJGKx8Q81P%2Fy0FgPY7oxRbKEXA%2BamKhKI82rA7LCCQg7sZsczpbP8oQoeE5mGxnMQ%2BYTp4PRoC7%2BGyHqERFlBI2NnAGZ1%2BjiD4UggDIImC4OeXw5hvOErvcaKk1kohCPsZUQHPcLqWhUw4XtYjq6lAgRX8awtDhUVlb1A2YAZEaV%2BpR3X8WAiBr26j7jlEyDGVe09CIRwq5GFccvGXAGvsioc4Np5cALL6HXHi34DF04%2B71Et1f6OJAyk8t84gY6%2FkhAwTSwv8wBo0FJ7vVgGp1Jod2e5",
+      "url": "https://www.ebay.co.uk/itm/287439470620?_skw=pokemon+ascended+heroes+booster+box+sealed+english&hash=item42ecba401c:g:0MYAAeSwCNRqSj-x",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:57.195Z"
+      "scannedAt": "2026-07-05T14:09:30.326Z"
+    },
+    {
+      "id": "v1|366523733367|0",
+      "title": "Pokemon TCG Rebel Clash Half Booster Box 18 Packs, Sealed",
+      "type": "Booster Box",
+      "price": 114.99,
+      "marketFloor": 185,
+      "marketCeil": 260,
+      "midMarket": 222.5,
+      "netProfit": 74.51,
+      "roi": 65,
+      "pctBelow": 38,
+      "image": "https://i.ebayimg.com/images/g/7hgAAeSwLxdqSlfL/s-l1600.jpg",
+      "url": "https://www.ebay.co.uk/itm/366523733367?_skw=pokemon+rebel+clash+booster+box+sealed+english&hash=item5556845577:g:7hgAAeSwLxdqSlfL",
+      "condition": "New/Factory Sealed",
+      "source": "ebay_live",
+      "scannedAt": "2026-07-05T14:09:15.307Z"
     },
     {
       "id": "v1|188305044906|0",
@@ -49,7 +83,7 @@
       "url": "https://www.ebay.co.uk/itm/188305044906?_skw=pokemon+chilling+reign+booster+box+sealed+english&hash=item2bd7daf5aa:g:W5EAAeSwLUpp6ONi",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:08:57.999Z"
+      "scannedAt": "2026-07-05T14:08:30.812Z"
     },
     {
       "id": "v1|157946291732|0",
@@ -66,7 +100,7 @@
       "url": "https://www.ebay.co.uk/itm/157946291732?_skw=pokemon+cosmic+eclipse+booster+box+sealed+english&hash=item24c6552614:g:8JkAAeSw0k5qFva8",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:40.898Z"
+      "scannedAt": "2026-07-05T14:09:13.980Z"
     },
     {
       "id": "v1|800251843167|0",
@@ -83,7 +117,7 @@
       "url": "https://www.ebay.co.uk/itm/800251843167?_skw=pokemon+glory+of+team+rocket+japanese+booster+box&hash=itemba52ba125f:g:hXkAAeSw3ZNqP94j",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:53.116Z"
+      "scannedAt": "2026-07-05T14:09:26.144Z"
     },
     {
       "id": "v1|226860619025|0",
@@ -97,10 +131,10 @@
       "roi": 53,
       "pctBelow": 33,
       "image": "https://i.ebayimg.com/images/g/QZAAAeSwRqNocQJn/s-l1600.jpg",
-      "url": "https://www.ebay.co.uk/itm/226860619025?_skw=pokemon+shining+fates+elite+trainer+box+sealed+english&hash=item34d1f25511:g:QZAAAeSwRqNocQJn&amdata=enc%3AAQALAAABEACCtXRWQnOEpyOqnQQ8KGZGwGzY6EflDeoUkp2L8Ur8K5sq2Qb8nmJhM%2Bp6j1XTOoTGlctF2g9AJWrVi1yoXDTadMAvfmHiTPRMA5L70LLC%2Buib9DoaX24%2FJHHOq8ZBLX7j8GxlCLMF2kSTSY617rmc%2F94jU5H%2BR6QTQBNNqWmHyAr8VtAkrLkS3tBZMuwRiUILowe3eYuhEDVDwuifmtR%2FVmhOoCVWxNBqoYUmx%2FiKBCSJ6L%2FH8eXaKhy1DthSPMgX9RzfQmmKLc2m%2BH2PM4qse3iYfqm1a%2BHPOIZvFlGjukak6tF9aBWw4o5neaSDT41GNtcmBp8vNg7pa4p1RiWYKK8tpRYsh2U20P6Um1Gc",
+      "url": "https://www.ebay.co.uk/itm/226860619025?_skw=pokemon+shining+fates+elite+trainer+box+sealed+english&hash=item34d1f25511:g:QZAAAeSwRqNocQJn&amdata=enc%3AAQALAAABEACCtXRWQnOEpyOqnQQ8KGZGwGzY6EflDeoUkp2L8Ur8K5sq2Qb8nmJhM%2Bp6j1XTOoTGlctF2g9AJWrVi1yoXDTadMAvfmHiTPRMA5L70LLC%2Buib9DoaX24%2FJHHOq8ZBLX7j8GxlCLMF2kSTSY617rnckRRNnJHSHkWi4FWNJpC4iK4nkty22m7KDytlfZo2qWwdRcw3EdlFDVEhbKaZdJmjK21997NKkGDoDlIExc5Ni3XVlHLKqeZDHtbfXnpoHuY1J%2Fq6RLZKBqOv6Zkt1ZCAjNLRw%2B%2B9jLKDs9weL0IgFetTXDWH%2BjqEfogJR6fmrN6r1jQ8qnKD5BlSpyvl%2FsmxdWZZiGVBs364NoPKsg1m",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:08:55.261Z"
+      "scannedAt": "2026-07-05T14:08:28.035Z"
     },
     {
       "id": "v1|267594346175|0",
@@ -117,7 +151,7 @@
       "url": "https://www.ebay.co.uk/itm/267594346175?_skw=pokemon+battle+partners+japanese+booster+box&hash=item3e4dddaebf:g:iaAAAeSwPvlpqJFj",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:44.865Z"
+      "scannedAt": "2026-07-05T14:09:18.007Z"
     },
     {
       "id": "v1|267574491435|0",
@@ -131,10 +165,10 @@
       "roi": 53,
       "pctBelow": 27,
       "image": "https://i.ebayimg.com/images/g/IncAAeSwl8VpjhBV/s-l1600.jpg",
-      "url": "https://www.ebay.co.uk/itm/267574491435?_skw=pokemon+battle+partners+japanese+booster+box&hash=item3e4caeb92b:g:IncAAeSwl8VpjhBV&amdata=enc%3AAQALAAABEACCtXRWQnOEpyOqnQQ8KGby%2BHUzeM4AjptgBPKct7dEZQxCeaMqnoPv%2F9epzqbTQMbudBmmR%2BfYsydoRndGoos81rGTVIZW143%2B%2BZYjkupcSt5Tf%2FIEQsSSIKfViIoCwH8oaYk%2BQVFdPCfpB97wgJYQedBMSdKlsHVRCzw26brTjROYeLgLYvHV8luCZqg7jFvOGQO47GmqDEs87PrBaG8LiN%2BOxXyZxwXCv1468mZsMI5deDgW0FbQ8Her%2BA9NrysTAvgBL4DxT9TaFfWCdZpFR5ZaicGkFH2ZGsf635xBKNieL4pPy9rk%2FzuAOM%2FVL2J1iVldmk8FAfad%2Fmp2sXZIj15cin5Ijdoe9Jw1airg",
+      "url": "https://www.ebay.co.uk/itm/267574491435?_skw=pokemon+battle+partners+japanese+booster+box&hash=item3e4caeb92b:g:IncAAeSwl8VpjhBV&amdata=enc%3AAQALAAABEACCtXRWQnOEpyOqnQQ8KGby%2BHUzeM4AjptgBPKct7dEZQxCeaMqnoPv%2F9epzqbTQMbudBmmR%2BfYsydoRndGoos81rGTVIZW143%2B%2BZYjkupcSt5Tf%2FIEQsSSIKfViIoCwH8oaYk%2BQVFdPCfpB97wgJbgIy7OqpdeYVFgkvsrG5Or6nVu2xHIYDgLopw1Wu12TCBsY%2F6A%2Bd8SJCWPARAFoehrV%2FcAdsKbeSDQNsiRCkTGGnYdBtgdlVLqr5m8moAr2ZeSn3ojkxC22JWF5pRVqiDfdxIiA5ZKqEwq6NM9ySLpN1U2%2BqWCnyIiSE%2BvxQYyRXKBbS9pFHNuwIzrQtcClNldJlJp64jSUCMtrJbNBcnw",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:44.865Z"
+      "scannedAt": "2026-07-05T14:09:18.007Z"
     },
     {
       "id": "v1|336605208770|0",
@@ -151,7 +185,7 @@
       "url": "https://www.ebay.co.uk/itm/336605208770?_skw=pokemon+glory+of+team+rocket+japanese+booster+box&hash=item4e5f3be0c2:g:BaQAAeSwZXNqFxJO",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:53.116Z"
+      "scannedAt": "2026-07-05T14:09:26.144Z"
     },
     {
       "id": "v1|800076190258|0",
@@ -168,7 +202,7 @@
       "url": "https://www.ebay.co.uk/itm/800076190258?_skw=pokemon+glory+of+team+rocket+japanese+booster+box&hash=itemba4841d232:g:UF8AAeSwOeFqGzDw",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:53.116Z"
+      "scannedAt": "2026-07-05T14:09:26.144Z"
     },
     {
       "id": "v1|127946813646|0",
@@ -185,7 +219,7 @@
       "url": "https://www.ebay.co.uk/itm/127946813646?_skw=pokemon+battle+partners+japanese+booster+box&hash=item1dca3970ce:g:6j0AAeSwAnNqQoqn",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:44.865Z"
+      "scannedAt": "2026-07-05T14:09:18.006Z"
     },
     {
       "id": "v1|257601306164|0",
@@ -202,7 +236,24 @@
       "url": "https://www.ebay.co.uk/itm/257601306164?_skw=pokemon+silver+tempest+booster+box+sealed+english&hash=item3bfa3bfe34:g:VGUAAeSw0VlqRsxN",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:06.103Z"
+      "scannedAt": "2026-07-05T14:08:39.247Z"
+    },
+    {
+      "id": "v1|168515634823|0",
+      "title": "Ascended Heroes Pokémon Booster Bundle Sealed Box with 6 Booster Packs",
+      "type": "Booster Box",
+      "price": 70,
+      "marketFloor": 100,
+      "marketCeil": 145,
+      "midMarket": 122.5,
+      "netProfit": 32.4,
+      "roi": 46,
+      "pctBelow": 30,
+      "image": "https://i.ebayimg.com/images/g/cvoAAeSwkvxqSl3z/s-l1600.jpg",
+      "url": "https://www.ebay.co.uk/itm/168515634823?_skw=pokemon+ascended+heroes+booster+box+sealed+english&hash=item273c508687:g:cvoAAeSwkvxqSl3z",
+      "condition": "New/Factory Sealed",
+      "source": "ebay_live",
+      "scannedAt": "2026-07-05T14:09:30.325Z"
     },
     {
       "id": "v1|358712916142|0",
@@ -219,41 +270,7 @@
       "url": "https://www.ebay.co.uk/itm/358712916142?_skw=pokemon+ascended+heroes+booster+box+sealed+english&hash=item5384f4b8ae:g:GbIAAeSwVW1qOlmf",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:57.195Z"
-    },
-    {
-      "id": "v1|227416762118|0",
-      "title": "Pokemon TCG Ascended Heroes Booster Bundle (Brand New & Sealed)",
-      "type": "Booster Box",
-      "price": 70,
-      "marketFloor": 100,
-      "marketCeil": 145,
-      "midMarket": 122.5,
-      "netProfit": 32.4,
-      "roi": 46,
-      "pctBelow": 30,
-      "image": "https://i.ebayimg.com/images/g/9BUAAeSwcyhqSYUb/s-l1600.jpg",
-      "url": "https://www.ebay.co.uk/itm/227416762118?_skw=pokemon+ascended+heroes+booster+box+sealed+english&hash=item34f3186706:g:9BUAAeSwcyhqSYUb",
-      "condition": "New/Factory Sealed",
-      "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:57.195Z"
-    },
-    {
-      "id": "v1|206364738731|0",
-      "title": "Pokemon TCG Ascended Heroes Booster Bundle - New & Sealed",
-      "type": "Booster Box",
-      "price": 70.38,
-      "marketFloor": 100,
-      "marketCeil": 145,
-      "midMarket": 122.5,
-      "netProfit": 32.02,
-      "roi": 45,
-      "pctBelow": 30,
-      "image": "https://i.ebayimg.com/images/g/AioAAeSww81qN6ZN/s-l1600.jpg",
-      "url": "https://www.ebay.co.uk/itm/206364738731?_skw=pokemon+ascended+heroes+booster+box+sealed+english&hash=item300c4c04ab:g:AioAAeSww81qN6ZN",
-      "condition": "New/Factory Sealed",
-      "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:57.195Z"
+      "scannedAt": "2026-07-05T14:09:30.326Z"
     },
     {
       "id": "v1|366450782447|0",
@@ -270,7 +287,7 @@
       "url": "https://www.ebay.co.uk/itm/366450782447?_skw=pokemon+silver+tempest+booster+box+sealed+english&hash=item55522b30ef:g:rbMAAeSwHjxqHukL",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:06.103Z"
+      "scannedAt": "2026-07-05T14:08:39.247Z"
     },
     {
       "id": "v1|117282641406|0",
@@ -287,7 +304,7 @@
       "url": "https://www.ebay.co.uk/itm/117282641406?_skw=pokemon+silver+tempest+booster+box+sealed+english&hash=item1b4e9715fe:g:1m4AAeSwuRxqR8n5",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:06.103Z"
+      "scannedAt": "2026-07-05T14:08:39.248Z"
     },
     {
       "id": "v1|298445244464|0",
@@ -304,7 +321,7 @@
       "url": "https://www.ebay.co.uk/itm/298445244464?_skw=pokemon+chilling+reign+booster+box+sealed+english&hash=item457cb90830:g:p9cAAOSwzUxg9~lQ",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:08:57.999Z"
+      "scannedAt": "2026-07-05T14:08:30.812Z"
     },
     {
       "id": "v1|206388801986|0",
@@ -321,7 +338,7 @@
       "url": "https://www.ebay.co.uk/itm/206388801986?_skw=pokemon+silver+tempest+booster+box+sealed+english&hash=item300dbb31c2:g:RvEAAeSwVbhqRmMG",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:06.103Z"
+      "scannedAt": "2026-07-05T14:08:39.248Z"
     },
     {
       "id": "v1|398097674401|0",
@@ -338,7 +355,7 @@
       "url": "https://www.ebay.co.uk/itm/398097674401?_skw=pokemon+surging+sparks+booster+box+sealed+english&hash=item5cb07870a1:g:kZoAAeSwd2NqOmvo",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:10.292Z"
+      "scannedAt": "2026-07-05T14:08:43.338Z"
     },
     {
       "id": "v1|287437975899|0",
@@ -355,7 +372,7 @@
       "url": "https://www.ebay.co.uk/itm/287437975899?_skw=pokemon+glory+of+team+rocket+japanese+booster+box&hash=item42eca3715b:g:ctMAAeSwjwJqQOwL",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:53.116Z"
+      "scannedAt": "2026-07-05T14:09:26.144Z"
     },
     {
       "id": "v1|800290943896|0",
@@ -372,7 +389,24 @@
       "url": "https://www.ebay.co.uk/itm/800290943896?_skw=pokemon+ascended+heroes+booster+box+sealed+english&hash=itemba550eb398:g:5QIAAeSw0VlqSgeC",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:57.195Z"
+      "scannedAt": "2026-07-05T14:09:30.326Z"
+    },
+    {
+      "id": "v1|147336971730|0",
+      "title": "Pokémon TCG Ascended Heroes Booster Bundle Brand New Sealed",
+      "type": "Booster Box",
+      "price": 73.5,
+      "marketFloor": 100,
+      "marketCeil": 145,
+      "midMarket": 122.5,
+      "netProfit": 28.9,
+      "roi": 39,
+      "pctBelow": 27,
+      "image": "https://i.ebayimg.com/images/g/YO8AAeSwtJZqGEmy/s-l960.jpg",
+      "url": "https://www.ebay.co.uk/itm/147336971730?_skw=pokemon+ascended+heroes+booster+box+sealed+english&hash=item224df7c5d2:g:YO8AAeSwtJZqGEmy&amdata=enc%3AAQALAAABEACCtXRWQnOEpyOqnQQ8KGbQ820G0Ei3oovbLJlw28IC%2F42ppInGQcg2La5IUdG1vVr6ILNzvg%2FoLiP69HmJ%2FqIaOdJsOj1vNthp%2F3eB8qeaALku6b5phlNiWuOegUVfMmg0ThodsAXKoF2JroCFdxIG2zAFUbEu64fzX7LLvA1uTbQEXYRP0cyJGTy472bP7AIBMe001FMlwXfdazznQusV%2B6BWFwxdQ9uUccu%2F1TYR9%2BKbq40s60VlUUTZzQLWtVqt8O3yAFBNBwf7xMv0as3ks8bVjDMbAECqOijgNdnFsz5VulJinkWeGUIVuf5%2FHRjLudBBFt3Jv0v83ChxgNRADJT%2BrrMDXoT3B8K%2B2ixM",
+      "condition": "New/Factory Sealed",
+      "source": "ebay_live",
+      "scannedAt": "2026-07-05T14:09:30.326Z"
     },
     {
       "id": "v1|306878358374|0",
@@ -386,10 +420,10 @@
       "roi": 38,
       "pctBelow": 29,
       "image": "https://i.ebayimg.com/images/g/OqkAAeSwSx9p3RQH/s-l1600.jpg",
-      "url": "https://www.ebay.co.uk/itm/306878358374?_skw=pokemon+brilliant+stars+booster+box+sealed+english&hash=item4773602366:g:OqkAAeSwSx9p3RQH&amdata=enc%3AAQALAAABEACCtXRWQnOEpyOqnQQ8KGaBU72B8rVfvNvKYpVuBo2nPBgBDZxXL5m2RvN3Js96YwzmjbYWJyvmgcolTSoMiRA2YbPlQtgePAei60ICLC9rj0tIc0VadHP0YDZ6%2Bh9RrYUhZfKoSIlNGclgJi5agrO9JBoHedzgjHve3998ZJDMoE0grk%2BPEUu2TTTVzxCR6gqa11%2FHVrDoxPz9NOJpI6hMu9M%2FopS53rQ5Gd5%2F6p72k%2BkjKJoJjsEBGtpqtjAlv0Ac3VSPFdSi5IG1ZB2%2Fz4ExYvMyI8FJqdut96Ku2f08IT5mlbn0Ofzss3hW2I2j6E790HrrxDgbS9w92Anyfk1Q8aHPXp8bxp%2BKIFZLsWOI",
+      "url": "https://www.ebay.co.uk/itm/306878358374?_skw=pokemon+brilliant+stars+booster+box+sealed+english&hash=item4773602366:g:OqkAAeSwSx9p3RQH&amdata=enc%3AAQALAAABEACCtXRWQnOEpyOqnQQ8KGaBU72B8rVfvNvKYpVuBo2nPBgBDZxXL5m2RvN3Js96YwzmjbYWJyvmgcolTSoMiRA2YbPlQtgePAei60ICLC9rj0tIc0VadHP0YDZ6%2Bh9RrYUhZfKoSIlNGclgJi5agrOWGo5w7NlCpRIG1N2a6KmKLWp1WYNBZZXFmLLVQU0JXMGGHpgJ37lyG4KJSIDkIK%2BaT1fLS6YFFHh4qZGQSMQVNCqJGfeiy3D41qFAK3YJA1153LtTl5L2P7nTJmSr9qZ0Mn%2F3usEoF77gaKwM1AfJjRdYL8f7FDAkPhMJF1ZzW6GrvnbmQRLKpHHcBmiW70oRAlXUXYAYgjhcsmSs0jv8",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:00.671Z"
+      "scannedAt": "2026-07-05T14:08:33.865Z"
     },
     {
       "id": "v1|236706023879|0",
@@ -406,7 +440,7 @@
       "url": "https://www.ebay.co.uk/itm/236706023879?_skw=pokemon+silver+tempest+booster+box+sealed+english&hash=item371cc749c7:g:iDwAAeSw2SVpwDaO",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:06.103Z"
+      "scannedAt": "2026-07-05T14:08:39.248Z"
     },
     {
       "id": "v1|800096226838|0",
@@ -423,7 +457,7 @@
       "url": "https://www.ebay.co.uk/itm/800096226838?_skw=pokemon+white+flare+japanese+booster+box&hash=itemba49738e16:g:b4EAAeSwvBxqGx-l",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:47.581Z"
+      "scannedAt": "2026-07-05T14:09:20.672Z"
     },
     {
       "id": "v1|398008031995|0",
@@ -440,7 +474,7 @@
       "url": "https://www.ebay.co.uk/itm/398008031995?_skw=pokemon+white+flare+japanese+booster+box&hash=item5cab209afb:g:70EAAeSwWa1qGztg",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:47.581Z"
+      "scannedAt": "2026-07-05T14:09:20.672Z"
     },
     {
       "id": "v1|117284820408|0",
@@ -457,7 +491,24 @@
       "url": "https://www.ebay.co.uk/itm/117284820408?_skw=pokemon+ascended+heroes+booster+box+sealed+english&hash=item1b4eb855b8:g:~g0AAeSwBCFqSYsi",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:57.195Z"
+      "scannedAt": "2026-07-05T14:09:30.326Z"
+    },
+    {
+      "id": "v1|168418812470|0",
+      "title": "Pokémon Glory of Team Rocket Booster Box Japanese Sealed UK Seller",
+      "type": "Booster Box",
+      "price": 119.99,
+      "marketFloor": 160,
+      "marketCeil": 220,
+      "midMarket": 190,
+      "netProfit": 41.2,
+      "roi": 34,
+      "pctBelow": 25,
+      "image": "https://i.ebayimg.com/images/g/fY4AAeSwLwBqHvqS/s-l1600.jpg",
+      "url": "https://www.ebay.co.uk/itm/168418812470?_skw=pokemon+glory+of+team+rocket+japanese+booster+box&hash=item27368b2236:g:fY4AAeSwLwBqHvqS",
+      "condition": "New/Factory Sealed",
+      "source": "ebay_live",
+      "scannedAt": "2026-07-05T14:09:26.144Z"
     },
     {
       "id": "v1|198476724114|0",
@@ -474,7 +525,7 @@
       "url": "https://www.ebay.co.uk/itm/198476724114?_skw=pokemon+terastal+festival+japanese+booster+box&hash=item2e36227792:g:OL0AAeSwoolqShIR",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:46.225Z"
+      "scannedAt": "2026-07-05T14:09:19.329Z"
     },
     {
       "id": "v1|137455684595|0",
@@ -491,7 +542,7 @@
       "url": "https://www.ebay.co.uk/itm/137455684595?_skw=pokemon+white+flare+japanese+booster+box&hash=item2000ff4bf3:g:~8oAAeSwPQNqPpz4",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:47.581Z"
+      "scannedAt": "2026-07-05T14:09:20.672Z"
     },
     {
       "id": "v1|327241723599|0",
@@ -508,7 +559,7 @@
       "url": "https://www.ebay.co.uk/itm/327241723599?_skw=pokemon+surging+sparks+booster+box+sealed+english&hash=item4c31206ecf:g:NXYAAeSw779qRSh9",
       "condition": "New",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:10.292Z"
+      "scannedAt": "2026-07-05T14:08:43.338Z"
     },
     {
       "id": "v1|127806457923|0",
@@ -525,7 +576,24 @@
       "url": "https://www.ebay.co.uk/itm/127806457923?_skw=pokemon+surging+sparks+booster+box+sealed+english&hash=item1dc1dbc843:g:7wUAAeSwYbhp2-Ie",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:10.292Z"
+      "scannedAt": "2026-07-05T14:08:43.338Z"
+    },
+    {
+      "id": "v1|327179149384|0",
+      "title": "Pokémon TCG: Scarlet & Violet Journey Together Half Booster box 18 Packs Sealed",
+      "type": "Booster Box",
+      "price": 109.9,
+      "marketFloor": 140,
+      "marketCeil": 200,
+      "midMarket": 170,
+      "netProfit": 33.87,
+      "roi": 31,
+      "pctBelow": 21,
+      "image": "https://i.ebayimg.com/images/g/JcUAAeSweUZqFYvm/s-l1600.jpg",
+      "url": "https://www.ebay.co.uk/itm/327179149384?_skw=pokemon+journey+together+booster+box+sealed+english&hash=item4c2d65a048:g:JcUAAeSweUZqFYvm",
+      "condition": "Graded",
+      "source": "ebay_live",
+      "scannedAt": "2026-07-05T14:09:05.709Z"
     },
     {
       "id": "v1|318410629753|0",
@@ -542,7 +610,7 @@
       "url": "https://www.ebay.co.uk/itm/318410629753?_skw=pokemon+obsidian+flames+booster+box+sealed+english&hash=item4a22c0a279:g:vg8AAeSwL-BqIfkQ",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:39.471Z"
+      "scannedAt": "2026-07-05T14:09:12.627Z"
     },
     {
       "id": "v1|800284277011|0",
@@ -559,7 +627,7 @@
       "url": "https://www.ebay.co.uk/itm/800284277011?_skw=pokemon+black+bolt+korean+booster+box&hash=itemba54a8f913:g:PMAAAeSwBOlqSDFk",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:48.994Z"
+      "scannedAt": "2026-07-05T14:09:22.041Z"
     },
     {
       "id": "v1|127949672490|0",
@@ -576,7 +644,7 @@
       "url": "https://www.ebay.co.uk/itm/127949672490?_skw=pokemon+glory+of+team+rocket+japanese+booster+box&hash=item1dca65102a:g:V2YAAeSw~DhqQ8zg",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:53.116Z"
+      "scannedAt": "2026-07-05T14:09:26.144Z"
     },
     {
       "id": "v1|327212627256|0",
@@ -593,7 +661,7 @@
       "url": "https://www.ebay.co.uk/itm/327212627256?_skw=pokemon+glory+of+team+rocket+japanese+booster+box&hash=item4c2f647538:g:7-oAAeSw3XhqLmXl",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:53.116Z"
+      "scannedAt": "2026-07-05T14:09:26.144Z"
     },
     {
       "id": "v1|366383373456|0",
@@ -607,27 +675,10 @@
       "roi": 28,
       "pctBelow": 20,
       "image": "https://i.ebayimg.com/images/g/pjgAAeSwzRxp9RrU/s-l1600.jpg",
-      "url": "https://www.ebay.co.uk/itm/366383373456?_skw=pokemon+ascended+heroes+booster+box+sealed+english&hash=item554e269c90:g:pjgAAeSwzRxp9RrU&amdata=enc%3AAQALAAABEACCtXRWQnOEpyOqnQQ8KGYVmZI5xJUmyhjxJLkIqtQ7jjw91au9yfq5iCNs3Jvv%2BceTftmIfx%2BA9kWQcxwyAsYM1e0cmYjBMliIKZV96yg6Pv7y2UsAC0m6gkRieyLcuKM%2B7q%2BJnXGc%2FiSU94W6E16DMMX4zxgZ8qvPjR%2FEqL5eqrrHzD%2FOvRkgbvWDpa%2BYweY64A0651w%2B4ogdGGoDTaeI6FVFqM%2F0D6njoK8Z8zfMEGgPG9CgQW7oHsHI8e6kldZEVZ4WakGn2K%2B4%2FDLmnyTz%2BEWLgEN%2F%2B0GMEgX1VXmzAgolwXB04lxLbEUYzj%2BhU%2FS%2FVh0ymIFRoXfWZiRMKtybe6%2FpTzgTRKalw6%2Bl5%2FW6",
+      "url": "https://www.ebay.co.uk/itm/366383373456?_skw=pokemon+ascended+heroes+booster+box+sealed+english&hash=item554e269c90:g:pjgAAeSwzRxp9RrU&amdata=enc%3AAQALAAABEACCtXRWQnOEpyOqnQQ8KGYVmZI5xJUmyhjxJLkIqtQ7jjw91au9yfq5iCNs3Jvv%2BceTftmIfx%2BA9kWQcxwyAsYM1e0cmYjBMliIKZV96yg6Pv7y2UsAC0m6gkRieyLcuKM%2B7q%2BJnXGc%2FiSU94W6E14iO%2B3TRRq7YcoyYOmp%2BpABEb65nOSvw0JMMRQDhtpXvxfqkVTKCYfzcd5pGI8JjPFBjVGvqui4gitkW93cPzHX9QlDT7hXlXbgWKJ1G807lf4JtCcV8UOK%2BG7Lhk2sEhNvSaxuOgo9A1uDgFBtLx32NPHwh4fPWxoQgr%2BcphZdpeq8BXwRsS%2Fb%2Bbd1ZfSthQe35RW3m%2FNWR82W6pXMWbEf",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:57.195Z"
-    },
-    {
-      "id": "v1|287402862991|0",
-      "title": "Pokemon TCG Glory of Team Rocket Booster Box Japanese New Factory Sealed",
-      "type": "Booster Box",
-      "price": 129,
-      "marketFloor": 160,
-      "marketCeil": 220,
-      "midMarket": 190,
-      "netProfit": 32.19,
-      "roi": 25,
-      "pctBelow": 19,
-      "image": "https://i.ebayimg.com/images/g/t4MAAeSwBsFqM5~V/s-l1600.jpg",
-      "url": "https://www.ebay.co.uk/itm/287402862991?_skw=pokemon+glory+of+team+rocket+japanese+booster+box&hash=item42ea8ba98f:g:t4MAAeSwBsFqM5~V",
-      "condition": "New/Factory Sealed",
-      "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:53.116Z"
+      "scannedAt": "2026-07-05T14:09:30.326Z"
     },
     {
       "id": "v1|117240471495|0",
@@ -644,24 +695,7 @@
       "url": "https://www.ebay.co.uk/itm/117240471495?_skw=pokemon+glory+of+team+rocket+japanese+booster+box&hash=item1b4c139fc7:g:3zAAAeSwQIxqKGyx",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:53.116Z"
-    },
-    {
-      "id": "v1|298416724057|0",
-      "title": "Pokémon TCG Japanese Glory Of Team Rocket Booster Box - Factory Sealed -",
-      "type": "Booster Box",
-      "price": 129.99,
-      "marketFloor": 160,
-      "marketCeil": 220,
-      "midMarket": 190,
-      "netProfit": 31.2,
-      "roi": 24,
-      "pctBelow": 19,
-      "image": "https://i.ebayimg.com/images/g/bDAAAeSwBoRqLwie/s-l1600.jpg",
-      "url": "https://www.ebay.co.uk/itm/298416724057?_skw=pokemon+glory+of+team+rocket+japanese+booster+box&hash=item457b05d859:g:bDAAAeSwBoRqLwie&amdata=enc%3AAQALAAABEACCtXRWQnOEpyOqnQQ8KGYr9NNDYnRVjxckwYXNmNC2KrorkpqgBRgnTm3%2FYoJ0%2FeSBraxXvM6y6lnJH8%2FZnatxxSCOW3ae3MVTxvVmV7%2B3LPC41MIUCIyadsMpOZw1CgP1sOXX3z8UZ3j7xtonDoY79fCFBGd%2BzijIh3kFRQ4FskpifkjliGr0JRWL%2FeAOcnwypBpnl%2FUshHh8eOYvYxdqgBVhwKrmxiiviWm29T8YtVKVRq81A63rykNvISxFhy9OYTzslgZPZ3c6ASHE9evQEDTUB2PZDc2SiA3J9Nz2qeX2EsNV7iVWlg479HsKFGIz%2B4tWvsIQkpvnknOZS2D3HVs%2BdR4sEmsBPiVCCLUN",
-      "condition": "New/Factory Sealed",
-      "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:53.116Z"
+      "scannedAt": "2026-07-05T14:09:26.144Z"
     },
     {
       "id": "v1|206391242836|0",
@@ -678,7 +712,24 @@
       "url": "https://www.ebay.co.uk/itm/206391242836?_skw=pokemon+glory+of+team+rocket+japanese+booster+box&hash=item300de07054:g:ex8AAeSwUD9qR8o2",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:53.116Z"
+      "scannedAt": "2026-07-05T14:09:26.144Z"
+    },
+    {
+      "id": "v1|298416724057|0",
+      "title": "Pokémon TCG Japanese Glory Of Team Rocket Booster Box - Factory Sealed -",
+      "type": "Booster Box",
+      "price": 129.99,
+      "marketFloor": 160,
+      "marketCeil": 220,
+      "midMarket": 190,
+      "netProfit": 31.2,
+      "roi": 24,
+      "pctBelow": 19,
+      "image": "https://i.ebayimg.com/images/g/bDAAAeSwBoRqLwie/s-l1600.jpg",
+      "url": "https://www.ebay.co.uk/itm/298416724057?_skw=pokemon+glory+of+team+rocket+japanese+booster+box&hash=item457b05d859:g:bDAAAeSwBoRqLwie&amdata=enc%3AAQALAAABEACCtXRWQnOEpyOqnQQ8KGYr9NNDYnRVjxckwYXNmNC2KrorkpqgBRgnTm3%2FYoJ0%2FeSBraxXvM6y6lnJH8%2FZnatxxSCOW3ae3MVTxvVmV7%2B3LPC41MIUCIyadsMpOZw1CgP1sOXX3z8UZ3j7xtonDoalK5%2F%2BVe3MpFhkiY%2FuCE%2FsHkthlZPoz7R54N290NCP1d%2F7dpKf6n%2Fn1cK3vMOLQC0jFkjdz521QvzMaksS5OnfQhQ4l7KzPGZqjf7u5OL6QWLfsKmCGCHSjQYQ4b8tMPs%2FgvGmTMsiWt223Rbjca4gUeOgSM%2BpGQ%2BI%2FcP9LdxiYfH7TGiXguZUeX9AYMzLuGgguSniFXFxtDcw9O8nIJC6",
+      "condition": "New/Factory Sealed",
+      "source": "ebay_live",
+      "scannedAt": "2026-07-05T14:09:26.144Z"
     },
     {
       "id": "v1|117278532307|0",
@@ -692,10 +743,10 @@
       "roi": 23,
       "pctBelow": 16,
       "image": "https://i.ebayimg.com/images/g/HKUAAeSwmGZqROz2/s-l1600.jpg",
-      "url": "https://www.ebay.co.uk/itm/117278532307?_skw=pokemon+surging+sparks+booster+box+sealed+english&hash=item1b4e5862d3:g:HKUAAeSwmGZqROz2&amdata=enc%3AAQALAAABEACCtXRWQnOEpyOqnQQ8KGYfMRXM36zrtDvvkp8CJP6ILrSEVv%2B9QToLLFo2I12J50zPR2Du75hbw9SeDY3Nbg5lnK%2BtLnrGD3JufZTbIcdpqBSKua6MdNMrfjhdabDsEIoxg%2FrKjiih9kzqORepgMUBcRXimsxIXfTw2yU8hkYv9Tu0G3x0XmkcRm2icxmGRGXyxdAq6m%2FbJpgaJbCBmPbARdiIX2QBINb56jvkWcVzp2ExhWkC5TM%2FXDAiSjueDFId%2FNXojRF6GffmtnzO08SSScAE8WtKZpV8KlcajuzA5vTcX37pzxoMSYO5cNRsUDSY3TbUOnFqJ7ZxiELwERQ%2FNocoBvZyv%2B0Wnnugd8Ny",
+      "url": "https://www.ebay.co.uk/itm/117278532307?_skw=pokemon+surging+sparks+booster+box+sealed+english&hash=item1b4e5862d3:g:HKUAAeSwmGZqROz2&amdata=enc%3AAQALAAABEACCtXRWQnOEpyOqnQQ8KGYfMRXM36zrtDvvkp8CJP6ILrSEVv%2B9QToLLFo2I12J50zPR2Du75hbw9SeDY3Nbg5lnK%2BtLnrGD3JufZTbIcdpqBSKua6MdNMrfjhdabDsEIoxg%2FrKjiih9kzqORepgMW%2F9BlfydaHvbnnHNIRMh%2BAft7SUS8qfYfWTMZ11HhmmpakbZAqi%2Bom7oql4BiYRLAy1TfZ1rD2s%2FVm6xhnnaAze7H3BsHCQGow3S5Y%2BjHQ3Q0MCWmGIRcXhrf9kvlA%2FwU9isOJ5WySDTyxDM6UpPImxsUHkcBKXVaghR6Zune8dPI1ATlQNmVnBhCPgzFZOi8--fISY8LG4yadZEQ60dp%2F",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:10.292Z"
+      "scannedAt": "2026-07-05T14:08:43.338Z"
     },
     {
       "id": "v1|377318471817|0",
@@ -712,7 +763,7 @@
       "url": "https://www.ebay.co.uk/itm/377318471817?_skw=pokemon+obsidian+flames+booster+box+sealed+english&hash=item57d9eef889:g:1xUAAeSw4kdqSZWR",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:39.471Z"
+      "scannedAt": "2026-07-05T14:09:12.627Z"
     },
     {
       "id": "v1|287439395616|0",
@@ -729,7 +780,7 @@
       "url": "https://www.ebay.co.uk/itm/287439395616?_skw=pokemon+white+flare+japanese+booster+box&hash=item42ecb91b20:g:S9oAAeSwutxqSi5e",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:47.581Z"
+      "scannedAt": "2026-07-05T14:09:20.672Z"
     },
     {
       "id": "v1|298475318137|0",
@@ -743,10 +794,10 @@
       "roi": 20,
       "pctBelow": 14,
       "image": "https://i.ebayimg.com/images/g/10wAAeSwutxqR2Yu/s-l1600.jpg",
-      "url": "https://www.ebay.co.uk/itm/298475318137?_skw=pokemon+journey+together+booster+box+sealed+english&hash=item457e83eb79:g:10wAAeSwutxqR2Yu&amdata=enc%3AAQALAAABEACCtXRWQnOEpyOqnQQ8KGaZHjd%2BuOuEJ817%2BGeYg179DRoX4UOhg2NEHaPoq8wclt98zYSacDS6LuSIVHLsJuzYfeXcO8pU2aGUfs732Ack8XQaVpCYI3tWhCmrPTIJMP9oFuILxQKNXa%2FumyymdBQ5d7vNsbgv9Kg%2FfhlzJuVw9%2F98KK2qiHi89St0rtapJdeCq%2B3T1Tm8jU609iwryvq3ivk%2FASwWeR8md2QIwAg9owpBUOXd5tDyVE9WQy4ONsU%2BhBKV1t9BhNUTDxEX%2BJZH2j89YXWLnG25QstSFxc6rroISf9dT7eBly1RPalVIyeHgJ4MJyBtVSfbnBC61CF3bf370ThDfoL2JymQmJY4",
+      "url": "https://www.ebay.co.uk/itm/298475318137?_skw=pokemon+journey+together+booster+box+sealed+english&hash=item457e83eb79:g:10wAAeSwutxqR2Yu&amdata=enc%3AAQALAAABEACCtXRWQnOEpyOqnQQ8KGaZHjd%2BuOuEJ817%2BGeYg179DRoX4UOhg2NEHaPoq8wclt98zYSacDS6LuSIVHLsJuzYfeXcO8pU2aGUfs732Ack8XQaVpCYI3tWhCmrPTIJMP9oFuILxQKNXa%2FumyymdBQyG49GbsIT3ZUZhKH0CXSoSNUffzcMqlX4fpcOVZ6cYp2718k2Ue2BzL1MhlOBlqAU3W5OMFilbv37oq6rsuFkieXVpBb2GLo3uQ5MbDtabJXbo%2F3h5viEoCXhn%2FjMu4NCvQdGBxv5vM9UK6WOGLSfORoCoKTQBE19vgRUw%2FuWwgE%2FI%2BLd%2F2AwMx7qqRBI1x0sSISKSxsPOJd05CQfDpku",
       "condition": "Ungraded",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:32.492Z"
+      "scannedAt": "2026-07-05T14:09:05.709Z"
     },
     {
       "id": "v1|147343491252|0",
@@ -760,10 +811,10 @@
       "roi": 20,
       "pctBelow": 14,
       "image": "https://i.ebayimg.com/images/g/nxUAAeSwJ6NqHKp0/s-l1600.jpg",
-      "url": "https://www.ebay.co.uk/itm/147343491252?_skw=pokemon+journey+together+booster+box+sealed+english&hash=item224e5b40b4:g:nxUAAeSwJ6NqHKp0&amdata=enc%3AAQALAAABEACCtXRWQnOEpyOqnQQ8KGYxh21cl7kPgpySqY5wQxZeuFJvNSkyelbvDo0tYuTxNEznHR3loB%2Bl%2BCmYabyeuahDg9AyHK2WTpLolX6LupgQeVRae0y7ElfCFS8b2v60h0RHcbifVOO1WKdGbq57c6PCArAUzzN0OHel4pts7In0ML%2BG5QgKN9r61vjVZfgYyJpSgHiuBt5y8mHaRcptf8PDYYLfi8WuiMvE%2FR2YZRAZbblWsw8s5lE3QEhUpMDu1qOwa%2BkZm8Ydrk8c6jkvbJ2swZ83%2Flh%2Bl%2FD9Bc9QmshNKmU1FxqYYA7%2FaEt6NuP2HxKmXx%2BiIdBluzu8yw4s6NEU04dN8k3Z%2BkYexW0Vo%2F%2BQ",
+      "url": "https://www.ebay.co.uk/itm/147343491252?_skw=pokemon+journey+together+booster+box+sealed+english&hash=item224e5b40b4:g:nxUAAeSwJ6NqHKp0&amdata=enc%3AAQALAAABEACCtXRWQnOEpyOqnQQ8KGYxh21cl7kPgpySqY5wQxZeuFJvNSkyelbvDo0tYuTxNEznHR3loB%2Bl%2BCmYabyeuahDg9AyHK2WTpLolX6LupgQeVRae0y7ElfCFS8b2v60h0RHcbifVOO1WKdGbq57c6P2%2FUjJpA8z0lr9FI636YLS1t9RuK4ur%2FqPcnD0SwQNukYifgpc8gohFLj22i6oeUBR9dhdMF1Wug1v12Mcq3Xsq2eW1TLwItHPTCpo4U37EHsJ2Hahz62KwFZxuKIExCYdEGr%2BZXtXVYX%2BcX4eOwTXF75myxHamC20aPEKT2Kw7to%2F%2B%2BkAjevqIObWOPw0VbSBJGrCdCbsnCeiYMhwi3VE",
       "condition": "New",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:32.492Z"
+      "scannedAt": "2026-07-05T14:09:05.709Z"
     },
     {
       "id": "v1|297577063695|0",
@@ -780,24 +831,7 @@
       "url": "https://www.ebay.co.uk/itm/297577063695?_skw=pokemon+darkness+ablaze+booster+box+sealed+english&hash=item4548f9a50f:g:CToAAeSw6INosxnb",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:36.775Z"
-    },
-    {
-      "id": "v1|198476702853|0",
-      "title": "Pokémon TCG Scarlet & Violet Stellar Crown Elite Trainer Box ETB SEALED",
-      "type": "Booster Box",
-      "price": 89.1,
-      "marketFloor": 100,
-      "marketCeil": 145,
-      "midMarket": 122.5,
-      "netProfit": 13.3,
-      "roi": 15,
-      "pctBelow": 11,
-      "image": "https://i.ebayimg.com/images/g/DHwAAeSw3YRqBLEW/s-l1600.jpg",
-      "url": "https://www.ebay.co.uk/itm/198476702853?_skw=pokemon+stellar+crown+booster+box+sealed+english&hash=item2e36222485:g:DHwAAeSw3YRqBLEW",
-      "condition": "New/Factory Sealed",
-      "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:25.718Z"
+      "scannedAt": "2026-07-05T14:09:09.843Z"
     },
     {
       "id": "v1|406966445267|0",
@@ -814,7 +848,7 @@
       "url": "https://www.ebay.co.uk/itm/406966445267?_skw=pokemon+journey+together+booster+box+sealed+english&hash=item5ec11724d3:g:yKUAAeSw3fZqHZ5d",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:32.492Z"
+      "scannedAt": "2026-07-05T14:09:05.709Z"
     },
     {
       "id": "v1|206379403360|0",
@@ -831,7 +865,7 @@
       "url": "https://www.ebay.co.uk/itm/206379403360?_skw=pokemon+rebel+clash+booster+box+sealed+english&hash=item300d2bc860:g:9TIAAeSw1cZqQVr2",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:42.212Z"
+      "scannedAt": "2026-07-05T14:09:15.307Z"
     },
     {
       "id": "v1|198428774370|0",
@@ -848,7 +882,7 @@
       "url": "https://www.ebay.co.uk/itm/198428774370?_skw=pokemon+white+flare+japanese+booster+box&hash=item2e3346cfe2:g:UFMAAeSwKEtqJWJH",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:47.581Z"
+      "scannedAt": "2026-07-05T14:09:20.672Z"
     },
     {
       "id": "v1|168515322592|0",
@@ -865,7 +899,7 @@
       "url": "https://www.ebay.co.uk/itm/168515322592?_skw=pokemon+paradox+rift+elite+trainer+box+sealed+english&hash=item273c4bc2e0:g:aXsAAeSwhs1qSjUh",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:18.568Z"
+      "scannedAt": "2026-07-05T14:08:51.642Z"
     },
     {
       "id": "v1|137482981933|0",
@@ -882,7 +916,7 @@
       "url": "https://www.ebay.co.uk/itm/137482981933?_skw=pokemon+stellar+crown+booster+box+sealed+english&hash=item20029fd22d:g:bNYAAeSwcqdqSZcS",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:25.718Z"
+      "scannedAt": "2026-07-05T14:08:58.699Z"
     },
     {
       "id": "v1|318529618086|0",
@@ -899,7 +933,7 @@
       "url": "https://www.ebay.co.uk/itm/318529618086?_skw=pokemon+rebel+clash+booster+box+sealed+english&hash=item4a29d840a6:g:UUAAAeSwTM9qRUEi",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:42.212Z"
+      "scannedAt": "2026-07-05T14:09:15.307Z"
     },
     {
       "id": "v1|198457746539|0",
@@ -916,7 +950,7 @@
       "url": "https://www.ebay.co.uk/itm/198457746539?_skw=pokemon+journey+together+elite+trainer+box+sealed+english&hash=item2e3500e46b:g:qt4AAeSwtSxqP7bW",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:34.002Z"
+      "scannedAt": "2026-07-05T14:09:07.131Z"
     },
     {
       "id": "v1|377234158534|0",
@@ -933,7 +967,24 @@
       "url": "https://www.ebay.co.uk/itm/377234158534?_skw=pokemon+chilling+reign+elite+trainer+box+sealed+english&hash=item57d4e873c6:g:AvsAAeSwYe5qIZXr",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:08:59.312Z"
+      "scannedAt": "2026-07-05T14:08:32.260Z"
+    },
+    {
+      "id": "v1|127958324557|0",
+      "title": "Pokémon TCG Paradox Rift Elite Trainer Box ETB New Sealed",
+      "type": "Booster Box",
+      "price": 110,
+      "marketFloor": 120,
+      "marketCeil": 165,
+      "midMarket": 142.5,
+      "netProfit": 9.82,
+      "roi": 9,
+      "pctBelow": 8,
+      "image": "https://i.ebayimg.com/images/g/X6UAAeSwTM9qSk5m/s-l1600.jpg",
+      "url": "https://www.ebay.co.uk/itm/127958324557?_skw=pokemon+paradox+rift+booster+box+sealed+english&hash=item1dcae9154d:g:X6UAAeSwTM9qSk5m",
+      "condition": "New/Factory Sealed",
+      "source": "ebay_live",
+      "scannedAt": "2026-07-05T14:08:50.203Z"
     },
     {
       "id": "v1|198457763231|0",
@@ -950,7 +1001,7 @@
       "url": "https://www.ebay.co.uk/itm/198457763231?_skw=pokemon+darkness+ablaze+booster+box+sealed+english&hash=item2e3501259f:g:XCYAAeSwZTdqP7mA",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:36.775Z"
+      "scannedAt": "2026-07-05T14:09:09.843Z"
     },
     {
       "id": "v1|407041254396|0",
@@ -967,7 +1018,7 @@
       "url": "https://www.ebay.co.uk/itm/407041254396?_skw=pokemon+paradox+rift+elite+trainer+box+sealed+english&hash=item5ec58ca3fc:g:uq4AAeSwSl5qRWg0",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:18.568Z"
+      "scannedAt": "2026-07-05T14:08:51.642Z"
     },
     {
       "id": "v1|257570016763|0",
@@ -984,7 +1035,7 @@
       "url": "https://www.ebay.co.uk/itm/257570016763?_skw=pokemon+paradox+rift+elite+trainer+box+sealed+english&hash=item3bf85e8dfb:g:HH4AAeSwHKFqMcQi",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:18.568Z"
+      "scannedAt": "2026-07-05T14:08:51.642Z"
     },
     {
       "id": "v1|227349953114|0",
@@ -1001,9 +1052,9 @@
       "url": "https://www.ebay.co.uk/itm/227349953114?_skw=pokemon+astral+radiance+elite+trainer+box+sealed+english&hash=item34ef1cfa5a:g:AOMAAeSw~WhqDEhB",
       "condition": "New/Factory Sealed",
       "source": "ebay_live",
-      "scannedAt": "2026-07-05T12:09:03.332Z"
+      "scannedAt": "2026-07-05T14:08:36.576Z"
     }
   ],
-  "updatedAt": "2026-07-05T12:09:57.696Z",
-  "count": 59
+  "updatedAt": "2026-07-05T14:09:30.827Z",
+  "count": 62
 }
